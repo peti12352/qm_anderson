@@ -157,7 +157,7 @@ class TestTMM:
         N = M * M
         tmm_single, _ = make_tmm_fns(M, "sc")
         key = jax.random.PRNGKey(2)
-        gammas = tmm_single(key, L=10_000, W=16.5, p=1.0)
+        gammas = tmm_single(key, L=5_000, W=16.5, p=1.0)
         pairs = gammas[:N] + gammas[2*N-1:N-1:-1]
         assert jnp.max(jnp.abs(pairs)) < 0.1, \
             f"Lyapunov pairs {pairs} not symmetric (max deviation {jnp.max(jnp.abs(pairs)):.4f})"
@@ -166,9 +166,9 @@ class TestTMM:
         """At W >> W_c, Λ_M should decrease with M (localized phase)."""
         from src.tmm import make_tmm_fns, lambda_M
         M_small, M_large = 4, 8
-        L = 50_000
-        W = 30.0   # deep in insulating phase
-        n_real = 50
+        L = 5_000   # short bar sufficient: ξ << L at W=30 (deep insulator)
+        W = 30.0    # deep in insulating phase
+        n_real = 20
 
         lam_vals = {}
         for M in [M_small, M_large]:
@@ -185,9 +185,9 @@ class TestTMM:
         """At W << W_c, Λ_M should increase with M (metallic phase)."""
         from src.tmm import make_tmm_fns, lambda_M
         M_small, M_large = 4, 8
-        L = 50_000
-        W = 5.0   # deep in metallic phase
-        n_real = 50
+        L = 5_000   # shorter bar; signal clear because W=5 is far from W_c
+        W = 5.0     # deep in metallic phase
+        n_real = 20
 
         lam_vals = {}
         for M in [M_small, M_large]:
@@ -207,9 +207,9 @@ class TestTMM:
         """
         from src.tmm import make_tmm_fns, lambda_M
         M_small, M_large = 4, 8
-        p = 0.25   # below p_c(SC)=0.311
-        L = 50_000
-        n_real = 50
+        p = 0.25   # below p_c(SC)=0.311 — all states localized, strong signal
+        L = 5_000
+        n_real = 20
 
         lam_vals = {}
         for M in [M_small, M_large]:

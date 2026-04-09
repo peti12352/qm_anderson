@@ -69,8 +69,7 @@ def make_tmm_fns(
     N = M * M
     build_T = make_transfer_matrix_fn(M, lattice, E, t)
 
-    @functools.partial(jax.jit, static_argnums=(1,))   # L is static for scan shape
-    def tmm_single(key: jax.Array, L: int, W: float, p: float) -> jnp.ndarray:
+    def _tmm_core(key: jax.Array, L: int, W: float, p: float) -> jnp.ndarray:
         """
         Single TMM run. Returns all 2N Lyapunov exponents in descending order.
 
@@ -122,7 +121,14 @@ def make_tmm_fns(
         # and γ[N-1] is the smallest positive one (slowest decay → ξ_M).
         return jnp.sort(gamma)[::-1]
 
-    tmm_batched = jax.vmap(tmm_single, in_axes=(0, None, None, None))
+    # jit(vmap(f)) is the correct pattern: vectorise first, then compile once.
+    # vmap(jit(f)) forces JAX to trace through an inner jit per call, which
+    # can behave unexpectedly with static args and triggers extra retracing.
+    tmm_single  = jax.jit(_tmm_core, static_argnums=(1,))
+    tmm_batched = jax.jit(
+        jax.vmap(_tmm_core, in_axes=(0, None, None, None)),
+        static_argnums=(1,),
+    )
 
     return tmm_single, tmm_batched
 
