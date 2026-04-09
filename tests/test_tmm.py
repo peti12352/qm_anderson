@@ -157,7 +157,9 @@ class TestTMM:
         N = M * M
         tmm_single, _ = make_tmm_fns(M, "sc")
         key = jax.random.PRNGKey(2)
+        print(f"\n  running M={M} L=5000 single bar (JIT compiles on first call)...")
         gammas = tmm_single(key, L=5_000, W=16.5, p=1.0)
+        print(f"  gammas range: [{float(gammas[-1]):.4f}, {float(gammas[0]):.4f}]")
         pairs = gammas[:N] + gammas[2*N-1:N-1:-1]
         assert jnp.max(jnp.abs(pairs)) < 0.1, \
             f"Lyapunov pairs {pairs} not symmetric (max deviation {jnp.max(jnp.abs(pairs)):.4f})"
@@ -172,10 +174,12 @@ class TestTMM:
 
         lam_vals = {}
         for M in [M_small, M_large]:
+            print(f"\n  M={M}: compiling + running {n_real} bars × L={L} steps...")
             _, batched = make_tmm_fns(M, "sc", E=0.0)
             keys   = jax.random.split(jax.random.PRNGKey(3), n_real)
             gammas = batched(keys, L, W, 1.0)
             lam_vals[M], _ = lambda_M(gammas, M)
+            print(f"  M={M}: Λ_M = {lam_vals[M]:.4f}")
 
         assert lam_vals[M_small] > lam_vals[M_large], \
             f"At W={W} (localized), Λ_M should decrease with M: " \
@@ -191,10 +195,12 @@ class TestTMM:
 
         lam_vals = {}
         for M in [M_small, M_large]:
+            print(f"\n  M={M}: compiling + running {n_real} bars × L={L} steps...")
             _, batched = make_tmm_fns(M, "sc", E=0.0)
             keys   = jax.random.split(jax.random.PRNGKey(4), n_real)
             gammas = batched(keys, L, W, 1.0)
             lam_vals[M], _ = lambda_M(gammas, M)
+            print(f"  M={M}: Λ_M = {lam_vals[M]:.4f}")
 
         assert lam_vals[M_small] < lam_vals[M_large], \
             f"At W={W} (metallic), Λ_M should increase with M: " \
@@ -213,10 +219,12 @@ class TestTMM:
 
         lam_vals = {}
         for M in [M_small, M_large]:
+            print(f"\n  M={M}: compiling + running {n_real} bars × L={L} steps (p={p}, below p_c=0.311)...")
             _, batched = make_tmm_fns(M, "sc", E=0.0)
             keys   = jax.random.split(jax.random.PRNGKey(5), n_real)
             gammas = batched(keys, L, 0.0, p)
             lam_vals[M], _ = lambda_M(gammas, M)
+            print(f"  M={M}: Λ_M = {lam_vals[M]:.4f}")
 
         assert lam_vals[M_small] > lam_vals[M_large], \
             f"Below p_c, all states must be localized. " \
