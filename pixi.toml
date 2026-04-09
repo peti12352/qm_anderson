@@ -11,7 +11,7 @@ cuda = "12"
 
 [dependencies]
 python = "3.11.*"
-numpy = ">=1.26,<2"
+numpy = ">=2.0"
 scipy = ">=1.13"
 matplotlib = ">=3.9"
 h5py = ">=3.11"
