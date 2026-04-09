@@ -25,9 +25,12 @@ the amplitude at absent sites is O(t / ABSENT_ENERGY) → 0 as ABSENT_ENERGY →
 BCC NOTE: The BCC coupling matrix V has eigenvalues
     λ_{kx,ky} = -4t·cos(2πkx/M)·cos(2πky/M)
 which are zero when M is divisible by 4 (kx or ky = M/4). For those M
-we apply a twisted boundary condition (phase φ = π/(2M) in the x-direction)
-that shifts all k-points away from zero. M ∈ {6, 10} are non-problematic
-and recommended for BCC; M ∈ {4, 8, 12} require twisted BC (applied automatically).
+we apply a twisted boundary condition with phase φ = π/(2M) in BOTH x and y
+directions, giving:
+    λ_{kx,ky} = -4t·cos(π/(2M)+2πkx/M)·cos(π/(2M)+2πky/M)
+which is never zero (the zero-condition kx=(M-1)/4+nM/2 has no integer solutions).
+M ∈ {6, 10} are non-problematic and recommended for BCC; M ∈ {4, 8, 12} require
+twisted BC (applied automatically).
 """
 from __future__ import annotations
 
@@ -72,8 +75,12 @@ def _bcc_coupling_matrix(M: int, t: float, twisted: bool) -> np.ndarray:
     For BCC, site (ix, iy) in slice n connects to sites (ix+dx, iy+dy) mod M
     in slice n+1, for (dx, dy) ∈ {(±1, ±1)}.
 
-    twisted=True applies a phase exp(iπ/(2M)) per unit shift in the x-direction,
-    which avoids the zero eigenvalues that appear when M is divisible by 4.
+    twisted=True applies a phase exp(iπ(dx+dy)/(2M)) per bond, twisting in BOTH
+    x and y directions. This shifts ALL k-points: the zero condition becomes
+    kx = (M-1)/4 + nM/2, which has no integer solutions for any M.
+
+    Twisting x only (the naive fix) leaves ky = M/4 zero eigenvalues intact
+    because the y-direction eigenvalue factor cos(2πky/M) is unchanged.
     """
     N = M * M
     indices = np.arange(N)
@@ -86,7 +93,9 @@ def _bcc_coupling_matrix(M: int, t: float, twisted: bool) -> np.ndarray:
             jx = (ix + dx) % M
             jy = (iy + dy) % M
             j_idx = jx * M + jy
-            phase = np.exp(1j * np.pi * dx / (2 * M)) if twisted else 1.0
+            # Twist in both x and y: phase = exp(iπ(dx+dy)/(2M))
+            # This gives λ = -4t·cos(π/(2M)+2πkx/M)·cos(π/(2M)+2πky/M), never 0.
+            phase = np.exp(1j * np.pi * (dx + dy) / (2 * M)) if twisted else 1.0
             V[indices, j_idx] += -t * phase
 
     return V
