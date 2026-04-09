@@ -3,7 +3,13 @@ Pytest session configuration: prints device info and timing context
 so the user can see whether JAX found the GPU and roughly how long
 each compilation/run phase is taking.
 """
-import time
+import sys
+from pathlib import Path
+
+# Add project root to path so 'src' is importable regardless of where
+# pytest is invoked from.
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import pytest
 
 
