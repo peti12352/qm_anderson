@@ -4,3 +4,6 @@ __pycache__/
 *.pyc
 .pixi/
 *.h5
+
+# results/  is tracked (lightweight CSV summaries)
+# data/     is NOT tracked (raw HDF5 gammas, 100-400 MB each)
