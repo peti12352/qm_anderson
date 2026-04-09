@@ -257,8 +257,14 @@ class TestFSS:
                 M_list.append(M); x_list.append(x)
                 lam_list.append(lam_noisy); err_list.append(noise)
 
+        # poly_order=1 matches the true linear model (2 coefficients).
+        # Using poly_order=3 overparameterises and biases nu.
+        # n_boot=50 is sufficient for a test; production uses n_boot=500.
         result = fit_fss(M_list, x_list, lam_list, err_list,
-                         x_c_guess=0.45, nu_guess=1.6)
+                         x_c_guess=0.45, nu_guess=1.6,
+                         poly_order=1, n_boot=50)
+        print(f"\n  FSS result: x_c={result.x_c:.4f} (true {true_x_c}), "
+              f"nu={result.nu:.4f} (true {true_nu}), chi2/dof={result.chi2_dof:.3f}")
 
         assert abs(result.x_c - true_x_c) < 0.003, \
             f"x_c recovery failed: {result.x_c:.4f} vs {true_x_c}"
