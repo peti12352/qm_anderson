@@ -28,4 +28,5 @@ benchmark   = { cmd = "python runs/sc_benchmark.py",  description = "Reproduce Î
 sc-dilution = { cmd = "python runs/sc_dilution.py",   description = "Measure p_q for SC site-diluted lattice" }
 bcc-dilution= { cmd = "python runs/bcc_dilution.py",  description = "Measure p_q for BCC site-diluted lattice" }
 figures     = { cmd = "python analysis/figures.py",   description = "Generate all publication figures" }
-test        = { cmd = "pytest tests/ -v -s --tb=short",  description = "Run test suite" }
+test        = { cmd = "pytest tests/ -v -s --tb=short -m 'not slow'", description = "Fast tests only â€” skips slow GPU integration tests (<60s)" }
+test-all    = { cmd = "pytest tests/ -v -s --tb=short",               description = "Full test suite including slow GPU integration tests (~21 min)" }

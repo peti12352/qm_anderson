@@ -131,41 +131,37 @@ def make_transfer_matrix_fn(
         raise ValueError(f"lattice must be 'sc' or 'bcc', got '{lattice}'")
 
     N = M * M
-    eye_N = jnp.eye(N, dtype=jnp.complex128)
 
     if lattice == "sc":
-        # V = -t·I  →  V^{-1} = -I/t  →  V^{-1}(E·I - H_n) = (H_n - E·I)/t
+        # SC Hamiltonian is real for real E and t: use float64 throughout.
+        # On consumer GPUs (RTX 5090) complex128 runs at ~1/128 of FP32 speed
+        # (emulated FP64 × 2); float64 is ~1/64.  SC needs no complex arithmetic.
+        eye_N = jnp.eye(N, dtype=jnp.float64)
+
         rows_np, cols_np = _sc_inplane_adjacency(M)
-        # Build a static (N,N) in-plane hopping matrix (without disorder/mask).
-        # We will scale it with the mask at runtime.
         H_hop_np = np.zeros((N, N), dtype=np.float64)
-        # rows_np/cols_np encode one direction of each bond; symmetrise explicitly.
         H_hop_np[rows_np, cols_np] = -t
         H_hop_np[cols_np, rows_np] = -t
-        H_hop = jnp.array(H_hop_np)  # captured in JIT closure as a compile-time constant
+        H_hop = jnp.array(H_hop_np)
 
         @jax.jit
         def _transfer_matrix_sc(disorder: jnp.ndarray, mask: jnp.ndarray) -> jnp.ndarray:
-            # disorder : (N,) float64 on-site energies from uniform disorder
-            # mask     : (N,) bool, True = site present
             eps = jnp.where(mask, disorder, ABSENT_ENERGY)
-
-            # Zero out hoppings to/from absent sites.
-            # mask.astype(float64) converts bool → {0.0, 1.0} safely.
             hop_mask = jnp.outer(mask.astype(jnp.float64), mask.astype(jnp.float64))
             H_n = jnp.diag(eps) + H_hop * hop_mask  # (N,N) float64
 
-            # SC: V = -t·I  →  V^{-1}(E·I − H_n) = (H_n − E·I)/t
-            upper_left = (H_n - E * eye_N) / t   # dtype promotes to complex128 via eye_N
-            # T = [ upper_left   −I ]
-            #     [      I        0 ]
+            # V = -t·I  →  V^{-1}(E·I − H_n) = (H_n − E·I)/t
+            upper_left = (H_n - E * eye_N) / t      # float64
             top    = jnp.concatenate([upper_left, -eye_N], axis=1)
             bottom = jnp.concatenate([eye_N,  jnp.zeros_like(eye_N)], axis=1)
-            return jnp.concatenate([top, bottom], axis=0)
+            return jnp.concatenate([top, bottom], axis=0)   # (2N,2N) float64
 
         return _transfer_matrix_sc
 
     else:  # bcc
+        # BCC twisted BC introduces complex phases: complex128 is unavoidable.
+        eye_N = jnp.eye(N, dtype=jnp.complex128)
+
         twisted = _needs_twisted_bc(M)
         V_np = _bcc_coupling_matrix(M, t, twisted=twisted)
         V_inv_np = np.linalg.inv(V_np)
@@ -173,7 +169,6 @@ def make_transfer_matrix_fn(
 
         @jax.jit
         def _transfer_matrix_bcc(disorder: jnp.ndarray, mask: jnp.ndarray) -> jnp.ndarray:
-            # BCC has no in-plane hoppings: H_n = diag(ε)
             eps = jnp.where(mask, disorder, ABSENT_ENERGY)
             H_n = jnp.diag(eps.astype(jnp.complex128))
             upper_left = V_inv @ (E * eye_N - H_n)

@@ -2,6 +2,12 @@
 Pytest session configuration: prints device info and timing context
 so the user can see whether JAX found the GPU and roughly how long
 each compilation/run phase is taking.
+
+Marks
+-----
+@pytest.mark.slow  — integration tests that JIT-compile and run real TMM bars.
+    Skipped by default (pixi run test).
+    Run with: pixi run test-all
 """
 import sys
 from pathlib import Path
@@ -11,6 +17,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "slow: integration tests requiring JIT compile + GPU run (~7 min total). "
+        "Skipped by default; run with pixi run test-all."
+    )
 
 
 def pytest_sessionstart(session):

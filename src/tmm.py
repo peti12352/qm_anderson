@@ -69,6 +69,13 @@ def make_tmm_fns(
     N = M * M
     build_T = make_transfer_matrix_fn(M, lattice, E, t)
 
+    # Probe the transfer matrix dtype once (at factory time, not inside JIT).
+    # SC returns float64; BCC returns complex128. Q must match T's dtype so that
+    # T @ Q does not upcast the entire computation back to complex128.
+    _probe_dis  = jnp.zeros(N, dtype=jnp.float64)
+    _probe_mask = jnp.ones(N, dtype=bool)
+    _mat_dtype  = build_T(_probe_dis, _probe_mask).dtype   # float64 or complex128
+
     def _tmm_core(key: jax.Array, L: int, W: float, p: float) -> jnp.ndarray:
         """
         Single TMM run. Returns all 2N Lyapunov exponents in descending order.
@@ -94,8 +101,8 @@ def make_tmm_fns(
             dis_slice  = jax.random.uniform(k_dis, (N,), minval=-W / 2.0, maxval=W / 2.0)
             mask_slice = jax.random.uniform(k_dil, (N,)) < p
 
-            T  = build_T(dis_slice, mask_slice)   # (2N, 2N) complex128
-            QT = T @ Q                             # (2N, 2N)
+            T  = build_T(dis_slice, mask_slice)   # (2N, 2N) — float64 (SC) or complex128 (BCC)
+            QT = T @ Q                             # (2N, 2N) — same dtype as T
 
             Q, R = jnp.linalg.qr(QT)
 
@@ -111,7 +118,7 @@ def make_tmm_fns(
             return (Q, log_norms), None
 
         dim = 2 * N
-        Q0        = jnp.eye(dim, dtype=jnp.complex128)
+        Q0         = jnp.eye(dim, dtype=_mat_dtype)       # float64 (SC) or complex128 (BCC)
         log_norms0 = jnp.zeros(dim, dtype=jnp.float64)
 
         (_, log_norms), _ = jax.lax.scan(step, (Q0, log_norms0), jnp.arange(L))
