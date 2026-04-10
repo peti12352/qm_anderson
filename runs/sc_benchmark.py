@@ -66,18 +66,39 @@ def main(fast: bool = False) -> None:
     t0 = time.time()
     for M in M_LIST:
         all_gammas[M] = {}
+        N = M * M
         _, tmm_batched = make_tmm_fns(M, "sc", E=E, t=T_HOP)
 
-        # Warm up JIT (first call compiles)
+        # Warm up JIT (first call compiles — can take several minutes on first ever run)
+        print(f"\n  M={M} | N={N} | compiling JIT kernel… ", end="", flush=True)
         keys_warmup = jax.random.split(rng, 4)
+        t_compile = time.time()
         _ = tmm_batched(keys_warmup, L, W_LIST[len(W_LIST)//2], P).block_until_ready()
-        print(f"  M={M} JIT compiled ({time.time()-t0:.1f}s)")
+        print(f"done ({time.time()-t_compile:.0f}s)")
 
-        for W in tqdm(W_LIST, desc=f"M={M}"):
-            rng, subkey = jax.random.split(rng)
-            keys = jax.random.split(subkey, n_real)
-            gammas = np.asarray(tmm_batched(keys, L, W, P).block_until_ready())
-            all_gammas[M][W] = gammas
+        lam_by_W = {}
+        t_M = time.time()
+        with tqdm(W_LIST, desc=f"  M={M:2d}", unit="W", ncols=100) as pbar:
+            for W in pbar:
+                rng, subkey = jax.random.split(rng)
+                keys = jax.random.split(subkey, n_real)
+                t_pt = time.time()
+                gammas = np.asarray(tmm_batched(keys, L, W, P).block_until_ready())
+                dt = time.time() - t_pt
+                all_gammas[M][W] = gammas
+                lam, err = lambda_M(jnp.array(gammas), M)
+                lam_by_W[W] = lam
+                pbar.set_postfix(
+                    W=f"{W:.2f}",
+                    lam=f"{lam:.3f}±{err:.3f}",
+                    s_pt=f"{dt:.1f}s",
+                    real_s=f"{n_real/dt:.0f}",
+                )
+
+        elapsed_M = time.time() - t_M
+        lam_vals = list(lam_by_W.values())
+        print(f"  M={M} finished | {elapsed_M/60:.1f} min | "
+              f"λ_M ∈ [{min(lam_vals):.3f}, {max(lam_vals):.3f}]")
 
     elapsed = time.time() - t0
     print(f"\nRaw data collected in {elapsed/60:.1f} min")

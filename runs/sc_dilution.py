@@ -89,16 +89,37 @@ def main() -> None:
     t0 = time.time()
     for M in M_LIST:
         all_gammas[M] = {}
+        N = M * M
         _, tmm_batched = make_tmm_fns(M, "sc", E=E, t=T_HOP)
 
-        # Warm up
+        print(f"\n  M={M} | N={N} | compiling JIT kernel… ", end="", flush=True)
+        t_compile = time.time()
         _ = tmm_batched(jax.random.split(rng, 4), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
+        print(f"done ({time.time()-t_compile:.0f}s)")
 
-        for p in tqdm(P_LIST, desc=f"M={M}"):
-            rng, subkey = jax.random.split(rng)
-            keys = jax.random.split(subkey, N_REAL)
-            gammas = np.asarray(tmm_batched(keys, L, W, p).block_until_ready())
-            all_gammas[M][p] = gammas
+        lam_by_p = {}
+        t_M = time.time()
+        with tqdm(P_LIST, desc=f"  M={M:2d}", unit="p", ncols=100) as pbar:
+            for p in pbar:
+                rng, subkey = jax.random.split(rng)
+                keys = jax.random.split(subkey, N_REAL)
+                t_pt = time.time()
+                gammas = np.asarray(tmm_batched(keys, L, W, p).block_until_ready())
+                dt = time.time() - t_pt
+                all_gammas[M][p] = gammas
+                lam, err = lambda_M(jnp.array(gammas), M)
+                lam_by_p[p] = lam
+                pbar.set_postfix(
+                    p=f"{p:.3f}",
+                    lam=f"{lam:.3f}±{err:.3f}",
+                    s_pt=f"{dt:.1f}s",
+                    real_s=f"{N_REAL/dt:.0f}",
+                )
+
+        elapsed_M = time.time() - t_M
+        lam_vals = list(lam_by_p.values())
+        print(f"  M={M} finished | {elapsed_M/60:.1f} min | "
+              f"λ_M ∈ [{min(lam_vals):.3f}, {max(lam_vals):.3f}]")
 
     elapsed = time.time() - t0
     print(f"\nData collected in {elapsed/60:.1f} min")
