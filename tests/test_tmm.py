@@ -159,7 +159,7 @@ class TestTMM:
         N = M * M
         tmm_single, _ = make_tmm_fns(M, "sc")
         key = jax.random.PRNGKey(2)
-        print(f"\n  running M={M} L=5000 single bar (JIT compiles on first call)...")
+        print(f"\n  running M={M} L=5000 single bar...")
         gammas = tmm_single(key, L=5_000, W=16.5, p=1.0)
         print(f"  gammas range: [{float(gammas[-1]):.4f}, {float(gammas[0]):.4f}]")
         pairs = gammas[:N] + gammas[2*N-1:N-1:-1]

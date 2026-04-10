@@ -21,16 +21,20 @@ After each decomposition, R diagonal entries have positive real parts
 
 GPU parallelism strategy
 ------------------------
-The sequential loop (lax.scan over L slices) cannot be parallelized within
-a single bar. Parallelism comes entirely from running B independent disorder
-realizations concurrently via jax.vmap. On RTX 5090 with M=8:
-    - Each bar: 16×16 complex128 matmul + QR at each of 100k steps
-    - B=500 bars in parallel fills ~2 GB VRAM (Q matrices only)
-    - Throughput: ~1500 realizations/min
+The sequential loop cannot be parallelized within a single bar. Parallelism
+comes entirely from running B independent disorder realizations concurrently
+via jax.vmap.
+
+Loop implementation: lax.fori_loop(0, L, body, init)
+  - L is a regular (non-static) argument — one compiled kernel for ALL L values
+  - No (L,) index array allocated (unlike lax.scan over jnp.arange(L))
+  - XLA compiles a plain while-loop; compilation takes seconds not minutes
+  - lax.scan over arange(L) caused 15-30 min XLA compile hangs because it
+    materialized a 100k-element array and triggered full autotuning
 
 Memory note
 -----------
-Disorder is generated on-the-fly at each scan step via jax.random.fold_in,
+Disorder is generated on-the-fly at each fori_loop step via jax.random.fold_in,
 NOT pre-allocated as (L, N) arrays. Pre-allocation would require
 B × L × N × 8 bytes ≈ 100 GB for B=2000, L=100k, N=64 — far exceeding
 GPU VRAM. With fold_in, peak memory per realization is O((2N)²) ≈ 256 KB.
@@ -43,8 +47,6 @@ Public API
     lambda_M(gammas, M)             -> (mean, stderr) of Λ_M = ξ_M / M
 """
 from __future__ import annotations
-
-import functools
 
 import jax
 import jax.numpy as jnp
@@ -89,53 +91,45 @@ def make_tmm_fns(
         """
         key_dis, key_dil = jax.random.split(key)
 
-        # Generate disorder on-the-fly at each scan step via fold_in.
-        # This avoids pre-allocating (L, N) arrays, keeping memory O((2N)²)
-        # per realization instead of O(L × N) — critical for large B in vmap.
-        def step(carry, n):
+        dim = 2 * N
+        Q0         = jnp.eye(dim, dtype=_mat_dtype)
+        log_norms0 = jnp.zeros(dim, dtype=jnp.float64)
+
+        def body(n, carry):
             Q, log_norms = carry
 
-            # Per-slice keys: fold step index n into the bar-level keys.
+            # Per-slice keys derived via fold_in — no (L,N) pre-allocation.
             k_dis      = jax.random.fold_in(key_dis, n)
             k_dil      = jax.random.fold_in(key_dil, n)
             dis_slice  = jax.random.uniform(k_dis, (N,), minval=-W / 2.0, maxval=W / 2.0)
             mask_slice = jax.random.uniform(k_dil, (N,)) < p
 
-            T  = build_T(dis_slice, mask_slice)   # (2N, 2N) — float64 (SC) or complex128 (BCC)
-            QT = T @ Q                             # (2N, 2N) — same dtype as T
+            T  = build_T(dis_slice, mask_slice)   # (2N,2N) float64 or complex128
+            QT = T @ Q
 
             Q, R = jnp.linalg.qr(QT)
 
-            # Fix sign convention: ensure Re(R_ii) > 0 so that log|R_ii| is
-            # unambiguous and columns of Q point in consistent directions.
+            # Positive-diagonal convention: ensures log|R_ii| is unambiguous.
             signs = jnp.sign(jnp.real(jnp.diag(R)))
-            # signs can be 0.0 at exact degeneracy; treat as +1 to avoid NaN
             signs = jnp.where(signs == 0.0, 1.0, signs)
             Q = Q * signs[None, :]
             R = R * signs[:, None]
 
             log_norms = log_norms + jnp.log(jnp.abs(jnp.diag(R)))
-            return (Q, log_norms), None
+            return (Q, log_norms)
 
-        dim = 2 * N
-        Q0         = jnp.eye(dim, dtype=_mat_dtype)       # float64 (SC) or complex128 (BCC)
-        log_norms0 = jnp.zeros(dim, dtype=jnp.float64)
-
-        (_, log_norms), _ = jax.lax.scan(step, (Q0, log_norms0), jnp.arange(L))
+        # fori_loop compiles as a plain while-loop; L is dynamic (not static),
+        # so one kernel covers all bar lengths — no recompilation when L changes.
+        _, log_norms = jax.lax.fori_loop(0, L, body, (Q0, log_norms0))
 
         gamma = log_norms / L
-        # Sort descending so that γ[0] is the largest (fastest-growing mode)
-        # and γ[N-1] is the smallest positive one (slowest decay → ξ_M).
         return jnp.sort(gamma)[::-1]
 
-    # jit(vmap(f)) is the correct pattern: vectorise first, then compile once.
-    # vmap(jit(f)) forces JAX to trace through an inner jit per call, which
-    # can behave unexpectedly with static args and triggers extra retracing.
-    tmm_single  = jax.jit(_tmm_core, static_argnums=(1,))
-    tmm_batched = jax.jit(
-        jax.vmap(_tmm_core, in_axes=(0, None, None, None)),
-        static_argnums=(1,),
-    )
+    # L is no longer static: fori_loop accepts a dynamic upper bound.
+    # One compiled kernel handles any L value — no recompilation between
+    # test runs (L=5k) and production runs (L=100k).
+    tmm_single  = jax.jit(_tmm_core)
+    tmm_batched = jax.jit(jax.vmap(_tmm_core, in_axes=(0, None, None, None)))
 
     return tmm_single, tmm_batched
 
