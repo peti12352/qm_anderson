@@ -92,9 +92,10 @@ def main() -> None:
         N = M * M
         _, tmm_batched = make_tmm_fns(M, "sc", E=E, t=T_HOP)
 
-        print(f"\n  M={M} | N={N} | compiling JIT kernel… ", end="", flush=True)
+        print(f"\n  M={M} | N={N} | compiling JIT kernel (batch={N_REAL}, L={L})… ",
+              end="", flush=True)
         t_compile = time.time()
-        _ = tmm_batched(jax.random.split(rng, 4), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
+        _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
         print(f"done ({time.time()-t_compile:.0f}s)")
 
         lam_by_p = {}

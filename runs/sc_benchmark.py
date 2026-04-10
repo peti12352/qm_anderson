@@ -70,8 +70,12 @@ def main(fast: bool = False) -> None:
         _, tmm_batched = make_tmm_fns(M, "sc", E=E, t=T_HOP)
 
         # Warm up JIT (first call compiles — can take several minutes on first ever run)
-        print(f"\n  M={M} | N={N} | compiling JIT kernel… ", end="", flush=True)
-        keys_warmup = jax.random.split(rng, 4)
+        # Warm-up MUST use the production batch size (n_real).
+        # A different size (e.g. 4) produces a different XLA kernel and causes
+        # a silent recompile on the first real point — appearing as a 30-min hang.
+        print(f"\n  M={M} | N={N} | compiling JIT kernel (batch={n_real}, L={L})… ",
+              end="", flush=True)
+        keys_warmup = jax.random.split(rng, n_real)
         t_compile = time.time()
         _ = tmm_batched(keys_warmup, L, W_LIST[len(W_LIST)//2], P).block_until_ready()
         print(f"done ({time.time()-t_compile:.0f}s)")
