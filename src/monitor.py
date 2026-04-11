@@ -17,14 +17,23 @@ import jax
 
 
 def _nvidia_smi(*fields: str) -> list[str] | None:
+    """Query nvidia-smi for the given fields on GPU 0. Returns list[str] or None."""
     try:
         r = subprocess.run(
-            ["nvidia-smi",
+            ["nvidia-smi", "--id=0",
              f"--query-gpu={','.join(fields)}",
              "--format=csv,noheader,nounits"],
             capture_output=True, text=True, timeout=5,
         )
-        return [x.strip() for x in r.stdout.strip().split(",")]
+        if r.returncode != 0 or not r.stdout.strip():
+            return None
+        # Take first line (GPU 0), split on ", " — nvidia-smi CSV separator
+        line = r.stdout.strip().splitlines()[0]
+        parts = [x.strip() for x in line.split(", ")]
+        # Fallback: some builds use "," without space
+        if len(parts) != len(fields):
+            parts = [x.strip() for x in line.split(",")]
+        return parts if len(parts) == len(fields) else None
     except Exception:
         return None
 
