@@ -30,10 +30,11 @@ from tqdm import tqdm
 
 import sys; sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import src.config   # noqa: F401  — must import first to enable x64
+import src.config   # noqa: F401  — must import first to enable x64 + XLA flags
 from src.tmm     import make_tmm_fns, lambda_M
 from src.fss     import fit_fss
 from src.io_utils import save_run
+from src.monitor  import print_system_info, CompileMonitor
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -56,9 +57,9 @@ FAST_N_REAL = 200   # for --fast mode
 
 def main(fast: bool = False) -> None:
     n_real = FAST_N_REAL if fast else N_REAL
+    print_system_info()
     print(f"SC benchmark  |  M={M_LIST}  |  {len(W_LIST)} W values  |  "
           f"L={L}  |  N_real={n_real}")
-    print("Verify GPU:", jax.devices())
 
     rng = jax.random.PRNGKey(SEED)
     all_gammas: dict[int, dict[float, np.ndarray]] = {}
@@ -73,12 +74,11 @@ def main(fast: bool = False) -> None:
         # Warm-up MUST use the production batch size (n_real).
         # A different size (e.g. 4) produces a different XLA kernel and causes
         # a silent recompile on the first real point — appearing as a 30-min hang.
-        print(f"\n  M={M} | N={N} | compiling JIT kernel (batch={n_real}, L={L})… ",
-              end="", flush=True)
         keys_warmup = jax.random.split(rng, n_real)
-        t_compile = time.time()
-        _ = tmm_batched(keys_warmup, L, W_LIST[len(W_LIST)//2], P).block_until_ready()
-        print(f"done ({time.time()-t_compile:.0f}s)")
+        print(f"\n  M={M} | N={N} | JIT compile+warmup (batch={n_real}, L={L})")
+        print(f"  GPU idle = XLA compiling (CPU-bound); GPU busy = executing")
+        with CompileMonitor(label=f"M={M} warmup", interval=10):
+            _ = tmm_batched(keys_warmup, L, W_LIST[len(W_LIST)//2], P).block_until_ready()
 
         lam_by_W = {}
         t_M = time.time()

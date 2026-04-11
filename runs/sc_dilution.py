@@ -38,6 +38,7 @@ import src.config
 from src.tmm      import make_tmm_fns, lambda_M
 from src.fss      import fit_fss
 from src.io_utils  import save_run
+from src.monitor   import print_system_info, CompileMonitor
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -78,6 +79,7 @@ def _check_classical_threshold() -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    print_system_info()
     _check_classical_threshold()
 
     print(f"SC quantum percolation  |  M={M_LIST}  |  {len(P_LIST)} p values  |  "
@@ -92,11 +94,9 @@ def main() -> None:
         N = M * M
         _, tmm_batched = make_tmm_fns(M, "sc", E=E, t=T_HOP)
 
-        print(f"\n  M={M} | N={N} | compiling JIT kernel (batch={N_REAL}, L={L})… ",
-              end="", flush=True)
-        t_compile = time.time()
-        _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
-        print(f"done ({time.time()-t_compile:.0f}s)")
+        print(f"\n  M={M} | N={N} | JIT compile+warmup (batch={N_REAL}, L={L})")
+        with CompileMonitor(label=f"M={M} warmup", interval=10):
+            _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
         lam_by_p = {}
         t_M = time.time()

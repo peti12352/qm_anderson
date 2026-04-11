@@ -6,6 +6,16 @@ Must be imported before any jax.numpy call that expects float64.
 import os
 from pathlib import Path
 
+# XLA GPU autotuning: default level 4 benchmarks hundreds of CUDA kernel
+# configurations per op — this is the most common cause of 10-60 min
+# silent compile hangs on first run. Level 0 uses heuristic selection
+# (negligible runtime cost for sequential QR-dominated workloads like TMM).
+# Set XLA_FLAGS before importing jax so it takes effect.
+os.environ.setdefault(
+    "XLA_FLAGS",
+    "--xla_gpu_autotune_level=0 --xla_gpu_enable_fast_min_max=true",
+)
+
 import jax
 
 # Enable 64-bit precision globally. Without this, JAX defaults to float32

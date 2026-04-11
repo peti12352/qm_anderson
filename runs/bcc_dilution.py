@@ -41,6 +41,7 @@ import src.config
 from src.tmm      import make_tmm_fns, lambda_M
 from src.fss      import fit_fss
 from src.io_utils  import save_run
+from src.monitor   import print_system_info, CompileMonitor
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -95,6 +96,7 @@ def _compare_with_sc(p_q_bcc: float, nu_bcc: float) -> None:
 
 
 def main() -> None:
+    print_system_info()
     _check_classical_threshold()
 
     print(f"BCC quantum percolation  |  M={M_LIST}  |  {len(P_LIST)} p values  |  "
@@ -110,11 +112,9 @@ def main() -> None:
         _, tmm_batched = make_tmm_fns(M, "bcc", E=E, t=T_HOP)
 
         # BCC uses complex128 — compile takes longer than SC float64
-        print(f"\n  M={M} | N={N} | BCC complex128 | compiling JIT kernel (batch={N_REAL}, L={L})… ",
-              end="", flush=True)
-        t_compile = time.time()
-        _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
-        print(f"done ({time.time()-t_compile:.0f}s)")
+        print(f"\n  M={M} | N={N} | BCC complex128 | JIT compile+warmup (batch={N_REAL}, L={L})")
+        with CompileMonitor(label=f"M={M} BCC warmup", interval=10):
+            _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
         lam_by_p = {}
         t_M = time.time()
