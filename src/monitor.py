@@ -57,6 +57,22 @@ def print_system_info() -> None:
         print(f"  VRAM         : {mem_free} MiB free / {mem_tot} MiB total")
         print(f"  Temp / Power : {temp}°C / {pwr}W (limit {pwr_lim}W)")
     else:
+        # Debug: show exactly what nvidia-smi returned
+        try:
+            fields = ["name", "driver_version", "cuda_version",
+                      "memory.total", "memory.free", "temperature.gpu",
+                      "power.draw", "power.limit"]
+            r = subprocess.run(
+                ["nvidia-smi", f"--query-gpu={','.join(fields)}",
+                 "--format=csv,noheader,nounits"],
+                capture_output=True, text=True, timeout=5,
+            )
+            print(f"  GPU debug    : returncode={r.returncode}")
+            print(f"  GPU debug    : stdout={repr(r.stdout[:200])}")
+            print(f"  GPU debug    : stderr={repr(r.stderr[:200])}")
+            print(f"  GPU debug    : parsed vals={vals!r}")
+        except Exception as e:
+            print(f"  GPU debug    : exception={e!r}")
         print("  GPU info     : (nvidia-smi unavailable)")
     print("=" * 65 + "\n")
 
