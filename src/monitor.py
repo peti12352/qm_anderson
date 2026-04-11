@@ -20,7 +20,7 @@ def _nvidia_smi(*fields: str) -> list[str] | None:
     """Query nvidia-smi for the given fields on GPU 0. Returns list[str] or None."""
     try:
         r = subprocess.run(
-            ["nvidia-smi", "--id=0",
+            ["nvidia-smi",
              f"--query-gpu={','.join(fields)}",
              "--format=csv,noheader,nounits"],
             capture_output=True, text=True, timeout=5,
