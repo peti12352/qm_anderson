@@ -15,9 +15,11 @@ at step n.
 The quasi-1D localization length is:
     ξ_M = 1 / γ_{N-1}   (N = M², the (N-1)-th entry in 0-indexed descending array)
 
-The QR decomposition is applied at EVERY step to prevent overflow.
-After each decomposition, R diagonal entries have positive real parts
-(sign convention fix), ensuring γ_i are consistently ordered.
+Modified Gram-Schmidt (MGS) orthogonalization is applied at EVERY step to
+prevent overflow. MGS always gives positive diagonal R entries, so no sign
+fix is needed. MGS is implemented via lax.scan over columns (pure JAX ops),
+avoiding the cuSOLVER custom-call overhead that made jnp.linalg.qr inside
+a fori_loop take ~40 ms/step × 100k steps ≈ 4800 s.
 
 GPU parallelism strategy
 ------------------------
@@ -69,6 +71,7 @@ def make_tmm_fns(
     tmm_batched : (keys, L, W, p) -> (B, 2N) Lyapunov exponents
     """
     N = M * M
+    dim = 2 * N
     build_T = make_transfer_matrix_fn(M, lattice, E, t)
 
     # Probe the transfer matrix dtype once (at factory time, not inside JIT).
@@ -77,6 +80,34 @@ def make_tmm_fns(
     _probe_dis  = jnp.zeros(N, dtype=jnp.float64)
     _probe_mask = jnp.ones(N, dtype=bool)
     _mat_dtype  = build_T(_probe_dis, _probe_mask).dtype   # float64 or complex128
+
+    def _qr_mgs(A: jnp.ndarray):
+        """Modified Gram-Schmidt QR via lax.scan over columns.
+
+        Replaces jnp.linalg.qr to avoid cuSOLVER custom-call overhead inside
+        lax.fori_loop. cuSOLVER allocates/frees a workspace buffer on every
+        loop iteration, adding ~40-50 ms latency per step × 100k steps = hours.
+        Pure-JAX MGS compiles to fused tensor kernels with no custom calls.
+
+        Args:
+            A: (dim, dim) float64 or complex128
+        Returns:
+            Q: (dim, dim) orthonormal columns
+            diag_r: (dim,) positive float64 — diagonal of R
+        """
+        def step(V, j):
+            v    = V[:, j]
+            norm = jnp.sqrt(jnp.dot(jnp.conj(v), v).real)
+            q    = v / jnp.where(norm > 0, norm, jnp.ones_like(norm))
+            # Project q out of all remaining columns (mask past columns to zero)
+            dots = jnp.conj(q) @ V                  # (dim,)
+            mask = jnp.arange(dim) > j              # False for cols ≤ j
+            V    = V - q[:, None] * (dots * mask)[None, :]
+            return V, (q, norm)
+
+        _, (Q_cols, diag_r) = jax.lax.scan(step, A, jnp.arange(dim))
+        # Q_cols[j] = j-th Q column -> transpose to standard (dim, dim) layout
+        return Q_cols.T, diag_r.astype(jnp.float64)
 
     def _tmm_core(key: jax.Array, L: int, W: float, p: float) -> jnp.ndarray:
         """
@@ -107,15 +138,10 @@ def make_tmm_fns(
             T  = build_T(dis_slice, mask_slice)   # (2N,2N) float64 or complex128
             QT = T @ Q
 
-            Q, R = jnp.linalg.qr(QT)
+            # MGS QR: diag_r is always positive, no sign fix needed.
+            Q, diag_r = _qr_mgs(QT)
 
-            # Positive-diagonal convention: ensures log|R_ii| is unambiguous.
-            signs = jnp.sign(jnp.real(jnp.diag(R)))
-            signs = jnp.where(signs == 0.0, 1.0, signs)
-            Q = Q * signs[None, :]
-            R = R * signs[:, None]
-
-            log_norms = log_norms + jnp.log(jnp.abs(jnp.diag(R)))
+            log_norms = log_norms + jnp.log(diag_r)
             return (Q, log_norms)
 
         # fori_loop compiles as a plain while-loop; L is dynamic (not static),
