@@ -109,6 +109,19 @@ def make_tmm_fns(
         # Q_cols[j] = j-th Q column -> transpose to standard (dim, dim) layout
         return Q_cols.T, diag_r.astype(jnp.float64)
 
+    def _qr_cusolver(A: jnp.ndarray):
+        """cuSOLVER QR (jnp.linalg.qr). Faster than MGS for dim > ~100 where
+        BLAS3 compute exceeds the ~40 ms/call custom-call overhead."""
+        Q, R = jnp.linalg.qr(A)
+        # abs(diag(R)) is always non-negative; no sign fix needed since we
+        # only use diag_r for log-norm accumulation.
+        return Q, jnp.abs(jnp.diag(R)).astype(jnp.float64)
+
+    # QR dispatch: MGS for small dim (overhead-dominated), cuSOLVER for large.
+    # MGS scales O(dim^3) = O(M^6); cuSOLVER overhead ~40 ms/call × L steps.
+    # Crossover at dim ≈ 100 (M ≈ 7) for L = 10_000.
+    _orthogonalize = _qr_mgs if dim <= 100 else _qr_cusolver
+
     def _tmm_core(key: jax.Array, L: int, W: float, p: float) -> jnp.ndarray:
         """
         Single TMM run. Returns all 2N Lyapunov exponents in descending order.
@@ -138,8 +151,7 @@ def make_tmm_fns(
             T  = build_T(dis_slice, mask_slice)   # (2N,2N) float64 or complex128
             QT = T @ Q
 
-            # MGS QR: diag_r is always positive, no sign fix needed.
-            Q, diag_r = _qr_mgs(QT)
+            Q, diag_r = _orthogonalize(QT)
 
             log_norms = log_norms + jnp.log(diag_r)
             return (Q, log_norms)

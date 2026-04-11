@@ -39,17 +39,21 @@ from src.monitor  import print_system_info, CompileMonitor
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-M_LIST  = [4, 6, 8, 10, 12]
-W_LIST  = list(np.linspace(13.0, 20.0, 40))   # dense coverage of transition
-L       = 100_000   # bar length; increase to 300k near W_c if variance is high
-N_REAL  = 2_000     # disorder realizations per (M, W) point
-E       = 0.0       # band centre
-T_HOP   = 1.0       # hopping amplitude (energy unit)
-P       = 1.0       # no site dilution
-OUTFILE = Path("data/sc_benchmark.h5")
+M_LIST  = [4, 6, 8, 10]      # 4-point FSS sufficient; M=12 (dim=288) not worth it
+W_LIST  = list(np.linspace(13.0, 20.0, 40))
+# L=10_000 is >> ξ_M near W_c (ξ_M ~ M ~ 10); L=100_000 was 10× over-sampled.
+# N_REAL=500 gives err~0.003 vs err~0.000 at 2000 — negligible for FSS.
+# MGS (M≤6) and cuSOLVER (M≥8) in tmm.py give ~10–40s/point across all M.
+L       = 10_000
+N_REAL  = 500
+E       = 0.0
+T_HOP   = 1.0
+P       = 1.0
+OUTFILE  = Path("data/sc_benchmark.h5")
+CKPT_DIR = Path("data/checkpoints")
 SEED    = 42
 
-FAST_N_REAL = 200   # for --fast mode
+FAST_N_REAL = 50
 
 # ---------------------------------------------------------------------------
 # Main
@@ -61,6 +65,7 @@ def main(fast: bool = False) -> None:
     print(f"SC benchmark  |  M={M_LIST}  |  {len(W_LIST)} W values  |  "
           f"L={L}  |  N_real={n_real}")
 
+    CKPT_DIR.mkdir(parents=True, exist_ok=True)
     rng = jax.random.PRNGKey(SEED)
     all_gammas: dict[int, dict[float, np.ndarray]] = {}
 
@@ -103,6 +108,12 @@ def main(fast: bool = False) -> None:
         lam_vals = list(lam_by_W.values())
         print(f"  M={M} finished | {elapsed_M/60:.1f} min | "
               f"λ_M ∈ [{min(lam_vals):.3f}, {max(lam_vals):.3f}]")
+
+        # Checkpoint: save after each M so a crash doesn't lose all data.
+        ckpt = CKPT_DIR / f"sc_benchmark_M{M}.npz"
+        np.savez(ckpt, **{f"W_{i}": all_gammas[M][W] for i, W in enumerate(W_LIST)},
+                 W_list=np.array(W_LIST))
+        print(f"  ✓ checkpoint saved → {ckpt}")
 
     elapsed = time.time() - t0
     print(f"\nRaw data collected in {elapsed/60:.1f} min")
