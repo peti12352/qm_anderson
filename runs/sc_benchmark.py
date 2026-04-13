@@ -73,6 +73,15 @@ def main(fast: bool = False) -> None:
     for M in M_LIST:
         all_gammas[M] = {}
         N = M * M
+
+        # Resume: if a completed-M checkpoint exists, load it and skip.
+        ckpt = CKPT_DIR / f"sc_benchmark_M{M}.npz"
+        if ckpt.exists():
+            data = np.load(ckpt)
+            all_gammas[M] = {W: data[f"W_{i}"] for i, W in enumerate(W_LIST)}
+            print(f"\n  M={M} | loaded from checkpoint {ckpt}  (skipping)")
+            continue
+
         _, tmm_batched = make_tmm_fns(M, "sc", E=E, t=T_HOP)
 
         # Warm up JIT (first call compiles — can take several minutes on first ever run)
@@ -85,9 +94,26 @@ def main(fast: bool = False) -> None:
         with CompileMonitor(label=f"M={M} warmup", interval=10):
             _ = tmm_batched(keys_warmup, L, W_LIST[len(W_LIST)//2], P).block_until_ready()
 
+        # Resume mid-M: load any per-W checkpoints saved from a previous interrupted run.
+        ckpt_w_dir = CKPT_DIR / f"sc_benchmark_M{M}_partial"
+        ckpt_w_dir.mkdir(exist_ok=True)
+        done_W = set()
+        for i, W in enumerate(W_LIST):
+            wf = ckpt_w_dir / f"W_{i}.npy"
+            if wf.exists():
+                all_gammas[M][W] = np.load(wf)
+                done_W.add(W)
+        if done_W:
+            print(f"  M={M} | resumed {len(done_W)}/{len(W_LIST)} W values from partial checkpoint")
+
+        remaining_W = [W for W in W_LIST if W not in done_W]
+        lam_by_W = {W: float(lambda_M(jnp.array(all_gammas[M][W]), M)[0])
+                    for W in done_W}
+
         lam_by_W = {}
         t_M = time.time()
-        with tqdm(W_LIST, desc=f"  M={M:2d}", unit="W", ncols=100) as pbar:
+        with tqdm(remaining_W, desc=f"  M={M:2d}", unit="W", ncols=100,
+                  initial=len(done_W), total=len(W_LIST)) as pbar:
             for W in pbar:
                 rng, subkey = jax.random.split(rng)
                 keys = jax.random.split(subkey, n_real)
@@ -103,17 +129,22 @@ def main(fast: bool = False) -> None:
                     s_pt=f"{dt:.1f}s",
                     real_s=f"{n_real/dt:.0f}",
                 )
+                # Per-W checkpoint: survives a mid-M kill.
+                np.save(ckpt_w_dir / f"W_{W_LIST.index(W)}.npy", gammas)
 
         elapsed_M = time.time() - t_M
         lam_vals = list(lam_by_W.values())
         print(f"  M={M} finished | {elapsed_M/60:.1f} min | "
               f"λ_M ∈ [{min(lam_vals):.3f}, {max(lam_vals):.3f}]")
 
-        # Checkpoint: save after each M so a crash doesn't lose all data.
-        ckpt = CKPT_DIR / f"sc_benchmark_M{M}.npz"
+        # Completed-M checkpoint.
         np.savez(ckpt, **{f"W_{i}": all_gammas[M][W] for i, W in enumerate(W_LIST)},
                  W_list=np.array(W_LIST))
         print(f"  ✓ checkpoint saved → {ckpt}")
+        # Clean up per-W partials now that the full M checkpoint exists.
+        for f in ckpt_w_dir.iterdir():
+            f.unlink()
+        ckpt_w_dir.rmdir()
 
     elapsed = time.time() - t0
     print(f"\nRaw data collected in {elapsed/60:.1f} min")
