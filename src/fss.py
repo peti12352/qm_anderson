@@ -85,6 +85,7 @@ def fit_fss(
     nu_guess:  float = 1.57,
     poly_order: int  = 3,
     n_boot:    int   = 500,
+    x_range:   tuple[float, float] | None = None,
 ) -> FSSResult:
     """
     Fit FSS collapse to extract critical parameters x_c and ν.
@@ -99,6 +100,11 @@ def fit_fss(
     nu_guess   : initial guess for ν (default 1.57 from 3D orthogonal class)
     poly_order : degree of the polynomial expansion of F (3 or 4 is typical)
     n_boot     : number of bootstrap resamples for confidence intervals
+    x_range    : optional (x_min, x_max) to restrict fit to a window around x_c.
+                 Data outside this range is excluded. Use this to avoid the
+                 far-from-critical regime where the polynomial approximation breaks.
+                 Recommended: (x_c_guess - 2, x_c_guess + 2) for Anderson disorder;
+                 leave None for percolation (p range is naturally narrow).
 
     Returns
     -------
@@ -108,6 +114,15 @@ def fit_fss(
     x_arr   = np.array(x_list,   dtype=np.float64)
     lam_arr = np.array(lam_list, dtype=np.float64)
     err_arr = np.array(err_list, dtype=np.float64)
+
+    if x_range is not None:
+        mask    = (x_arr >= x_range[0]) & (x_arr <= x_range[1])
+        M_arr   = M_arr[mask]
+        x_arr   = x_arr[mask]
+        lam_arr = lam_arr[mask]
+        err_arr = err_arr[mask]
+        if len(x_arr) < 6:
+            raise ValueError(f"x_range {x_range} leaves only {len(x_arr)} data points — too few to fit.")
 
     n_params = 2 + poly_order + 1  # x_c, nu, a_0..a_poly_order
     p0 = np.array([x_c_guess, nu_guess] + [0.5, 0.1] + [0.0] * (poly_order - 1))

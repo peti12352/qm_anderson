@@ -160,22 +160,38 @@ def main(fast: bool = False) -> None:
             lam_flat.append(mean)
             err_flat.append(max(stderr, 1e-6))   # guard against zero stderr
 
+    # FSS fit on a narrow window around W_c where the polynomial approximation is valid.
+    # Full W range [13,20] gives |u|_max ≈ 16 for M=10 — far outside scaling regime.
+    # Window [15.0, 18.5] gives |u|_max ≈ 1.5 × 4.6 ≈ 7 — much more controlled.
+    W_FIT_RANGE = (15.0, 18.5)
     result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
-                     x_c_guess=16.5, nu_guess=1.57, poly_order=3)
+                     x_c_guess=16.5, nu_guess=1.57, poly_order=3,
+                     x_range=W_FIT_RANGE)
 
-    print("\n" + "="*50)
+    print("\n" + "="*55)
     print("FSS RESULT (SC Anderson disorder benchmark)")
-    print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected ≈ 16.53)")
-    print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected ≈ 1.571)")
+    print(f"  W fit range: {W_FIT_RANGE}")
+    print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected 16.53 ± 0.05)")
+    print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected 1.571 ± 0.007)")
     print(f"  χ²/dof = {result.chi2_dof:.3f}  (ideal ≈ 1.0)")
     print(f"  converged: {result.converged}")
-    print("="*50)
+    print("="*55)
 
-    if abs(result.nu - 1.571) > 0.10:
-        print("\n  WARNING: ν deviates from expected by >6%. Do NOT proceed.")
-        print("  Debug checklist: transfer matrix construction, QR sign fix, L vs ξ_M.")
+    nu_ok  = abs(result.nu  - 1.571) < 0.10
+    wc_ok  = abs(result.x_c - 16.53) < 0.30   # 6σ on expected ±0.05
+    chi_ok = result.chi2_dof < 5.0
+
+    if nu_ok and wc_ok and chi_ok:
+        print("\n  PASS: W_c, ν, and χ²/dof all within tolerance. Proceed to sc_dilution.py.")
     else:
-        print("\n  PASS: benchmark within tolerance. Proceed to sc_dilution.py")
+        print("\n  FAIL — do NOT proceed to sc_dilution.py:")
+        if not nu_ok:
+            print(f"    ✗ ν = {result.nu:.4f} deviates from 1.571 by >{abs(result.nu-1.571):.3f}")
+        if not wc_ok:
+            print(f"    ✗ W_c = {result.x_c:.4f} deviates from 16.53 by {abs(result.x_c-16.53):.3f} (limit 0.30)")
+        if not chi_ok:
+            print(f"    ✗ χ²/dof = {result.chi2_dof:.2f} >> 1 (limit 5.0)")
+        print("  Debug: transfer matrix, L vs ξ_M, W_FIT_RANGE width, poly_order.")
 
     metadata = dict(lattice="sc", E=E, t=T_HOP, L=L, n_real=n_real,
                     run_type="benchmark", W_c=result.x_c, nu=result.nu)
@@ -187,5 +203,34 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--fast", action="store_true",
                         help="Use small N_real for quick sanity check")
+    parser.add_argument("--refit", action="store_true",
+                        help="Skip TMM; reload existing h5 and refit FSS only")
+    parser.add_argument("--w-min", type=float, default=15.0,
+                        help="Lower bound of FSS fit window (default 15.0)")
+    parser.add_argument("--w-max", type=float, default=18.5,
+                        help="Upper bound of FSS fit window (default 18.5)")
     args = parser.parse_args()
-    main(fast=args.fast)
+
+    if args.refit:
+        from src.io_utils import load_lambda
+        import jax.numpy as jnp
+        print(f"Refit mode: loading {OUTFILE}, FSS window [{args.w_min}, {args.w_max}]")
+        data    = load_lambda(OUTFILE)
+        M_list  = [int(m) for m in data["M_list"]]
+        x_vals  = data["x_values"]
+        M_flat, W_flat, lam_flat, err_flat = [], [], [], []
+        for M in M_list:
+            for W in x_vals:
+                lam, err = data["lambda"][M][W]
+                M_flat.append(M); W_flat.append(float(W))
+                lam_flat.append(lam); err_flat.append(max(err, 1e-6))
+        W_FIT_RANGE = (args.w_min, args.w_max)
+        result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
+                         x_c_guess=16.5, nu_guess=1.57, poly_order=3,
+                         x_range=W_FIT_RANGE)
+        print(f"\n  W fit range: {W_FIT_RANGE}")
+        print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected 16.53)")
+        print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected 1.571)")
+        print(f"  χ²/dof = {result.chi2_dof:.3f}")
+    else:
+        main(fast=args.fast)

@@ -16,6 +16,12 @@ os.environ.setdefault(
     "--xla_gpu_autotune_level=0 --xla_gpu_enable_fast_min_max=true",
 )
 
+# Disable JAX's 90% GPU memory preallocator.
+# By default JAX grabs ~29 GB on a 32 GB card immediately, making nvidia-smi
+# show alarming VRAM usage even when the actual computation uses ~17 MB.
+# Disabling lets the allocator grow on demand and keeps VRAM readable.
+os.environ.setdefault("XLA_PYTHON_CLIENT_PREALLOCATE", "false")
+
 import jax
 
 # Enable 64-bit precision globally. Without this, JAX defaults to float32

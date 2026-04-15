@@ -43,6 +43,8 @@ from src.fss      import fit_fss
 from src.io_utils  import save_run
 from src.monitor   import print_system_info, CompileMonitor
 
+CKPT_DIR = Path("data/checkpoints")
+
 # ---------------------------------------------------------------------------
 # Configuration
 # Note: avoid M ∈ {4,8,12} for BCC if you want to skip twisted BC entirely.
@@ -102,6 +104,7 @@ def main() -> None:
     print(f"BCC quantum percolation  |  M={M_LIST}  |  {len(P_LIST)} p values  |  "
           f"L={L}  |  N_real={N_REAL}")
 
+    CKPT_DIR.mkdir(parents=True, exist_ok=True)
     rng = jax.random.PRNGKey(SEED)
     all_gammas: dict[int, dict[float, np.ndarray]] = {}
 
@@ -109,16 +112,36 @@ def main() -> None:
     for M in M_LIST:
         all_gammas[M] = {}
         N = M * M
+
+        ckpt = CKPT_DIR / f"bcc_dilution_M{M}.npz"
+        if ckpt.exists():
+            data = np.load(ckpt)
+            all_gammas[M] = {P_LIST[i]: data[f"p_{i}"] for i in range(len(P_LIST))}
+            print(f"\n  M={M} | loaded from checkpoint {ckpt}  (skipping)")
+            continue
+
         _, tmm_batched = make_tmm_fns(M, "bcc", E=E, t=T_HOP)
 
-        # BCC uses complex128 — compile takes longer than SC float64
         print(f"\n  M={M} | N={N} | BCC complex128 | JIT compile+warmup (batch={N_REAL}, L={L})")
         with CompileMonitor(label=f"M={M} BCC warmup", interval=10):
             _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
+        ckpt_w_dir = CKPT_DIR / f"bcc_dilution_M{M}_partial"
+        ckpt_w_dir.mkdir(exist_ok=True)
+        done_p = set()
+        for i, p in enumerate(P_LIST):
+            wf = ckpt_w_dir / f"p_{i}.npy"
+            if wf.exists():
+                all_gammas[M][p] = np.load(wf)
+                done_p.add(p)
+        if done_p:
+            print(f"  M={M} | resumed {len(done_p)}/{len(P_LIST)} p values from partial checkpoint")
+
+        remaining_P = [p for p in P_LIST if p not in done_p]
         lam_by_p = {}
         t_M = time.time()
-        with tqdm(P_LIST, desc=f"  M={M:2d} BCC", unit="p", ncols=100) as pbar:
+        with tqdm(remaining_P, desc=f"  M={M:2d} BCC", unit="p", ncols=100,
+                  initial=len(done_p), total=len(P_LIST)) as pbar:
             for p in pbar:
                 rng, subkey = jax.random.split(rng)
                 keys = jax.random.split(subkey, N_REAL)
@@ -134,11 +157,17 @@ def main() -> None:
                     s_pt=f"{dt:.1f}s",
                     real_s=f"{N_REAL/dt:.0f}",
                 )
+                np.save(ckpt_w_dir / f"p_{P_LIST.index(p)}.npy", gammas)
 
         elapsed_M = time.time() - t_M
         lam_vals = list(lam_by_p.values())
         print(f"  M={M} BCC finished | {elapsed_M/60:.1f} min | "
               f"λ_M ∈ [{min(lam_vals):.3f}, {max(lam_vals):.3f}]")
+
+        np.savez(ckpt, **{f"p_{i}": all_gammas[M][P_LIST[i]] for i in range(len(P_LIST))})
+        print(f"  ✓ checkpoint saved → {ckpt}")
+        for f in ckpt_w_dir.iterdir(): f.unlink()
+        ckpt_w_dir.rmdir()
 
     elapsed = time.time() - t0
     print(f"\nData collected in {elapsed/60:.1f} min")
@@ -162,8 +191,12 @@ def main() -> None:
     p_q_rough = float(p_arr[np.argmin(spread)])
     print(f"\n  Rough p_q(BCC) estimate: {p_q_rough:.3f}")
 
+    p_fit_hw = 0.08
+    p_fit_range = (max(0.22, p_q_rough - p_fit_hw), min(0.65, p_q_rough + p_fit_hw))
+    print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]")
     result = fit_fss(M_flat, p_flat, lam_flat, err_flat,
-                     x_c_guess=p_q_rough, nu_guess=1.57, poly_order=3)
+                     x_c_guess=p_q_rough, nu_guess=1.57, poly_order=3,
+                     x_range=p_fit_range)
 
     print("\n" + "="*55)
     print("FSS RESULT (BCC site-diluted quantum percolation)")

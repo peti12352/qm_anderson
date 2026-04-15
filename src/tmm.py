@@ -117,10 +117,11 @@ def make_tmm_fns(
         # only use diag_r for log-norm accumulation.
         return Q, jnp.abs(jnp.diag(R)).astype(jnp.float64)
 
-    # QR dispatch: MGS for small dim (overhead-dominated), cuSOLVER for large.
-    # MGS scales O(dim^3) = O(M^6); cuSOLVER overhead ~40 ms/call × L steps.
-    # Crossover at dim ≈ 100 (M ≈ 7) for L = 10_000.
-    _orthogonalize = _qr_mgs if dim <= 100 else _qr_cusolver
+    # Always use MGS. cuSOLVER overhead is ~40 ms/call × L steps regardless of dim:
+    # at L=10_000 that is 400 s of pure alloc/free overhead per run, dwarfing compute.
+    # MGS via lax.scan fuses into the fori_loop body with no custom calls.
+    # _qr_cusolver kept above for reference but is never dispatched.
+    _orthogonalize = _qr_mgs
 
     def _tmm_core(key: jax.Array, L: int, W: float, p: float) -> jnp.ndarray:
         """
