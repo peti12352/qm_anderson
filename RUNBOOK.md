@@ -27,7 +27,7 @@ The sc_benchmark.h5 file already exists with all raw Lyapunov data. The previous
 fit failed because the W range [13, 20] was too wide. This refits using only [15.0, 18.5].
 
 ```bash
-python runs/sc_benchmark.py --refit
+pixi run refit
 ```
 
 **Success criterion:**
@@ -39,7 +39,7 @@ W_c = 16.xx ± 0.xx   (must be within 0.30 of 16.53)
 
 If χ²/dof is still >> 1, try a narrower window:
 ```bash
-python runs/sc_benchmark.py --refit --w-min 15.5 --w-max 18.0
+pixi run python runs/sc_benchmark.py --refit --w-min 15.5 --w-max 18.0
 ```
 
 If W_c is still off by > 0.30 after narrowing: **stop, do not proceed, investigate tmm.py**.
@@ -78,7 +78,7 @@ If it prints FAIL, read the specific failure lines and debug before continuing.
 Validates the quantum percolation setup against the known SC result p_q ≈ 0.44.
 
 ```bash
-python runs/sc_dilution.py
+pixi run sc-dilution
 ```
 
 This runs M ∈ {4, 6, 8, 10, 12} at L=100,000 and N_real=2,000.
@@ -102,7 +102,7 @@ If p_q deviates by > 0.02: **stop, do not run BCC**. The transfer matrix or RNG 
 Only run this after Step 3 passes.
 
 ```bash
-python runs/bcc_dilution.py
+pixi run bcc-dilution
 ```
 
 This runs M ∈ {4, 6, 8, 10} on the BCC lattice (complex128, ~2× slower than SC per step).
@@ -124,7 +124,7 @@ Kill-safe: same checkpoint system as sc_dilution.
 After both dilution runs complete:
 
 ```bash
-python analysis/fss_analysis.py
+pixi run analyse
 ```
 
 Prints a comparison table: SC benchmark, SC percolation, BCC percolation side by side,
@@ -138,7 +138,7 @@ These verify the result is not an artifact of fitting choices:
 
 ```bash
 # 1. Stability under polynomial order
-python runs/sc_benchmark.py --refit --w-min 15.0 --w-max 18.5
+pixi run python runs/sc_benchmark.py --refit --w-min 15.0 --w-max 18.5
 # check that W_c and ν do not shift when poly_order=2 or 4 is used (edit fss.py temporarily)
 
 # 2. Stability of BCC result under FSS window width

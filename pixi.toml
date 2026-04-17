@@ -24,9 +24,11 @@ jaxlib = ">=0.9.0"
 
 [tasks]
 # Validation: MUST reproduce W_c≈16.5, ν≈1.571 before proceeding
-benchmark   = { cmd = "python runs/sc_benchmark.py",  description = "Reproduce ν=1.571 for 3D SC Anderson disorder (gate for all other runs)" }
-sc-dilution = { cmd = "python runs/sc_dilution.py",   description = "Measure p_q for SC site-diluted lattice" }
-bcc-dilution= { cmd = "python runs/bcc_dilution.py",  description = "Measure p_q for BCC site-diluted lattice" }
-figures     = { cmd = "python analysis/figures.py",   description = "Generate all publication figures" }
-test        = { cmd = "pytest tests/ -v -s --tb=short -m 'not slow'", description = "Fast tests only — skips slow GPU integration tests (<60s)" }
-test-all    = { cmd = "pytest tests/ -v -s --tb=short",               description = "Full test suite including slow GPU integration tests (~21 min)" }
+benchmark    = { cmd = "python runs/sc_benchmark.py",                       description = "Full SC Anderson benchmark (TMM + FSS)" }
+refit        = { cmd = "python runs/sc_benchmark.py --refit",               description = "Refit FSS on existing sc_benchmark.h5 — no TMM rerun" }
+sc-dilution  = { cmd = "python runs/sc_dilution.py",                        description = "Measure p_q for SC site-diluted lattice" }
+bcc-dilution = { cmd = "python runs/bcc_dilution.py",                       description = "Measure p_q for BCC site-diluted lattice (novel)" }
+analyse      = { cmd = "python analysis/fss_analysis.py",                   description = "FSS summary table: SC benchmark + SC + BCC percolation" }
+figures      = { cmd = "python analysis/figures.py",                        description = "Generate all publication figures" }
+test         = { cmd = "pytest tests/ -v -s --tb=short -m 'not slow'",      description = "Fast tests only — skips slow GPU integration tests (<60s)" }
+test-all     = { cmd = "pytest tests/ -v -s --tb=short",                    description = "Full test suite including slow GPU integration tests (~21 min)" }
