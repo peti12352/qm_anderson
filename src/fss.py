@@ -16,16 +16,28 @@ variable u = M^{1/ν} · (x - x_c) / x_c:
 
     F(u) ≈ Σ_{k=0}^{poly_order} a_k · u^k
 
-The full parameter vector is θ = [x_c, ν, a_0, a_1, ..., a_{poly_order}].
+Corrections to scaling
+-----------------------
+For small M the leading irrelevant operator contributes an additive term:
 
-Fitting proceeds by minimising the weighted residuals χ²(θ) = Σ_i (Λ_i^pred - Λ_i)² / σ_i²
+    Λ_M(x) = Σ a_k u^k  +  b · M^{-y}
+
+where y is the irrelevant exponent (y ≈ 1.0 for the 3D orthogonal class;
+Slevin & Ohtsuki 1999 measure y = 1.12 ± 0.08). Omitting this term with
+M ≤ 10 inflates χ²/dof and biases W_c and ν toward lower values. Pass
+y_irrel > 0 to fit_fss to enable the correction (recommended for M < 16).
+
+Parameter vector:
+  without corrections: θ = [x_c, ν, a_0, ..., a_p]            (p+3 params)
+  with corrections:    θ = [x_c, ν, a_0, ..., a_p, b]         (p+4 params)
+
+Fitting proceeds by minimising χ²(θ) = Σ_i (Λ_i^pred - Λ_i)² / σ_i²
 using Nelder-Mead (global) followed by L-BFGS-B (local refinement).
 
 Bootstrap confidence intervals
 -------------------------------
-The raw Lyapunov samples (not just means and errors) are passed to bootstrap_fss,
-which resamples realizations to produce a distribution of (x_c, ν) estimates.
-This avoids the Gaussian assumption and correctly captures correlations.
+Λ_M values are perturbed by Gaussian noise scaled to their standard errors,
+producing a distribution of (x_c, ν, b) estimates.
 """
 from __future__ import annotations
 
@@ -50,6 +62,9 @@ class FSSResult:
     dof:      int
     poly_order: int
     converged: bool
+    b:        float = 0.0   # correction amplitude (0 if y_irrel=0)
+    b_err:    float = 0.0   # bootstrap std on b
+    y_irrel:  float = 0.0   # irrelevant exponent used (0 = no correction)
 
 
 # ---------------------------------------------------------------------------
@@ -59,15 +74,23 @@ class FSSResult:
 def _chi2(theta: np.ndarray,
           M_arr: np.ndarray, x_arr: np.ndarray,
           lam_arr: np.ndarray, err_arr: np.ndarray,
-          poly_order: int) -> float:
+          poly_order: int,
+          y_irrel: float = 0.0) -> float:
     x_c, nu = theta[0], theta[1]
-    coeffs  = theta[2:]
+    if y_irrel > 0.0:
+        coeffs = theta[2:-1]
+        b      = theta[-1]
+    else:
+        coeffs = theta[2:]
+        b      = 0.0
 
     if nu <= 0 or x_c <= 0:
         return 1e30
 
     u   = M_arr ** (1.0 / nu) * (x_arr - x_c) / x_c
     F_u = sum(c * u**k for k, c in enumerate(coeffs))
+    if y_irrel > 0.0:
+        F_u = F_u + b * M_arr ** (-y_irrel)
     res = (F_u - lam_arr) / err_arr
     return float(np.dot(res, res))
 
@@ -86,6 +109,7 @@ def fit_fss(
     poly_order: int  = 3,
     n_boot:    int   = 500,
     x_range:   tuple[float, float] | None = None,
+    y_irrel:   float = 0.0,
 ) -> FSSResult:
     """
     Fit FSS collapse to extract critical parameters x_c and ν.
@@ -105,10 +129,14 @@ def fit_fss(
                  far-from-critical regime where the polynomial approximation breaks.
                  Recommended: (x_c_guess - 2, x_c_guess + 2) for Anderson disorder;
                  leave None for percolation (p range is naturally narrow).
+    y_irrel    : irrelevant exponent for corrections-to-scaling (Slevin & Ohtsuki 1999).
+                 When > 0, adds b·M^{-y_irrel} to the FSS model as a free parameter b.
+                 Use y_irrel=1.0 for the 3D orthogonal class when M < 16.
+                 Default 0.0 disables corrections (backward compatible).
 
     Returns
     -------
-    FSSResult dataclass with x_c, nu, and their uncertainties
+    FSSResult dataclass with x_c, nu, b, and their uncertainties
     """
     M_arr   = np.array(M_list,   dtype=np.float64)
     x_arr   = np.array(x_list,   dtype=np.float64)
@@ -124,36 +152,43 @@ def fit_fss(
         if len(x_arr) < 6:
             raise ValueError(f"x_range {x_range} leaves only {len(x_arr)} data points — too few to fit.")
 
-    n_params = 2 + poly_order + 1  # x_c, nu, a_0..a_poly_order
-    p0 = np.array([x_c_guess, nu_guess] + [0.5, 0.1] + [0.0] * (poly_order - 1))
+    # +1 for b when corrections enabled
+    n_params = 2 + poly_order + 1 + (1 if y_irrel > 0.0 else 0)
+    p0_poly  = [0.5, 0.1] + [0.0] * (poly_order - 1)
+    p0_corr  = [0.0] if y_irrel > 0.0 else []   # initial b = 0
+    p0       = np.array([x_c_guess, nu_guess] + p0_poly + p0_corr)
+
+    _args = (M_arr, x_arr, lam_arr, err_arr, poly_order, y_irrel)
 
     # Two-stage minimisation: broad Nelder-Mead then precise L-BFGS-B.
     res1 = minimize(_chi2, p0,
-                    args=(M_arr, x_arr, lam_arr, err_arr, poly_order),
+                    args=_args,
                     method="Nelder-Mead",
                     options={"xatol": 1e-7, "fatol": 1e-9, "maxiter": 200_000})
     res2 = minimize(_chi2, res1.x,
-                    args=(M_arr, x_arr, lam_arr, err_arr, poly_order),
+                    args=_args,
                     method="L-BFGS-B",
                     options={"ftol": 1e-12, "gtol": 1e-8, "maxiter": 50_000})
 
-    best = res2.x if res2.fun < res1.fun else res1.x
-    x_c_fit, nu_fit = best[0], best[1]
+    best     = res2.x if res2.fun < res1.fun else res1.x
+    x_c_fit  = best[0]
+    nu_fit   = best[1]
+    b_fit    = float(best[-1]) if y_irrel > 0.0 else 0.0
 
-    n_data  = len(lam_arr)
-    dof     = max(1, n_data - n_params)
-    chi2_dof = _chi2(best, M_arr, x_arr, lam_arr, err_arr, poly_order) / dof
+    n_data   = len(lam_arr)
+    dof      = max(1, n_data - n_params)
+    chi2_dof = _chi2(best, M_arr, x_arr, lam_arr, err_arr, poly_order, y_irrel) / dof
 
     if chi2_dof > 5.0:
         warnings.warn(
             f"χ²/dof = {chi2_dof:.2f} >> 1. FSS fit is poor. "
             "Consider: (1) wider x range, (2) more system sizes, "
-            "(3) higher poly_order, (4) corrections to scaling."
+            "(3) higher poly_order, (4) corrections to scaling (y_irrel > 0)."
         )
 
     # Bootstrap CIs
-    x_c_boot, nu_boot = _bootstrap(
-        M_arr, x_arr, lam_arr, err_arr, best, poly_order, n_boot
+    x_c_boot, nu_boot, b_boot = _bootstrap(
+        M_arr, x_arr, lam_arr, err_arr, best, poly_order, n_boot, y_irrel
     )
 
     return FSSResult(
@@ -165,25 +200,28 @@ def fit_fss(
         dof=dof,
         poly_order=poly_order,
         converged=res2.success,
+        b=b_fit,
+        b_err=float(np.std(b_boot)),
+        y_irrel=y_irrel,
     )
 
 
-def _bootstrap(M_arr, x_arr, lam_arr, err_arr, p0, poly_order, n_boot):
+def _bootstrap(M_arr, x_arr, lam_arr, err_arr, p0, poly_order, n_boot,
+               y_irrel=0.0):
     rng = np.random.default_rng(seed=0)
-    x_c_samples, nu_samples = [], []
+    x_c_samples, nu_samples, b_samples = [], [], []
 
     for _ in range(n_boot):
-        # Perturb Λ_M values by Gaussian noise scaled to their standard error.
-        # This approximates resampling disorder realizations.
         lam_boot = lam_arr + rng.standard_normal(len(lam_arr)) * err_arr
         res = minimize(_chi2, p0,
-                       args=(M_arr, x_arr, lam_boot, err_arr, poly_order),
+                       args=(M_arr, x_arr, lam_boot, err_arr, poly_order, y_irrel),
                        method="Nelder-Mead",
                        options={"xatol": 1e-6, "fatol": 1e-8, "maxiter": 100_000})
         x_c_samples.append(res.x[0])
         nu_samples.append(res.x[1])
+        b_samples.append(float(res.x[-1]) if y_irrel > 0.0 else 0.0)
 
-    return np.array(x_c_samples), np.array(nu_samples)
+    return np.array(x_c_samples), np.array(nu_samples), np.array(b_samples)
 
 
 def fss_curve(x_c: float, nu: float, coeffs: np.ndarray,
