@@ -167,15 +167,14 @@ def main(fast: bool = False) -> None:
     result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
                      x_c_guess=16.5, nu_guess=1.57, poly_order=4,
                      x_range=W_FIT_RANGE, y_irrel=1.12,
-                     fit_y_irrel=True, n_corrections=2)
+                     fit_y_irrel=True, n_corrections=1)
 
     print("\n" + "="*55)
     print("FSS RESULT (SC Anderson disorder benchmark)")
     print(f"  W fit range: {W_FIT_RANGE}")
     print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected 16.53 ± 0.05)")
     print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected 1.571 ± 0.007)")
-    print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (first correction b·M^{{-y}})")
-    print(f"  b₂  = {result.b2:.4f} ± {result.b2_err:.4f}  (second correction b₂·M^{{-2y}})")
+    print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (correction b·M^{{-y}})")
     print(f"  y   = {result.y_irrel:.4f}  (irrelevant exponent; S&O99: 1.12±0.08)")
     print(f"  χ²/dof = {result.chi2_dof:.3f}  (ideal ≈ 1.0)")
     print(f"  converged: {result.converged}")
@@ -232,12 +231,11 @@ if __name__ == "__main__":
         result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
                          x_c_guess=16.5, nu_guess=1.57, poly_order=4,
                          x_range=W_FIT_RANGE, y_irrel=1.12,
-                         fit_y_irrel=True, n_corrections=2)
+                         fit_y_irrel=True, n_corrections=1)
         print(f"\n  W fit range: {W_FIT_RANGE}")
         print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected 16.53)")
         print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected 1.571)")
-        print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (first correction b·M^{{-y}})")
-        print(f"  b₂  = {result.b2:.4f} ± {result.b2_err:.4f}  (second correction b₂·M^{{-2y}})")
+        print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (correction b·M^{{-y}})")
         print(f"  y   = {result.y_irrel:.4f}  (irrelevant exponent; S&O99: 1.12±0.08)")
         print(f"  χ²/dof = {result.chi2_dof:.3f}")
     else:
