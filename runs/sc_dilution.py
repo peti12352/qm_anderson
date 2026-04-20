@@ -179,16 +179,37 @@ def main() -> None:
     p_fit_hw = 0.08   # half-width of FSS fit window around rough crossing
     p_fit_range = (max(0.25, p_q_rough - p_fit_hw), min(0.75, p_q_rough + p_fit_hw))
     print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]")
+    # y fixed at 1.12 (S&O99). With M={4..12}, y is non-identifiable from data:
+    # b·M^{-y} degenerates with a_0 as y→0, optimizer exploits this. See RUNBOOK §FSS.
+    Y_IRREL = 1.12
     result = fit_fss(M_flat, p_flat, lam_flat, err_flat,
-                     x_c_guess=p_q_rough, nu_guess=1.57, poly_order=3,
-                     x_range=p_fit_range)
+                     x_c_guess=p_q_rough, nu_guess=1.57, poly_order=4,
+                     x_range=p_fit_range, y_irrel=Y_IRREL,
+                     fit_y_irrel=False, n_corrections=1)
+
+    y_lo, y_hi = Y_IRREL - 0.08, Y_IRREL + 0.08
+    r_lo = fit_fss(M_flat, p_flat, lam_flat, err_flat,
+                   x_c_guess=p_q_rough, nu_guess=1.57, poly_order=4,
+                   x_range=p_fit_range, y_irrel=y_lo,
+                   fit_y_irrel=False, n_corrections=1)
+    r_hi = fit_fss(M_flat, p_flat, lam_flat, err_flat,
+                   x_c_guess=p_q_rough, nu_guess=1.57, poly_order=4,
+                   x_range=p_fit_range, y_irrel=y_hi,
+                   fit_y_irrel=False, n_corrections=1)
+    pq_syst = max(abs(r_lo.x_c - result.x_c), abs(r_hi.x_c - result.x_c))
+    nu_syst = max(abs(r_lo.nu  - result.nu),  abs(r_hi.nu  - result.nu))
 
     print("\n" + "="*55)
     print("FSS RESULT (SC site-diluted quantum percolation)")
-    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f}  (literature: ~0.44)")
-    print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f}  "
-          "(Ujfalusi 2014: 1.62 ± 0.035; Slevin: 1.571 ± 0.007)")
+    print(f"  y   = {Y_IRREL} fixed (S&O99: 1.12±0.08)")
+    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat)  (literature: ~0.44)")
+    print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat)  "
+          "(Ujfalusi 2014: 1.62±0.035)")
+    print(f"  b   = {result.b:.4f}  ± {result.b_err:.4f} (stat)")
     print(f"  χ²/dof = {result.chi2_dof:.3f}")
+    print(f"  Systematic from y±0.08: p_q syst=±{pq_syst:.5f}  ν syst=±{nu_syst:.4f}")
+    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat) ± {pq_syst:.5f} (syst)")
+    print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat) ± {nu_syst:.4f} (syst)")
     print("="*55)
 
     metadata = dict(lattice="sc", E=E, t=T_HOP, L=L, W=W, n_real=N_REAL,
