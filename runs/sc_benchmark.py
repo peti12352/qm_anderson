@@ -165,15 +165,18 @@ def main(fast: bool = False) -> None:
     # Window [15.0, 18.5] gives |u|_max ≈ 1.5 × 4.6 ≈ 7 — much more controlled.
     W_FIT_RANGE = (15.0, 18.5)
     result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
-                     x_c_guess=16.5, nu_guess=1.57, poly_order=3,
-                     x_range=W_FIT_RANGE, y_irrel=1.0)
+                     x_c_guess=16.5, nu_guess=1.57, poly_order=4,
+                     x_range=W_FIT_RANGE, y_irrel=1.12,
+                     fit_y_irrel=True, n_corrections=2)
 
     print("\n" + "="*55)
     print("FSS RESULT (SC Anderson disorder benchmark)")
     print(f"  W fit range: {W_FIT_RANGE}")
     print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected 16.53 ± 0.05)")
     print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected 1.571 ± 0.007)")
-    print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (corrections-to-scaling amplitude)")
+    print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (first correction b·M^{{-y}})")
+    print(f"  b₂  = {result.b2:.4f} ± {result.b2_err:.4f}  (second correction b₂·M^{{-2y}})")
+    print(f"  y   = {result.y_irrel:.4f}  (irrelevant exponent; S&O99: 1.12±0.08)")
     print(f"  χ²/dof = {result.chi2_dof:.3f}  (ideal ≈ 1.0)")
     print(f"  converged: {result.converged}")
     print("="*55)
@@ -227,12 +230,15 @@ if __name__ == "__main__":
                 lam_flat.append(lam); err_flat.append(max(err, 1e-6))
         W_FIT_RANGE = (args.w_min, args.w_max)
         result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
-                         x_c_guess=16.5, nu_guess=1.57, poly_order=3,
-                         x_range=W_FIT_RANGE, y_irrel=1.0)
+                         x_c_guess=16.5, nu_guess=1.57, poly_order=4,
+                         x_range=W_FIT_RANGE, y_irrel=1.12,
+                         fit_y_irrel=True, n_corrections=2)
         print(f"\n  W fit range: {W_FIT_RANGE}")
         print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected 16.53)")
         print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected 1.571)")
-        print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (corrections amplitude, y=1)")
+        print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (first correction b·M^{{-y}})")
+        print(f"  b₂  = {result.b2:.4f} ± {result.b2_err:.4f}  (second correction b₂·M^{{-2y}})")
+        print(f"  y   = {result.y_irrel:.4f}  (irrelevant exponent; S&O99: 1.12±0.08)")
         print(f"  χ²/dof = {result.chi2_dof:.3f}")
     else:
         main(fast=args.fast)
