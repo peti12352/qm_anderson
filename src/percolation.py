@@ -31,7 +31,7 @@ def _union(parent: np.ndarray, rank: np.ndarray, a: int, b: int) -> None:
 
 
 def _neighbors_sc(i: int, j: int, k: int, L: int):
-    """6 nearest neighbors of site (i,j,k) on a periodic SC lattice of side L."""
+    """6 nearest neighbors — periodic BC."""
     yield (i - 1) % L, j, k
     yield (i + 1) % L, j, k
     yield i, (j - 1) % L, k
@@ -40,12 +40,29 @@ def _neighbors_sc(i: int, j: int, k: int, L: int):
     yield i, j, (k + 1) % L
 
 
+def _neighbors_sc_nopbc(i: int, j: int, k: int, L: int):
+    """6 nearest neighbors — no periodic BC (for spanning check)."""
+    for ni, nj, nk in ((i-1,j,k),(i+1,j,k),(i,j-1,k),(i,j+1,k),(i,j,k-1),(i,j,k+1)):
+        if 0 <= ni < L and 0 <= nj < L and 0 <= nk < L:
+            yield ni, nj, nk
+
+
 def _neighbors_bcc(i: int, j: int, k: int, L: int):
-    """8 nearest neighbors of site (i,j,k) on a periodic BCC lattice of side L."""
+    """8 nearest neighbors — periodic BC."""
     for di in (-1, +1):
         for dj in (-1, +1):
             for dk in (-1, +1):
                 yield (i + di) % L, (j + dj) % L, (k + dk) % L
+
+
+def _neighbors_bcc_nopbc(i: int, j: int, k: int, L: int):
+    """8 nearest neighbors — no periodic BC (for spanning check)."""
+    for di in (-1, +1):
+        for dj in (-1, +1):
+            for dk in (-1, +1):
+                ni, nj, nk = i + di, j + dj, k + dk
+                if 0 <= ni < L and 0 <= nj < L and 0 <= nk < L:
+                    yield ni, nj, nk
 
 
 def percolation_probability(
@@ -74,12 +91,14 @@ def percolation_probability(
     (mean_P_inf, stderr)
     """
     rng = np.random.default_rng(seed)
-    neighbors_fn = _neighbors_sc if lattice == "sc" else _neighbors_bcc
+    # Non-periodic neighbors for spanning check: periodic BC makes z=0 directly
+    # adjacent to z=L-1, so _wraps with periodic neighbors trivially fires at any p.
+    nopbc_fn = _neighbors_sc_nopbc if lattice == "sc" else _neighbors_bcc_nopbc
     count = 0
 
     for _ in range(n_samples):
         grid  = rng.random((L, L, L)) < p   # (L,L,L) bool
-        count += _wraps(grid, L, neighbors_fn)
+        count += _wraps(grid, L, nopbc_fn)
 
     mean   = count / n_samples
     stderr = np.sqrt(mean * (1 - mean) / n_samples)
