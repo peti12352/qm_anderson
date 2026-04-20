@@ -163,19 +163,24 @@ def main(fast: bool = False) -> None:
     # FSS fit on a narrow window around W_c where the polynomial approximation is valid.
     # Full W range [13,20] gives |u|_max ≈ 16 for M=10 — far outside scaling regime.
     # Window [15.0, 18.5] gives |u|_max ≈ 1.5 × 4.6 ≈ 7 — much more controlled.
+    #
+    # Irrelevant exponent y is fixed at 1.12 (Slevin & Ohtsuki 1999, y=1.12±0.08).
+    # Fitting y freely is not identifiable with M={4,6,8,10}: the correction b·M^{-y}
+    # degenerates with the polynomial constant a_0 as y→0, and the optimizer exploits
+    # this. y requires M spanning a decade (e.g. {4..20}) to measure from TMM data.
+    Y_IRREL     = 1.12   # S&O99 central value; use --y-irrel to explore ±0.08 syst.
     W_FIT_RANGE = (15.0, 18.5)
     result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
                      x_c_guess=16.5, nu_guess=1.57, poly_order=4,
-                     x_range=W_FIT_RANGE, y_irrel=1.12,
-                     fit_y_irrel=True, n_corrections=1)
+                     x_range=W_FIT_RANGE, y_irrel=Y_IRREL,
+                     fit_y_irrel=False, n_corrections=1)
 
     print("\n" + "="*55)
     print("FSS RESULT (SC Anderson disorder benchmark)")
     print(f"  W fit range: {W_FIT_RANGE}")
     print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected 16.53 ± 0.05)")
     print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected 1.571 ± 0.007)")
-    print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (correction b·M^{{-y}})")
-    print(f"  y   = {result.y_irrel:.4f}  (irrelevant exponent; S&O99: 1.12±0.08)")
+    print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (correction b·M^{{-y}}, y={Y_IRREL} fixed)")
     print(f"  χ²/dof = {result.chi2_dof:.3f}  (ideal ≈ 1.0)")
     print(f"  converged: {result.converged}")
     print("="*55)
@@ -212,6 +217,8 @@ if __name__ == "__main__":
                         help="Lower bound of FSS fit window (default 15.0)")
     parser.add_argument("--w-max", type=float, default=18.5,
                         help="Upper bound of FSS fit window (default 18.5)")
+    parser.add_argument("--y-irrel", type=float, default=1.12,
+                        help="Fixed irrelevant exponent y (S&O99: 1.12±0.08, default 1.12)")
     args = parser.parse_args()
 
     if args.refit:
@@ -228,15 +235,35 @@ if __name__ == "__main__":
                 M_flat.append(M); W_flat.append(float(W))
                 lam_flat.append(lam); err_flat.append(max(err, 1e-6))
         W_FIT_RANGE = (args.w_min, args.w_max)
+
+        # Central fit
         result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
                          x_c_guess=16.5, nu_guess=1.57, poly_order=4,
-                         x_range=W_FIT_RANGE, y_irrel=1.12,
-                         fit_y_irrel=True, n_corrections=1)
+                         x_range=W_FIT_RANGE, y_irrel=args.y_irrel,
+                         fit_y_irrel=False, n_corrections=1)
         print(f"\n  W fit range: {W_FIT_RANGE}")
-        print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f}  (expected 16.53)")
-        print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f}  (expected 1.571)")
-        print(f"  b   = {result.b:.4f} ± {result.b_err:.4f}  (correction b·M^{{-y}})")
-        print(f"  y   = {result.y_irrel:.4f}  (irrelevant exponent; S&O99: 1.12±0.08)")
+        print(f"  y = {args.y_irrel} (fixed; S&O99: 1.12±0.08)")
+        print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f} (stat)  (expected 16.53)")
+        print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f} (stat)  (expected 1.571)")
+        print(f"  b   = {result.b:.4f} ± {result.b_err:.4f} (stat)")
         print(f"  χ²/dof = {result.chi2_dof:.3f}")
+
+        # Systematic error from y uncertainty (±1σ from S&O99)
+        # y is non-identifiable with M={4..10}; propagate its ±0.08 uncertainty explicitly.
+        y_lo, y_hi = args.y_irrel - 0.08, args.y_irrel + 0.08
+        r_lo = fit_fss(M_flat, W_flat, lam_flat, err_flat,
+                       x_c_guess=16.5, nu_guess=1.57, poly_order=4,
+                       x_range=W_FIT_RANGE, y_irrel=y_lo,
+                       fit_y_irrel=False, n_corrections=1)
+        r_hi = fit_fss(M_flat, W_flat, lam_flat, err_flat,
+                       x_c_guess=16.5, nu_guess=1.57, poly_order=4,
+                       x_range=W_FIT_RANGE, y_irrel=y_hi,
+                       fit_y_irrel=False, n_corrections=1)
+        wc_syst = max(abs(r_lo.x_c - result.x_c), abs(r_hi.x_c - result.x_c))
+        nu_syst = max(abs(r_lo.nu  - result.nu),  abs(r_hi.nu  - result.nu))
+        print(f"\n  Systematic from y ± 0.08 ({y_lo:.2f}..{y_hi:.2f}):")
+        print(f"  W_c syst = ±{wc_syst:.4f}  |  ν syst = ±{nu_syst:.4f}")
+        print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f} (stat) ± {wc_syst:.4f} (syst)")
+        print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f} (stat) ± {nu_syst:.4f} (syst)")
     else:
         main(fast=args.fast)
