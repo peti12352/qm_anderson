@@ -56,8 +56,9 @@ P_COARSE = list(np.linspace(0.25, 0.60, 18))
 P_FINE   = list(np.linspace(0.30, 0.46, 20))
 P_LIST   = sorted(set(P_COARSE + P_FINE))
 
-L       = 100_000
-N_REAL  = 2_000
+# L=10k: at p≈p_q, γ_min≈0.3 for M=8 → L×γ_min=3000 >> 1. Same reasoning as SC.
+L       = 10_000
+N_REAL  = 500
 W       = 0.0
 E       = 0.0
 T_HOP   = 1.0

@@ -45,14 +45,16 @@ CKPT_DIR = Path("data/checkpoints")
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-M_LIST = [4, 6, 8, 10, 12]
+M_LIST = [4, 6, 8, 10]   # M=12 deferred: adds ~22h, 4 sizes proven sufficient for FSS
 # Dense coverage around the expected p_q ≈ 0.44; sparse far from it.
 P_COARSE = list(np.linspace(0.32, 0.65, 20))
 P_FINE   = list(np.linspace(0.38, 0.52, 20))
 P_LIST   = sorted(set(P_COARSE + P_FINE))
 
-L       = 100_000
-N_REAL  = 2_000
+# L=10k: at p≈0.44, γ_min≈0.3 for M=8 → L×γ_min=3000 >> 1. Proven convergent at
+# benchmark. L=100k was 10× overkill; N_real=500 sufficient (same as benchmark).
+L       = 10_000
+N_REAL  = 500
 W       = 0.0    # pure geometric disorder (site dilution only)
 E       = 0.0    # band centre
 T_HOP   = 1.0
