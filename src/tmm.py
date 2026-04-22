@@ -133,7 +133,15 @@ def make_tmm_fns(
         L   : bar length (number of slices); must be > 10/γ_min for convergence
         W   : disorder strength (on-site energies drawn from Uniform[-W/2, W/2])
         p   : site occupation probability (p=1.0 → no dilution)
+
+        W and p are cast to JAX scalars so they are traced as dynamic (abstract)
+        values rather than Python floats. Python floats are baked as compile-time
+        constants into the XLA kernel; the disk cache then keyed on W alone would
+        serve the same kernel for all p values in a dilution run (W=0 fixed, p
+        varying), pinning Λ_M at the warmup-p value for all p.
         """
+        W = jnp.float64(W)
+        p = jnp.float64(p)
         key_dis, key_dil = jax.random.split(key)
 
         dim = 2 * N
