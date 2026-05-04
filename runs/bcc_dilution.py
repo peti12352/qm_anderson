@@ -24,6 +24,11 @@ and the ratio p_q/p_c to be similar (same universality class).
 
 BCC anomaly to watch for: The higher connectivity may delay onset of localization
 to smaller p/p_c ratio than SC — this would be a novel and physically interesting result.
+
+Energy choice: E=0.1 (not E=0). BCC NN lattice is bipartite (A=corners, B=body-centres;
+all 8 NN bonds connect A to B, no triangles → no odd cycles). At E=0, ΓHΓ=-H holds →
+class BDI, same chiral anomaly as SC: p_c^Q(E→0)→1, wrong universality class (ν≠1.62).
+E=0.1 breaks chiral symmetry → class AI, ν=1.622, direct comparison to SC result.
 """
 from __future__ import annotations
 
@@ -61,9 +66,9 @@ P_LIST   = sorted(set(P_COARSE + P_FINE))
 L       = 10_000
 N_REAL  = 500
 W       = 0.0
-E       = 0.0
+E       = 0.1    # off band centre — BCC is bipartite (class BDI at E=0, same issue as SC)
 T_HOP   = 1.0
-OUTFILE = Path("data/bcc_dilution.h5")
+OUTFILE = Path("data/bcc_dilution_E0p1.h5")   # E=0 analogue would be bcc_dilution_E0.h5
 SEED    = 44
 
 
@@ -136,6 +141,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--refit", action="store_true",
                         help="Skip TMM; load existing HDF5 and refit FSS only")
+    parser.add_argument("--data-file", type=str, default=None,
+                        help="HDF5 file to load for --refit (default: OUTFILE)")
     parser.add_argument("--p-min", type=float, default=None,
                         help="Override FSS fit window lower bound")
     parser.add_argument("--p-max", type=float, default=None,
@@ -163,7 +170,7 @@ def main() -> None:
         all_gammas[M] = {}
         N = M * M
 
-        ckpt = CKPT_DIR / f"bcc_dilution_M{M}.npz"
+        ckpt = CKPT_DIR / f"bcc_dilution_E0p1_M{M}.npz"
         if ckpt.exists():
             data = np.load(ckpt)
             all_gammas[M] = {P_LIST[i]: data[f"p_{i}"] for i in range(len(P_LIST))}
@@ -176,7 +183,7 @@ def main() -> None:
         with CompileMonitor(label=f"M={M} BCC warmup", interval=10):
             _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
-        ckpt_w_dir = CKPT_DIR / f"bcc_dilution_M{M}_partial"
+        ckpt_w_dir = CKPT_DIR / f"bcc_dilution_E0p1_M{M}_partial"
         ckpt_w_dir.mkdir(exist_ok=True)
         done_p = set()
         for i, p in enumerate(P_LIST):
@@ -307,12 +314,13 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
 
 def _run_refit(args) -> None:
     """Load existing HDF5 data and refit FSS — no TMM rerun needed."""
-    if not OUTFILE.exists():
-        print(f"ERROR: {OUTFILE} not found. Run bcc_dilution.py first (without --refit).")
+    src = Path(args.data_file) if args.data_file else OUTFILE
+    if not src.exists():
+        print(f"ERROR: {src} not found. Run bcc_dilution.py first (without --refit).")
         return
 
-    print(f"Loading data from {OUTFILE} ...")
-    data = load_lambda(OUTFILE)
+    print(f"Loading data from {src} ...")
+    data = load_lambda(src)
     M_list_h5 = [int(m) for m in data["M_list"]]
     p_list_h5 = list(data["x_values"])
 

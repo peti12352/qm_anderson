@@ -253,6 +253,13 @@ by the algorithm (it used the wrong method).
 
 Only run after Step 3 passes. Same FSS model, same universality class (3D orthogonal).
 
+**Energy: E=0.1 (not E=0).** BCC NN lattice is bipartite (no odd cycles in NN graph), so at E=0
+it has the same chiral symmetry ΓHΓ=−H and the same class-BDI anomaly as SC: p_c^Q(E→0)→1,
+ν≠1.622. At E=0.1, chiral symmetry is broken → class AI, ν=1.622, direct comparison to SC
+and to Ujfalusi's SC mobility edge.
+
+Output: `data/bcc_dilution_E0p1.h5`, checkpoints `bcc_dilution_E0p1_M{M}.npz`.
+
 ```bash
 pixi run bcc-dilution
 ```
@@ -271,7 +278,8 @@ Kill-safe: same checkpoint system.
 ```
 
 **What to look for:**
-- p_q(BCC) < p_q(SC) = 0.44 (expected: BCC is more connected, lower threshold)
+- p_q(BCC) < p_q(SC, E=0.1) = 0.454 (expected: BCC is more connected, lower threshold)
+- p_q(BCC) estimated ≈ 0.358 from p_q/p_c ratio: 0.454 × (0.2457/0.3115)
 - ν consistent with SC result within 2σ total (same universality class)
 - χ²/dof < 5.0
 - Harris criterion satisfied: 3ν > 2, i.e. ν > 0.667 (always true here)
