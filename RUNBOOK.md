@@ -107,10 +107,18 @@ Data regenerated for M=8 and M=10. Results unchanged (same statistics, correct p
 
 ---
 
-## Step 3 — SC quantum percolation
+## Step 3 — SC quantum percolation at E=0.1
 
-Validates the quantum percolation setup against the known SC result p_q ≈ 0.44.
+Validates the quantum percolation setup against Ujfalusi & Varga (2014) Table II: p_c^Q(E=0.1) = 0.45384.
 Uses same FSS model as benchmark (y=1.12 fixed, poly_order=4, n_corrections=1).
+
+**Why E=0.1, not E=0:** The SC lattice is bipartite (chiral symmetry: H → −H under sublattice flip).
+At E=0, this places the system in symmetry class AIII/BDI, not class AI (3D orthogonal). Measured
+consequence: p_q(E=0) ≈ 0.591 for M={4..10}, ν ≈ 2.0, χ²/dof = 10.5 — consistent with Ujfalusi's
+observation that p_c^Q(E→0)→1 and MFSS "severely fails to converge" at E<0.1. E=0.1 is the smallest
+energy where Ujfalusi's MFSS converges and gives the 3D-AI universality class (ν=1.62±0.035).
+
+Output files: `data/sc_dilution_E0p1.h5`, checkpoints `sc_dilution_E0p1_M{M}.npz`.
 
 ```bash
 pixi run sc-dilution
@@ -122,36 +130,41 @@ Kill-safe: per-M and per-p checkpoints written throughout. Resume with same comm
 ```
   Λ_M(p) table (every 4th p):
          p    Λ(M=4)    Λ(M=6)    Λ(M=8)   Λ(M=10)
-    0.3200   1.xxxxx   0.xxxxx   0.xxxxx   0.xxxxx
+    0.3200   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx
     ...
-    0.4400   0.xxxxx   0.xxxxx   0.xxxxx   0.xxxxx   ← all close here
+    0.4540   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx   ← all close here
     ...
 
-  Rough p_q (pairwise crossings): 0.49x  [individual: ['0.47x', '0.50x', '0.57x']]
-  FSS fit window: p ∈ [0.41x, 0.57x]
+  Rough p_q (pairwise crossings): 0.45x  [individual: ['0.44x', '0.45x', '0.46x']]
+  FSS fit window: p ∈ [0.37x, 0.53x]
 
-  p_q = 0.44xxx ± 0.000xx (stat) ± 0.000xx (syst)
+  p_q = 0.454xx ± 0.000xx (stat) ± 0.000xx (syst)
   ν   = 1.6xxx  ± 0.0xxx (stat) ± 0.0xxx (syst)
   χ²/dof = x.xxx
 ```
 
-In the Λ_M table: at low p (insulating), ordering is Λ_4 > Λ_6 > Λ_8 > Λ_10. At high p (metallic), ordering reverses. The p where ordering reverses varies by M pair — individual crossings appear at different p values due to corrections-to-scaling.
+Crossings at E=0.1 should be staggered by ~0.01–0.04 (corrections-to-scaling at this energy are
+smaller than at E=0 where b≈0 but ν≠1.62). Λ_M ordering: insulating (Λ_4>Λ_10 at low p), metallic
+(Λ_4<Λ_10 at high p).
 
 **Success criterion:**
-- |p_q − 0.44| < 0.01
-- |ν − 1.571| < 0.10  (or consistent with 1.62 ± 0.035 from Ujfalusi 2014)
+- |p_q − 0.454| < 0.01
+- |ν − 1.622| < 0.10  (Ujfalusi 2014: 1.622±0.035)
 - χ²/dof < 5.0
 - b_err/b < 0.5  (correction amplitude well-constrained)
 
-If p_q deviates by > 0.02: **stop, do not run BCC**. The transfer matrix or RNG is wrong.
+If p_q deviates by > 0.02 from 0.454: **stop, do not run BCC**. Check energy E in sc_dilution.py.
 
 **Refit without re-running TMM:**
 ```bash
 # Refit with default window (crossing-based):
 pixi run python runs/sc_dilution.py --refit
 
-# Force window to literature region [0.38, 0.52] — use if crossing estimate is off:
-pixi run python runs/sc_dilution.py --refit --p-min 0.38 --p-max 0.52
+# Force window to literature region [0.39, 0.52]:
+pixi run python runs/sc_dilution.py --refit --p-min 0.39 --p-max 0.52
+
+# Refit the old E=0 data (crossings at ~0.59, different symmetry class):
+pixi run python runs/sc_dilution.py --refit --data-file data/sc_dilution.h5 --p-min 0.54 --p-max 0.64
 
 # Test sensitivity to y:
 pixi run python runs/sc_dilution.py --refit --y-irrel 1.04
@@ -207,6 +220,32 @@ _Distinguish from Failure A_: In Failure B, the Λ_M TABLE shows variation (Λ_M
 - 0.32+: tolerance too tight. Finite-size shift p_c(L=20) ≈ p_c(∞) + 0.013. Tolerance must be ±0.025.
 
 Both are fixed in the current `src/percolation.py`.
+
+---
+
+**Failure D — p_q ≈ 0.59, ν ≈ 2.0, χ²/dof ≈ 10, b ≈ 0 (chiral-symmetry fixed point)**
+
+_Symptom_: Crossings tight at [0.589, 0.592, 0.594], p_q=0.591±0.001, ν=1.99±0.03, b_err/b≈7 (b
+consistent with zero), χ²/dof≈10.
+
+_Root cause_: This is NOT a code bug — it is correct physics at E=0. The SC lattice is bipartite
+(sublattice symmetry: H → −H). At E=0, this places the system in symmetry class AIII/BDI (chiral
+orthogonal), not the standard 3D-AI class. Consequences:
+- p_c^Q(E=0) > p_c^Q(E=0.1) because band-centre states are anomalously localized in the chiral class
+- Ujfalusi (2014) shows p_c^Q(E→0)→1 and reports "severe convergence troubles" for MFSS at E<0.1
+- ν≈2.0 is the chiral-class exponent, not 1.62 (AI class)
+- b≈0 because the standard AI irrelevant correction is absent at the chiral fixed point
+- χ²/dof≈10 has two contributions: (1) P_FINE grid covers [0.38,0.52] not [0.55,0.63]; (2) the
+  standard AI scaling function Λ_M = Σa_ku^k + b·M^{-y} is the wrong ansatz for the chiral class
+
+_This result was obtained and documented on 2026-05-04._ The E=0 data lives in `data/sc_dilution.h5`.
+
+_Resolution_: Run at E=0.1 (current default). At E=0.1, Ujfalusi gives p_c^Q=0.454, ν=1.622, 3D-AI
+class applies, and χ²/dof should fall below 5.
+
+_Distinguish from Failure B_: In Failure D, the crossings are TIGHT (spread < 0.01) and land near
+0.59; in Failure B (old minimum-spread code), the result was also ~0.59 but crossings were NOT found
+by the algorithm (it used the wrong method).
 
 ---
 
