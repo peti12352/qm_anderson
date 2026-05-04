@@ -24,6 +24,7 @@ Our target precision: ±0.002
 """
 from __future__ import annotations
 
+import argparse
 import time
 from pathlib import Path
 
@@ -37,7 +38,7 @@ import sys; sys.path.insert(0, str(Path(__file__).parent.parent))
 import src.config
 from src.tmm      import make_tmm_fns, lambda_M
 from src.fss      import fit_fss
-from src.io_utils  import save_run
+from src.io_utils  import save_run, load_lambda
 from src.monitor   import print_system_info, CompileMonitor
 
 CKPT_DIR = Path("data/checkpoints")
@@ -60,6 +61,50 @@ E       = 0.0    # band centre
 T_HOP   = 1.0
 OUTFILE = Path("data/sc_dilution.h5")
 SEED    = 43
+
+# ---------------------------------------------------------------------------
+# Helpers: crossing finder and diagnostic table
+# ---------------------------------------------------------------------------
+
+def _find_crossings(lam_by_M: dict, M_list: list[int], p_list: list[float]) -> list[float]:
+    """
+    Find p values where consecutive Λ_M curves cross by linear interpolation.
+
+    More robust than minimum spread: minimum spread can land in the metallic
+    phase where corrections-to-scaling accidentally equalise Λ_M values at a
+    p far above p_q. Direct crossing detection finds sign changes in
+    Λ_{M1}(p) − Λ_{M2}(p) and interpolates the zero.
+    """
+    crossings = []
+    for i in range(len(M_list) - 1):
+        M1, M2 = M_list[i], M_list[i + 1]
+        diff = np.array(lam_by_M[M1]) - np.array(lam_by_M[M2])
+        sign_changes = np.where(np.diff(np.sign(diff)))[0]
+        for idx in sign_changes:
+            p1, p2 = p_list[idx], p_list[idx + 1]
+            d1, d2 = diff[idx], diff[idx + 1]
+            if d2 != d1:
+                p_cross = p1 - d1 * (p2 - p1) / (d2 - d1)
+                crossings.append(float(p_cross))
+    return crossings
+
+
+def _print_lam_table(lam_by_M: dict, M_list: list[int], p_list: list[float],
+                     stride: int = 4) -> None:
+    """Print Λ_M(p) for every `stride`-th p value — diagnostic for curve ordering."""
+    print(f"\n  Λ_M(p) table (every {stride}th p):")
+    print(f"  {'p':>8}", end="")
+    for M in M_list:
+        print(f"  {'Λ(M='+str(M)+')':>12}", end="")
+    print()
+    for ip, p in enumerate(p_list):
+        if ip % stride != 0:
+            continue
+        print(f"  {p:8.4f}", end="")
+        for M in M_list:
+            print(f"  {lam_by_M[M][ip]:12.5f}", end="")
+        print()
+
 
 # ---------------------------------------------------------------------------
 # Classical percolation sanity check
@@ -89,6 +134,21 @@ def _check_classical_threshold() -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--refit", action="store_true",
+                        help="Skip TMM; load existing HDF5 and refit FSS only")
+    parser.add_argument("--p-min", type=float, default=None,
+                        help="Override FSS fit window lower bound")
+    parser.add_argument("--p-max", type=float, default=None,
+                        help="Override FSS fit window upper bound")
+    parser.add_argument("--y-irrel", type=float, default=1.12,
+                        help="Irrelevant exponent (default 1.12)")
+    args = parser.parse_args()
+
+    if args.refit:
+        _run_refit(args)
+        return
+
     print_system_info()
     _check_classical_threshold()
 
@@ -163,33 +223,60 @@ def main() -> None:
     elapsed = time.time() - t0
     print(f"\nData collected in {elapsed/60:.1f} min")
 
-    # Compute Λ_M
+    # Compute Λ_M and build lam_by_M for crossing analysis
     M_flat, p_flat, lam_flat, err_flat = [], [], [], []
+    lam_by_M = {M: [] for M in M_LIST}
     for M in M_LIST:
         for p in P_LIST:
             mean, stderr = lambda_M(jnp.array(all_gammas[M][p]), M)
+            lam_by_M[M].append(mean)
             M_flat.append(M)
             p_flat.append(p)
             lam_flat.append(mean)
             err_flat.append(max(stderr, 1e-6))
 
-    # Estimate p_q from visual crossing before FSS (rough)
-    # Find p where the median Λ_M is flattest across M
-    p_arr = np.array(P_LIST)
-    lam_by_M = {M: [] for M in M_LIST}
-    for M in M_LIST:
-        for p in P_LIST:
-            lam_by_M[M].append(lambda_M(jnp.array(all_gammas[M][p]), M)[0])
-    spread = np.array([np.std([lam_by_M[M][ip] for M in M_LIST]) for ip in range(len(P_LIST))])
-    p_q_rough = float(p_arr[np.argmin(spread)])
-    print(f"\n  Rough p_q estimate (minimum spread): {p_q_rough:.3f}")
+    _print_lam_table(lam_by_M, M_LIST, P_LIST)
+    _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat, lam_by_M, M_LIST, P_LIST, args)
 
-    p_fit_hw = 0.08   # half-width of FSS fit window around rough crossing
-    p_fit_range = (max(0.25, p_q_rough - p_fit_hw), min(0.75, p_q_rough + p_fit_hw))
-    print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]")
+    metadata = dict(lattice="sc", E=E, t=T_HOP, L=L, W=W, n_real=N_REAL,
+                    run_type="quantum_percolation")
+    save_run(OUTFILE, M_LIST, P_LIST, all_gammas, metadata)
+    print(f"Data saved to {OUTFILE}")
+
+
+def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
+                      lam_by_M, M_list, p_list, args) -> None:
+    """Shared FSS fitting logic used by both the main run and --refit mode."""
+    p_arr = np.array(p_list)
+
+    # Pairwise crossing detector — more robust than minimum spread for small M.
+    # Minimum spread can land in the metallic phase where corrections-to-scaling
+    # accidentally equalise Λ_M values far above p_q (see RUNBOOK §FSS).
+    crossings = _find_crossings(lam_by_M, M_list, p_list)
+    if crossings:
+        p_q_rough = float(np.median(crossings))
+        cross_strs = [f"{c:.3f}" for c in sorted(crossings)]
+        print(f"\n  Rough p_q (pairwise crossings): {p_q_rough:.3f}  "
+              f"[individual: {cross_strs}]")
+    else:
+        spread = np.array([np.std([lam_by_M[M][ip] for M in M_list])
+                           for ip in range(len(p_list))])
+        p_q_rough = float(p_arr[np.argmin(spread)])
+        print(f"\n  Rough p_q (min-spread fallback, no crossings found): {p_q_rough:.3f}")
+        print("  WARNING: No curve crossings found. Critical point may lie outside P_LIST.")
+
+    if args.p_min is not None and args.p_max is not None:
+        p_fit_range = (args.p_min, args.p_max)
+        print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]  "
+              f"(manual override)")
+    else:
+        p_fit_hw = 0.08
+        p_fit_range = (max(0.25, p_q_rough - p_fit_hw), min(0.75, p_q_rough + p_fit_hw))
+        print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]")
+
     # y fixed at 1.12 (S&O99). With M={4..12}, y is non-identifiable from data:
     # b·M^{-y} degenerates with a_0 as y→0, optimizer exploits this. See RUNBOOK §FSS.
-    Y_IRREL = 1.12
+    Y_IRREL = args.y_irrel
     result = fit_fss(M_flat, p_flat, lam_flat, err_flat,
                      x_c_guess=p_q_rough, nu_guess=1.57, poly_order=4,
                      x_range=p_fit_range, y_irrel=Y_IRREL,
@@ -220,12 +307,36 @@ def main() -> None:
     print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat) ± {nu_syst:.4f} (syst)")
     print("="*55)
 
-    metadata = dict(lattice="sc", E=E, t=T_HOP, L=L, W=W, n_real=N_REAL,
-                    run_type="quantum_percolation",
-                    p_q=result.x_c, p_q_err=result.x_c_err,
-                    nu=result.nu, nu_err=result.nu_err)
-    save_run(OUTFILE, M_LIST, P_LIST, all_gammas, metadata)
-    print(f"Data saved to {OUTFILE}")
+
+def _run_refit(args) -> None:
+    """Load existing HDF5 data and refit FSS — no TMM rerun needed."""
+    if not OUTFILE.exists():
+        print(f"ERROR: {OUTFILE} not found. Run sc_dilution.py first (without --refit).")
+        return
+
+    print(f"Loading data from {OUTFILE} ...")
+    data = load_lambda(OUTFILE)
+    M_list_h5  = [int(m) for m in data["M_list"]]
+    p_list_h5  = list(data["x_values"])
+
+    lam_by_M: dict[int, list[float]] = {}
+    M_flat, p_flat, lam_flat, err_flat = [], [], [], []
+    for M in M_list_h5:
+        lam_by_M[M] = []
+        for p in p_list_h5:
+            mean, stderr = data["lambda"][M][p]
+            lam_by_M[M].append(mean)
+            M_flat.append(M)
+            p_flat.append(p)
+            lam_flat.append(mean)
+            err_flat.append(max(stderr, 1e-6))
+
+    print(f"  Loaded: M={M_list_h5}  |  {len(p_list_h5)} p values  |  "
+          f"p ∈ [{min(p_list_h5):.3f}, {max(p_list_h5):.3f}]")
+
+    _print_lam_table(lam_by_M, M_list_h5, p_list_h5)
+    _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
+                      lam_by_M, M_list_h5, p_list_h5, args)
 
 
 if __name__ == "__main__":

@@ -1,10 +1,26 @@
-(base) v@greengoblin:~/proj/petya/simulations/qm_anderson$ pixi run python runs/sc_benchmark.py --refit --w-min 16.0 --w-max 17.5
-Refit mode: loading data/sc_benchmark.h5, FSS window [16.0, 17.5]
-/home/v/proj/petya/simulations/qm_anderson/src/fss.py:148: UserWarning: χ²/dof = 7.62 >> 1. FSS fit is poor. Consider: (1) wider x range, (2) more system sizes, (3) higher poly_order, (4) corrections to scaling.
-  warnings.warn(
+(base) v@greengoblin:~/proj/petya/simulations/qm_anderson$ git pull && pixi run sc-dilution
+Already up to date.
+✨ Pixi task (sc-dilution): python runs/sc_dilution.py: (Measure p_q for SC site-diluted lattice)
 
-# fit range: (16.0, 17.5)
-W_c = 16.3502 ± 0.0059 (expected 16.53)
-ν = 1.4775 ± 0.0175 (expected 1.571)
-χ²/dof = 7.620
+=======================================================
+ENVIRONMENT
+JAX version  : 0.9.2
+JAX backend  : gpu
+JAX devices  : [CudaDevice(id=0)]
+x64 enabled  : True
+GPU          : NVIDIA GeForce RTX 5090
+Driver       : 580.126.09
+VRAM         : 31559 MiB free / 32607 MiB total
+Temp / Power : 41°C / 24.41W (limit 575.00W)
+=======================================================
+
+Classical p_c(SC) measured: 0.3250 (expected 0.3116)
+Traceback (most recent call last):
+  File "/home/v/proj/petya/simulations/qm_anderson/runs/sc_dilution.py", line 224, in <module>
+    main()
+  File "/home/v/proj/petya/simulations/qm_anderson/runs/sc_dilution.py", line 85, in main
+    _check_classical_threshold()
+  File "/home/v/proj/petya/simulations/qm_anderson/runs/sc_dilution.py", line 72, in _check_classical_threshold
+    raise RuntimeError(
+RuntimeError: Classical p_c check failed: 0.3250 != 0.3116. Check percolation.py implementation.
 (base) v@greengoblin:~/proj/petya/simulations/qm_anderson$ 

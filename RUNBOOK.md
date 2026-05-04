@@ -113,8 +113,6 @@ Validates the quantum percolation setup against the known SC result p_q ≈ 0.44
 Uses same FSS model as benchmark (y=1.12 fixed, poly_order=4, n_corrections=1).
 
 ```bash
-cd ~/proj/petya/simulations/qm_anderson
-git pull
 pixi run sc-dilution
 ```
 
@@ -122,11 +120,22 @@ Kill-safe: per-M and per-p checkpoints written throughout. Resume with same comm
 
 **Expected output:**
 ```
-y   = 1.12 (fixed)
-p_q = 0.44xxx ± 0.000xx (stat) ± 0.000xx (syst)
-ν   = 1.6xxx ± 0.0xxx (stat) ± 0.0xxx (syst)
-χ²/dof = x.xxx
+  Λ_M(p) table (every 4th p):
+         p    Λ(M=4)    Λ(M=6)    Λ(M=8)   Λ(M=10)
+    0.3200   1.xxxxx   0.xxxxx   0.xxxxx   0.xxxxx
+    ...
+    0.4400   0.xxxxx   0.xxxxx   0.xxxxx   0.xxxxx   ← all close here
+    ...
+
+  Rough p_q (pairwise crossings): 0.49x  [individual: ['0.47x', '0.50x', '0.57x']]
+  FSS fit window: p ∈ [0.41x, 0.57x]
+
+  p_q = 0.44xxx ± 0.000xx (stat) ± 0.000xx (syst)
+  ν   = 1.6xxx  ± 0.0xxx (stat) ± 0.0xxx (syst)
+  χ²/dof = x.xxx
 ```
+
+In the Λ_M table: at low p (insulating), ordering is Λ_4 > Λ_6 > Λ_8 > Λ_10. At high p (metallic), ordering reverses. The p where ordering reverses varies by M pair — individual crossings appear at different p values due to corrections-to-scaling.
 
 **Success criterion:**
 - |p_q − 0.44| < 0.01
@@ -136,7 +145,68 @@ p_q = 0.44xxx ± 0.000xx (stat) ± 0.000xx (syst)
 
 If p_q deviates by > 0.02: **stop, do not run BCC**. The transfer matrix or RNG is wrong.
 
-Expected runtime: 4–10 hours (L=100k is 10× longer than benchmark, N_real=2000 is 4×).
+**Refit without re-running TMM:**
+```bash
+# Refit with default window (crossing-based):
+pixi run python runs/sc_dilution.py --refit
+
+# Force window to literature region [0.38, 0.52] — use if crossing estimate is off:
+pixi run python runs/sc_dilution.py --refit --p-min 0.38 --p-max 0.52
+
+# Test sensitivity to y:
+pixi run python runs/sc_dilution.py --refit --y-irrel 1.04
+pixi run python runs/sc_dilution.py --refit --y-irrel 1.20
+```
+
+Expected runtime: ~9 hours (same parameters as benchmark: L=10k, N_real=500, M=[4,6,8,10]).
+
+---
+
+### Documented failure modes for Step 3
+
+**Failure A — p_q constant for all p (Λ_M flat, all same value)**
+
+_Symptom_: All p values give the same Λ_M ≈ Λ_warmup. Λ_M table shows identical values in every row.
+
+_Root cause_: JAX XLA disk cache bug. Python float `p` passed to `jax.jit` is treated as a compile-time constant baked into the XLA kernel. The disk cache key is based on abstract shapes/dtypes NOT concrete float values, so all p calls reuse the warmup-compiled kernel (p≈P_LIST[len//2]).
+
+_Fix_: `src/tmm.py` `_tmm_core` must begin with:
+```python
+W = jnp.float64(W)
+p = jnp.float64(p)
+```
+This converts Python floats to JAX abstract tracers, preventing constant-folding. Verify fix is in place before running.
+
+_Verify_: Check M=10 range. Correct: λ_M ∈ [0.047, 0.435]. Broken: λ_M ∈ [0.435, 0.435].
+
+---
+
+**Failure B — p_q ≈ 0.59–0.65, χ²/dof >> 5, ν > 2**
+
+_Symptom_: "Rough p_q estimate (minimum spread): 0.598" and FSS fit in window [0.52, 0.68] gives p_q=0.589, χ²/dof=27.
+
+_Root cause_: The minimum spread algorithm (`np.argmin(std(Λ_M over M))`) finds the global minimum of spread across all M. With corrections-to-scaling b·M^{-y} (y=1.12, up to 20% at M=4), individual pairwise crossings are staggered:
+- M4–M6 crossing: ~p_q + 0.13 (large shift at small M)
+- M6–M8 crossing: ~p_q + 0.06
+- M8–M10 crossing: ~p_q + 0.03
+
+The global std minimum lands at ~0.60 where corrections accidentally equalize all four Λ_M values — NOT at the actual quantum critical point. The FSS is then fit in the wrong window.
+
+_Fix_: `runs/sc_dilution.py` now uses `_find_crossings` (pairwise sign-change detector with linear interpolation) as the primary estimator. Minimum spread kept only as fallback. If running an old version of the script, use:
+```bash
+pixi run python runs/sc_dilution.py --refit --p-min 0.38 --p-max 0.52
+```
+
+_Distinguish from Failure A_: In Failure B, the Λ_M TABLE shows variation (Λ_M changes with p). In Failure A, every row is identical.
+
+---
+
+**Failure C — Classical p_c check fails: measured 0.20 or 0.32+**
+
+- 0.20: periodic BC bug in `_wraps` — used periodic neighbor function, making z=0 adjacent to z=L-1; any occupied pair straddling that boundary gave a false spanning cluster. Fix: use `_neighbors_sc_nopbc` (checking bounds: `0 ≤ ni < L`).
+- 0.32+: tolerance too tight. Finite-size shift p_c(L=20) ≈ p_c(∞) + 0.013. Tolerance must be ±0.025.
+
+Both are fixed in the current `src/percolation.py`.
 
 ---
 
@@ -152,11 +222,13 @@ Kill-safe: same checkpoint system.
 
 **Expected output:**
 ```
-y   = 1.12 (fixed; 3D orthogonal class)
-p_q = 0.3xxxx ± 0.000xx (stat) ± 0.000xx (syst)   ← first measurement
-ν   = 1.6xxx ± 0.0xxx (stat) ± 0.0xxx (syst)
-χ²/dof = x.xxx
-p_q/p_c(BCC) = p_q / 0.2457   ← compare to SC: 0.44/0.312 ≈ 1.41
+  Rough p_q (pairwise crossings): 0.3xx  [individual: ['0.3xx', '0.3xx', '0.4xx']]
+  FSS fit window: p ∈ [0.2xx, 0.4xx]
+
+  p_q = 0.3xxxx ± 0.000xx (stat) ± 0.000xx (syst)   ← first measurement
+  ν   = 1.6xxx  ± 0.0xxx (stat) ± 0.0xxx (syst)
+  χ²/dof = x.xxx
+  p_q/p_c(BCC) = p_q / 0.2457   ← compare to SC: 0.44/0.312 ≈ 1.41
 ```
 
 **What to look for:**
@@ -165,7 +237,15 @@ p_q/p_c(BCC) = p_q / 0.2457   ← compare to SC: 0.44/0.312 ≈ 1.41
 - χ²/dof < 5.0
 - Harris criterion satisfied: 3ν > 2, i.e. ν > 0.667 (always true here)
 
+**Refit without re-running TMM:**
+```bash
+pixi run python runs/bcc_dilution.py --refit
+pixi run python runs/bcc_dilution.py --refit --p-min 0.28 --p-max 0.44
+```
+
 Expected runtime: 8–20 hours (complex128 for BCC is ~2× slower per step than SC).
+
+**Failure modes**: Same as Step 3 (Failures A, B, C). Apply the same diagnostics. For Failure B on BCC, use `--p-min 0.28 --p-max 0.44` as the manual window (centered on expected p_q(BCC) ≈ 0.36).
 
 ---
 
