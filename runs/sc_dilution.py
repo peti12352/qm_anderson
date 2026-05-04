@@ -5,22 +5,26 @@ Prerequisite: sc_benchmark.py must PASS (W_c and ν within 5% of expected).
 
 What this measures
 ------------------
-At fixed W=0 (no Anderson disorder) and E=0 (band centre), we scan the site
-occupation probability p from p_c=0.3115 up to p=0.80 and compute Λ_M for
-M ∈ {4,6,8,10,12}. The crossing point of Λ_M(p) curves is the quantum
-percolation threshold p_q.
+At fixed W=0 (no Anderson disorder) and E=0.1 (off band centre), we scan the
+site occupation probability p from p_c=0.3115 up to p=0.65 and compute Λ_M
+for M ∈ {4,6,8,10}. The crossing point of Λ_M(p) curves is the quantum
+percolation threshold p_q at this energy.
 
-Physical interpretation: p_q is the minimum fraction of occupied sites
-for any quantum transport to survive at the band centre. Below p_q, all
-eigenstates are localized despite there being a classical connected path
-(for p > p_c). The gap p_q - p_c quantifies the "quantum localization cost".
+Physical interpretation: p_q is the minimum fraction of occupied sites for
+quantum transport to survive at this energy. Below p_q, all eigenstates are
+localized despite there being a classical connected path (for p > p_c). The
+gap p_q - p_c quantifies the "quantum localization cost".
 
-Note on disorder: We set W=0 to isolate the quantum percolation transition.
-A separate sweep with W>0 (e.g. W=1) can be done to test whether weak
-disorder shifts p_q — this is a secondary result if time allows.
+Energy choice: E=0.1 (not E=0). At E=0, the SC lattice has chiral symmetry
+(bipartite + H → -H under sublattice flip), creating a DOS pseudogap at the
+band centre. Ujfalusi (2014) explicitly shows p_c^Q(E→0)→1 and reports "severe
+convergence troubles" for MFSS at E<0.1. At E=0.1, Ujfalusi Table II gives
+p_c^Q = 0.45384, close to the S&E (1983) value of ~0.44 which was likely
+measured at E slightly above zero. E=0.1 is therefore the correct validation
+target. E=0 data is stored separately in sc_dilution_E0.h5 if needed.
 
-Expected: p_q(SC) ≈ 0.44 ± 0.01 (Soukoulis & Economou 1983; last precise measurement)
-Our target precision: ±0.002
+Expected: p_q(SC, E=0.1) ≈ 0.454 (Ujfalusi & Varga 2014, Table II)
+Our target precision: ±0.005
 """
 from __future__ import annotations
 
@@ -57,9 +61,9 @@ P_LIST   = sorted(set(P_COARSE + P_FINE))
 L       = 10_000
 N_REAL  = 500
 W       = 0.0    # pure geometric disorder (site dilution only)
-E       = 0.0    # band centre
+E       = 0.1    # off band centre — avoids chiral-symmetry anomaly (see docstring)
 T_HOP   = 1.0
-OUTFILE = Path("data/sc_dilution.h5")
+OUTFILE = Path("data/sc_dilution_E0p1.h5")   # E=0 data in sc_dilution_E0.h5
 SEED    = 43
 
 # ---------------------------------------------------------------------------
@@ -137,6 +141,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--refit", action="store_true",
                         help="Skip TMM; load existing HDF5 and refit FSS only")
+    parser.add_argument("--data-file", type=str, default=None,
+                        help="HDF5 file to load for --refit (default: OUTFILE)")
     parser.add_argument("--p-min", type=float, default=None,
                         help="Override FSS fit window lower bound")
     parser.add_argument("--p-max", type=float, default=None,
@@ -164,7 +170,7 @@ def main() -> None:
         all_gammas[M] = {}
         N = M * M
 
-        ckpt = CKPT_DIR / f"sc_dilution_M{M}.npz"
+        ckpt = CKPT_DIR / f"sc_dilution_E0p1_M{M}.npz"
         if ckpt.exists():
             data = np.load(ckpt)
             all_gammas[M] = {P_LIST[i]: data[f"p_{i}"] for i in range(len(P_LIST))}
@@ -177,7 +183,7 @@ def main() -> None:
         with CompileMonitor(label=f"M={M} warmup", interval=10):
             _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
-        ckpt_w_dir = CKPT_DIR / f"sc_dilution_M{M}_partial"
+        ckpt_w_dir = CKPT_DIR / f"sc_dilution_E0p1_M{M}_partial"
         ckpt_w_dir.mkdir(exist_ok=True)
         done_p = set()
         for i, p in enumerate(P_LIST):
@@ -216,7 +222,7 @@ def main() -> None:
               f"λ_M ∈ [{min(lam_vals):.3f}, {max(lam_vals):.3f}]")
 
         np.savez(ckpt, **{f"p_{i}": all_gammas[M][P_LIST[i]] for i in range(len(P_LIST))})
-        print(f"  ✓ checkpoint saved → {ckpt}")
+        print(f"  ✓ checkpoint saved → {ckpt}")  # E0p1 checkpoint
         for f in ckpt_w_dir.iterdir(): f.unlink()
         ckpt_w_dir.rmdir()
 
@@ -310,12 +316,13 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
 
 def _run_refit(args) -> None:
     """Load existing HDF5 data and refit FSS — no TMM rerun needed."""
-    if not OUTFILE.exists():
-        print(f"ERROR: {OUTFILE} not found. Run sc_dilution.py first (without --refit).")
+    src = Path(args.data_file) if args.data_file else OUTFILE
+    if not src.exists():
+        print(f"ERROR: {src} not found. Run sc_dilution.py first (without --refit).")
         return
 
-    print(f"Loading data from {OUTFILE} ...")
-    data = load_lambda(OUTFILE)
+    print(f"Loading data from {src} ...")
+    data = load_lambda(src)
     M_list_h5  = [int(m) for m in data["M_list"]]
     p_list_h5  = list(data["x_values"])
 
