@@ -249,6 +249,42 @@ by the algorithm (it used the wrong method).
 
 ---
 
+**Failure E — Spurious crossings from correction dominance near the chiral fixed point**
+
+_Symptom_: Crossings appear at p≈0.35, far below Ujfalusi's p_c^Q(E=0.1)=0.454. FSS gives
+p_q=0.372, ν=0.915 (wrong class), b=−0.153 (large negative), χ²/dof=1543.
+
+_Root cause_: E=0.1 is only 1.7% of the SC half-bandwidth (6t) from E=0. The system is in a
+crossover between the BDI (chiral) fixed point at E=0 and the AI fixed point at E>>0. At M={4..10},
+finite-size corrections b·M^{-y} have magnitude |b|·4^{-1.12} = 0.032, which is 38% of Λ_M≈0.085 at
+the apparent crossing. The correction differential between M=4 and M=10 (0.022) inverts the insulating
+ordering wherever the physical insulating signal F(u_4)−F(u_10) < 0.022 — which occurs for all
+p ∈ [0.35, 0.45]. The true p_q≈0.45 is invisible: ALL data for p>0.35 appears metallic due to
+corrections, not physics. χ²/dof=1543 is driven by σ(Λ_M)≈10^{-4} (statistically precise data)
+combined with higher-order correction terms b₂·M^{-2y} not captured by the single-correction ansatz.
+
+_Confirmed_: SC E=0.1 run completed 2026-05-05, data in `data/sc_dilution_E0p1.h5` (greengoblin).
+Runtime: 701.7 min. M=10: 849s/point.
+
+_Fix_: Two options:
+1. **Add M=12, 16**: At M=16, correction = 0.153×16^{-1.12} = 0.006 (4% of signal). Crossings
+   shift toward true p_q. Add to M_LIST, rerun. ~20h additional compute.
+2. **Use E=0.7**: p_c^Q(E=0.7)=0.384 (Ujfalusi min). E=0.7 is 11.7% of half-bandwidth — far from
+   BDI crossover. Corrections expected similar to Anderson benchmark (b≈0.1). Clean crossings
+   and χ²/dof<5 expected with M={4..10}. Requires new 9h run with E=0.7.
+
+_Constrained refit (partial diagnosis — won't fix χ²)_:
+```bash
+pixi run python runs/sc_dilution.py --refit --data-file data/sc_dilution_E0p1.h5 --p-min 0.41 --p-max 0.50
+```
+Forces the fit window to straddle Ujfalusi's p_q=0.454. Still expects poor χ² because correction
+dominance persists throughout this window.
+
+_BCC warning_: BCC has bandwidth 16t → E=0.1 is 1.25% of half-bandwidth, even closer to BDI
+crossover than SC. Same correction-dominance failure expected for BCC at E=0.1 with M={4..10}.
+
+---
+
 ## Step 4 — BCC quantum percolation (the novel measurement)
 
 Only run after Step 3 passes. Same FSS model, same universality class (3D orthogonal).
