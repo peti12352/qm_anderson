@@ -454,16 +454,37 @@ The $M^2$ sites on each slice form a state vector of dimension $M^2$.
 
 ### 6.2 What the transfer matrix does
 
-The Schrödinger equation $H|\psi\rangle = E|\psi\rangle$ on the strip can be rewritten as a recursion
-relating the wavefunction amplitudes on slice $k+1$ to those on slices $k$ and $k-1$:
+**Hamiltonian block structure.** $H$ on the strip decomposes into three types of blocks:
 
 $$
-\psi_{k+1} = T_k \cdot \psi_k - V^{-1} V_\text{back} \cdot \psi_{k-1}
+H = \sum_k C_k + \sum_k \bigl(V_k + V_k^\dagger\bigr)
 $$
 
-where $T_k$ encodes the on-slice Hamiltonian and the coupling to the next slice. This
-can be written as a $2M^2 \times 2M^2$ transfer matrix acting on $(\psi_k, \psi_{k-1})$
-(each $\psi_k$ has $M^2$ components, one per site in the $M \times M$ cross-section):
+- $C_k$: $M^2 \times M^2$ intra-slice matrix for slice $k$ — off-diagonal entries $-t$ for nearest-neighbour pairs within the slice; diagonal entries zero ($W = 0$, see below).
+- $V_k$: $M^2 \times M^2$ forward inter-slice hopping from slice $k$ to $k+1$. **Diagonal**: $(V_k)_{ii} = -t$ if site $i$ is occupied on both slices $k$ and $k+1$, else $0$.
+- $V_k^\dagger$: backward hopping from slice $k+1$ to $k$. This is $V_\text{back}$ in the recursion.
+
+$V_k$ and $V_{k-1}^\dagger$ are both diagonal but drawn from different slice-pair occupation patterns, so $V^{-1}V_\text{back} \neq I$ in general.
+
+**Derivation.** Project $H|\psi\rangle = E|\psi\rangle$ onto slice $k$:
+
+$$
+C_k\,\psi_k + V_{k-1}^\dagger\,\psi_{k-1} + V_k\,\psi_{k+1} = E\,\psi_k
+$$
+
+Isolate $\psi_{k+1}$ (left-multiply by $V_k^{-1}$):
+
+$$
+\psi_{k+1} = \underbrace{V_k^{-1}(E\cdot I - C_k)}_{T_k}\,\psi_k
+           - \underbrace{V_k^{-1}\,V_{k-1}^\dagger}_{V^{-1}V_\text{back}}\,\psi_{k-1}
+$$
+
+$V_k$ is diagonal with $-t$ on connected entries and $0$ on disconnected ones; the computation is
+restricted to the subspace where both slices are occupied, giving $V_k^{-1} = (-1/t)\cdot I_\text{active}$
+there. The $V^{-1}V_\text{back}$ term is not merely a correction — it is required to preserve the
+symplectic structure of the product, which forces Lyapunov exponents to come in $\pm$ pairs.
+
+Written as a $2M^2 \times 2M^2$ matrix acting on $(\psi_k,\, \psi_{k-1})$:
 
 $$
 \begin{pmatrix} \psi_{k+1} \\ \psi_k \end{pmatrix}
@@ -472,8 +493,13 @@ $$
 \begin{pmatrix} \psi_k \\ \psi_{k-1} \end{pmatrix}
 $$
 
-After $L$ steps, we have a product of $L$ random matrices (random because each slice has
-a different random occupation pattern).
+After $L$ steps we have a product of $L$ random $2M^2\times 2M^2$ matrices, one per slice.
+
+**Why $W = 0$ (no on-site disorder).** We study quantum percolation, not the Anderson model.
+The only randomness is geometric — which sites exist. Setting $W = 0$ isolates localization
+from topology alone; on-site energies are uniformly zero. The probe energy $E$ still enters
+through $(E\cdot I - C_k)$ in $T_k$: scanning $E$ probes different parts of the spectrum,
+which is why $E = 0.7$ matters for the BDI/AI crossover (\S10.2).
 
 ### 6.3 Lyapunov exponents
 
