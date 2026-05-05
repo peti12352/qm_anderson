@@ -43,7 +43,7 @@ import sys; sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import src.config
 from src.tmm      import make_tmm_fns, lambda_M
-from src.fss      import fit_fss, scan_fss_windows, print_window_scan
+from src.fss      import fit_fss, scan_fss_windows, print_window_scan, polynomial_order_stability_test, print_polynomial_stability
 from src.io_utils  import save_run, load_lambda
 from src.monitor   import print_system_info, CompileMonitor
 
@@ -314,7 +314,9 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
     print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat)  "
           "(3D-AI class: 1.622)")
     print(f"  b   = {result.b:.4f}  ± {result.b_err:.4f} (stat)")
-    print(f"  χ²/dof = {result.chi2_dof:.3f}")
+    from scipy.stats import chi2 as _chi2_dist
+    Q = float(1.0 - _chi2_dist.cdf(result.chi2_dof * result.dof, df=result.dof))
+    print(f"  χ²/dof = {result.chi2_dof:.3f}  (Q = {Q:.2e};  S&O99 criterion: Q > 0.1)")
     print(f"  Systematic from y±0.08: p_q syst=±{pq_syst:.5f}  ν syst=±{nu_syst:.4f}")
     print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat) ± {pq_syst:.5f} (syst)")
     print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat) ± {nu_syst:.4f} (syst)")

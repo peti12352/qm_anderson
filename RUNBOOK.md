@@ -25,19 +25,30 @@ where x is the control parameter (W for Anderson disorder, p for dilution).
 | `n_corrections` | 1 | See identifiability argument below |
 | `n_boot` | 500 | Sufficient for σ < 1% on bootstrap CIs |
 
-### Window selection (Rodriguez et al. 2011 method)
+### Window selection (δ adequacy scan)
 
-Instead of a hardcoded window half-width, we run a **stability scan**: fit FSS at
-δ ∈ {0.03..0.15} in 15 steps, record χ²/dof(δ), select the widest δ with χ²/dof < 3.0.
-This is the non-ad-hoc procedure. Manual override via `--p-min`/`--p-max` is available
-for diagnosis only. See `src/fss.py: scan_fss_windows` and `docs/methodology.md §6`.
+Instead of a hardcoded window half-width, we run a **window adequacy scan**: fit FSS at
+δ ∈ {0.03..0.15} in 15 steps, record χ²/dof(δ) and Q(δ), select the widest δ with
+χ²/dof < 3.0. This is standard FSS practice — NOT specifically from S&O99 or Rodriguez2011
+(see docs/methodology.md §6 for verified attribution). Manual `--p-min`/`--p-max` available
+for diagnosis only. See `src/fss.py: scan_fss_windows`.
+
+Rodriguez 2011 (PRB 84, 134209) Appendix A prescribes a DIFFERENT test: increase polynomial
+ORDER by +1 for each index, check parameters stay within 95% CI. Implemented separately in
+`src/fss.py: polynomial_order_stability_test`. Run this as a robustness check.
+
+S&O 1999 criterion is Q > 0.1 (goodness-of-fit probability). With σ(Λ_M)≈10⁻⁴, Q≈0 for
+all our fits due to unmodelled b₂·M^{-2y} corrections. Our χ²/dof < 3.0 threshold is
+calibrated against the benchmark floor (χ²/dof=2.4 at correct W_c). See methodology.md §6.3.
 
 ### Why y is fixed at 1.12, not fitted
 
 y is the effective irrelevant scaling exponent for our M range. S&O 1999 (PRL 82, 382)
-actually FIT y freely (not fixed) and obtain |y|≈2.8 (box disorder). Rodriguez 2011
-(PRB 84, 134209) obtain |y|≈1.7 for a different observable. Our effective y=1.12 is
-empirical: it gives χ²/dof=2.4 on the Anderson benchmark (all gates pass). With M = {4..12}, y cannot be identified
+ACTUALLY FIT y FREELY and obtain |y|≈2.8–3.9 (NOT 1.12). Rodriguez 2011 get |y|≈1.7 for a
+different observable (box-size corrections, not system-size). Our y=1.12 is empirical: it
+gives the correct benchmark (χ²/dof=2.4, W_c and ν within 5% of literature). The origin of
+y=1.12 in the broader literature is unclear; do not attribute it to S&O 1999.
+With M = {4..12}, y cannot be identified
 from our TMM data. Two explicit failures confirmed this:
 
 **Attempt 1** — `fit_y_irrel=True, n_corrections=2, poly_order=4`:

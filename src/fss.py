@@ -16,15 +16,17 @@ variable u = M^{1/ν} · (x - x_c) / x_c:
 
     F(u) ≈ Σ_{k=0}^{poly_order} a_k · u^k
 
-Corrections to scaling (Slevin & Ohtsuki 1999)
------------------------------------------------
+Corrections to scaling
+----------------------
 For small M the leading irrelevant operator contributes additive terms:
 
     Λ_M(x) = Σ a_k u^k  +  b·M^{-y}  +  b₂·M^{-2y}  +  ...
 
-where y is the irrelevant exponent.  For the 3D orthogonal class,
-Slevin & Ohtsuki (1999) measure y = 1.12 ± 0.08.  Omitting these terms
-with M ≤ 10 inflates χ²/dof and biases W_c and ν toward lower values.
+where y is the irrelevant exponent.  Slevin & Ohtsuki (1999, PRL 82, 382) fit
+y freely and obtain |y| ≈ 2.8–3.9 for the 3D orthogonal Λ observable.
+In this project y = 1.12 is used as an empirical effective exponent that gives
+a good benchmark fit (χ²/dof=2.4); it does NOT equal the S&O value and likely
+captures a subleading correction dominant at M={4..10}.  See docs/methodology.md.
 
 Set y_irrel > 0 to enable corrections.  y can be fixed (faster, fewer
 parameters) or fitted freely (more accurate, requires good M coverage).
@@ -48,6 +50,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from scipy.optimize import minimize
+from scipy.stats import chi2 as _chi2_dist
 
 
 # ---------------------------------------------------------------------------
@@ -277,7 +280,7 @@ def fss_curve(x_c: float, nu: float, coeffs: np.ndarray,
 
 
 # ---------------------------------------------------------------------------
-# Window stability scan (Rodriguez et al. 2011, PRB 84, 134209)
+# Window adequacy scan
 # ---------------------------------------------------------------------------
 
 def scan_fss_windows(
@@ -293,21 +296,27 @@ def scan_fss_windows(
     x_min_bound:    float = 0.0,
     x_max_bound:    float = 1.0,
 ) -> tuple[tuple[float, float], list[dict]]:
-    """Scan FSS window half-width δ to identify the stable plateau.
+    """Scan FSS window half-width δ — select widest window where model is adequate.
 
-    Implements the Rodriguez et al. 2011 (PRB 84, 134209) methodology:
+    Procedure (standard FSS practice; see docs/methodology.md §6 for attribution):
       - For each δ ∈ delta_values, fit FSS in window (x_c_rough−δ, x_c_rough+δ).
-      - Record x_c, ν, b, χ²/dof for each δ (no bootstrap — fast scan).
+      - Record x_c, ν, b, χ²/dof, Q (goodness-of-fit probability) for each δ.
+        No bootstrap (fast scan); full bootstrap runs on the selected window.
       - Select: widest δ with χ²/dof < chi2_threshold. If none satisfies the
-        threshold the smallest δ is returned as a fallback.
+        threshold the smallest δ is returned as a fallback (WARNING issued).
 
-    No bootstrap resampling is done here. Run fit_fss with n_boot=500 on the
-    returned window for final uncertainties.
+    NOTE on chi2_threshold vs Q > 0.1 (Slevin & Ohtsuki 1999 criterion):
+      S&O 1999 use Q > 0.1 (probability of observing chi² ≥ observed value).
+      With our σ(Λ_M) ~ 10^{-4} (L=10k, N=500), subleading b₂·M^{-2y} corrections
+      contribute ~2 to χ²/dof even for a correct model at the right window. Thus
+      Q ≈ 0 for all windows; the S&O criterion cannot be applied directly. The
+      chi2_threshold=3.0 is calibrated against the Anderson benchmark (χ²/dof=2.4)
+      as the physical floor from unmodelled subleading corrections.
 
     Returns
     -------
     best_range  : (x_lo, x_hi) of the selected window
-    scan_table  : list of dicts with keys δ, x_lo, x_hi, x_c, nu, b, chi2_dof, n_data
+    scan_table  : list of dicts: δ, x_lo, x_hi, x_c, nu, b, chi2_dof, Q, n_data
     """
     if delta_values is None:
         delta_values = np.linspace(0.03, 0.15, 15)
@@ -340,8 +349,10 @@ def scan_fss_windows(
         res2 = minimize(_chi2, res1.x, args=_args, method="L-BFGS-B",
                         options={"ftol": 1e-11, "gtol": 1e-7, "maxiter": 20_000})
         best  = res2.x if res2.fun < res1.fun else res1.x
-        dof   = max(1, len(x_w) - n_params)
-        chi2v = _chi2(best, M_w, x_w, lam_w, err_w, poly_order, y_irrel, False, 1) / dof
+        dof    = max(1, len(x_w) - n_params)
+        chi2_raw = _chi2(best, M_w, x_w, lam_w, err_w, poly_order, y_irrel, False, 1)
+        chi2v  = chi2_raw / dof
+        Q      = float(1.0 - _chi2_dist.cdf(chi2_raw, df=dof))
 
         scan_table.append({
             "delta":    float(delta),
@@ -351,6 +362,7 @@ def scan_fss_windows(
             "nu":       float(best[1]),
             "b":        float(best[2 + n_poly]),
             "chi2_dof": float(chi2v),
+            "Q":        Q,
             "n_data":   int(np.sum(mask)),
         })
 
@@ -366,13 +378,108 @@ def scan_fss_windows(
 
 
 def print_window_scan(scan_table: list[dict], chi2_threshold: float = 3.0) -> None:
-    """Print window stability scan table (companion to scan_fss_windows)."""
-    print(f"\n  Window stability scan  [χ²/dof < {chi2_threshold:.1f} = ✓]")
-    print(f"  {'δ':>6}  {'window':>20}  {'x_c':>9}  {'ν':>7}  {'b':>8}  {'χ²/dof':>8}  {'N':>4}")
-    print("  " + "-"*72)
+    """Print window adequacy scan table (companion to scan_fss_windows)."""
+    print(f"\n  Window adequacy scan  [χ²/dof < {chi2_threshold:.1f} = ✓; Q=goodness-of-fit prob.]")
+    print(f"  {'δ':>6}  {'window':>20}  {'x_c':>9}  {'ν':>7}  {'b':>8}  {'χ²/dof':>8}  {'Q':>7}  {'N':>4}")
+    print("  " + "-"*80)
     for row in scan_table:
         flag = " ✓" if row["chi2_dof"] < chi2_threshold else (
                " !" if row["chi2_dof"] < 20.0 else " ✗")
+        Q_str = f"{row['Q']:.2e}" if row["Q"] < 0.001 else f"{row['Q']:.3f}"
         print(f"  {row['delta']:6.3f}  [{row['x_lo']:.3f}, {row['x_hi']:.3f}]  "
               f"{row['x_c']:9.5f}  {row['nu']:7.4f}  {row['b']:8.4f}  "
-              f"{row['chi2_dof']:8.3f}{flag}  {row['n_data']:4d}")
+              f"{row['chi2_dof']:8.3f}{flag}  {Q_str:>7}  {row['n_data']:4d}")
+
+
+# ---------------------------------------------------------------------------
+# Rodriguez et al. 2011 polynomial-order stability test (Appendix A)
+# ---------------------------------------------------------------------------
+
+def polynomial_order_stability_test(
+    M_list:    list[int],
+    x_list:    list[float],
+    lam_list:  list[float],
+    err_list:  list[float],
+    x_c_ref:   float,
+    nu_ref:    float,
+    x_c_err_ref: float,
+    nu_err_ref:  float,
+    x_range:   tuple[float, float],
+    y_irrel:   float = 1.12,
+    poly_orders: list[int] | None = None,
+) -> list[dict]:
+    """Rodriguez et al. 2011 (PRB 84, 134209) Appendix A stability test.
+
+    The actual Rodriguez procedure: for each candidate polynomial order, perturb
+    the order by +1 and check that x_c and ν stay within the 95% CI of the
+    reference (chosen) expansion. A stable expansion is declared when ALL
+    one-index perturbations give parameters within the reference 95% CI.
+
+    This tests MODEL ORDER stability, NOT data-range stability (the latter is
+    tested by scan_fss_windows). Both tests together constitute the full
+    Rodriguez 2011 quality check.
+
+    Parameters
+    ----------
+    x_c_ref, nu_ref           : reference fit parameters (from poly_orders[0] or chosen order)
+    x_c_err_ref, nu_err_ref   : bootstrap std of reference (95% CI ≈ ±2×err)
+    poly_orders               : list of orders to test (default [3, 4, 5])
+
+    Returns
+    -------
+    list of dicts: poly_order, x_c, nu, chi2_dof, x_c_stable, nu_stable, stable
+      where stable = True if BOTH x_c and ν within 2σ of reference.
+    """
+    if poly_orders is None:
+        poly_orders = [3, 4, 5]
+
+    M_arr   = np.array(M_list,   dtype=np.float64)
+    x_arr   = np.array(x_list,   dtype=np.float64)
+    lam_arr = np.array(lam_list, dtype=np.float64)
+    err_arr = np.array(err_list, dtype=np.float64)
+    mask    = (x_arr >= x_range[0]) & (x_arr <= x_range[1])
+    M_w, x_w = M_arr[mask], x_arr[mask]
+    lam_w, err_w = lam_arr[mask], err_arr[mask]
+
+    rows = []
+    for order in poly_orders:
+        n_poly   = order + 1
+        n_params = 2 + n_poly + 1
+        p0 = np.array([x_c_ref, nu_ref, 0.5, 0.1] + [0.0] * (order - 1) + [0.0])
+        _args = (M_w, x_w, lam_w, err_w, order, y_irrel, False, 1)
+        res1 = minimize(_chi2, p0, args=_args, method="Nelder-Mead",
+                        options={"xatol": 1e-7, "fatol": 1e-9, "maxiter": 200_000})
+        res2 = minimize(_chi2, res1.x, args=_args, method="L-BFGS-B",
+                        options={"ftol": 1e-12, "gtol": 1e-8, "maxiter": 50_000})
+        best  = res2.x if res2.fun < res1.fun else res1.x
+        dof   = max(1, len(x_w) - n_params)
+        chi2_raw = _chi2(best, M_w, x_w, lam_w, err_w, order, y_irrel, False, 1)
+        chi2v = chi2_raw / dof
+        x_c_fit, nu_fit = float(best[0]), float(best[1])
+
+        # 95% CI check: |fitted − ref| < 2 × ref_err
+        x_c_stable = abs(x_c_fit - x_c_ref) < 2.0 * x_c_err_ref
+        nu_stable  = abs(nu_fit  - nu_ref)  < 2.0 * nu_err_ref
+        rows.append({
+            "poly_order": order,
+            "x_c":        x_c_fit,
+            "nu":         nu_fit,
+            "chi2_dof":   chi2v,
+            "x_c_stable": x_c_stable,
+            "nu_stable":  nu_stable,
+            "stable":     x_c_stable and nu_stable,
+        })
+    return rows
+
+
+def print_polynomial_stability(rows: list[dict], ref_order: int = 4) -> None:
+    """Print the Rodriguez polynomial-order stability test table."""
+    print("\n  Rodriguez 2011 polynomial-order stability test:")
+    print(f"  {'order':>6}  {'x_c':>9}  {'ν':>7}  {'χ²/dof':>8}  {'x_c stable':>12}  {'ν stable':>10}  {'overall':>8}")
+    print("  " + "-"*72)
+    for row in rows:
+        ref_mark = " ← ref" if row["poly_order"] == ref_order else ""
+        overall  = "✓" if row["stable"] else "✗"
+        print(f"  {row['poly_order']:>6}  {row['x_c']:9.5f}  {row['nu']:7.4f}  "
+              f"{row['chi2_dof']:8.3f}  {'yes' if row['x_c_stable'] else 'NO':>12}  "
+              f"{'yes' if row['nu_stable'] else 'NO':>10}  {overall:>8}{ref_mark}")

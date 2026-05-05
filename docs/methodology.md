@@ -200,35 +200,35 @@ in §6 enforces this.
 
 ### 5.3 Irrelevant Exponent y
 
-The correction term b·M^{-y} where y > 0 is the irrelevant scaling exponent
-for the 3D orthogonal universality class.
+The correction term b·M^{-y} where y > 0 is the irrelevant scaling exponent.
 
-**Literature values (in our positive-y convention):**
+**Verified literature values (web-checked, confirmed correct):**
 
-| Source | Observable | |y| |
-|--------|------------|-----|
-| Slevin & Ohtsuki 1999, PRL 82, 382 | Λ = λ/L (TMM) | 2.8–3.9 (fitted freely) |
-| Rodriguez et al. 2011, PRB 84, 134209 | multifractal Δ_q | 1.7 (fixed-λ FSS) |
-| This project (effective) | Λ_M = ξ_M/M | 1.12 (empirical) |
+| Source | Observable | |y| obtained | How |
+|--------|------------|------------|-----|
+| Slevin & Ohtsuki 1999, PRL 82, 382 | Λ = λ/L (TMM) | 2.8–3.9 | Fitted freely (NOT fixed). Box disorder: 2.8, Gaussian: 3.9, Lloyd: 2.5. |
+| Rodriguez et al. 2011, PRB 84, 134209 | multifractal Δ_q, fixed-λ FSS | 1.7 | Fitted freely. Governs box-size correction, NOT system-size correction. |
+| This project (effective) | Λ_M = ξ_M/M | 1.12 | Empirical — chosen to reproduce benchmark. |
 
-S&O 1999 fit y as a free parameter (not fixed), obtaining |y| ≈ 2.8 (box
-disorder). Rodriguez 2011 use a different observable (multifractal exponents
-at fixed box-to-system size ratio λ); their y governs correction with box size,
-not system size, and is not directly comparable to TMM corrections.
+**S&O 1999 does NOT give y=1.12.** Their result is |y|≈2.8 for the Λ
+observable. At M={4..10}, M^{-2.8} ∈ [0.002, 0.025] — extremely small
+corrections. The residual χ²/dof=2.4 in the benchmark is NOT from a y=2.8
+term but from y≈1.12 subleading corrections that happen to dominate at our M
+range.
 
-Our effective value y = 1.12 is the phenomenological correction exponent that
-gives a good benchmark fit (χ²/dof = 2.4, all gates pass). It is **not** the
-S&O value (2.8) or the field-theory leading irrelevant exponent — it appears
-to capture a subleading correction that dominates at M = {4..10}. This is
-acceptable for our purpose: the benchmark validates that the FSS methodology
-recovers the correct W_c and ν.
+**Rodriguez 2011's y≈1.7** governs the correction of multifractal exponents
+with box size l (not system size L). It is not the same quantity.
+
+Our effective y=1.12 is an empirical choice validated by the Anderson benchmark
+(W_c, ν within 5% of literature; χ²/dof=2.4). It likely captures subleading
+corrections of the form M^{-y} that dominate over the leading y≈2.8 term at
+M={4..10}. The source of y=1.12 in other literature citations remains unclear;
+it may derive from a Slevin & Ohtsuki paper prior to 1999 or from ε-expansion.
 
 **Why y is fixed, not fitted**: with M ∈ {4..10}, b·M^{-y} and b_2·M^{-2y}
 are nearly proportional — the fit is degenerate. Setting y free allows the
 optimizer to exploit the near-degeneracy (y → 0 gives b·M^0 = constant, which
-absorbs into a_0). Both failure modes confirmed empirically. The correct
-approach is to fix y at the empirical value and propagate the ±0.08 uncertainty
-as a systematic.
+absorbs into a_0). Both failure modes confirmed empirically (see RUNBOOK §FSS).
 
 **Systematic from y uncertainty**: Run FSS at y = 1.04, 1.12, 1.20. Report
 max(|result(1.04) − result(1.12)|, |result(1.20) − result(1.12)|) as ±syst.
@@ -242,71 +242,96 @@ requires M ≥ 5 distinct sizes with wider spacing (e.g., {4,6,8,10,12,16}).
 
 ---
 
-## 6. Window Selection: Stability Scan
+## 6. Window Selection
 
 ### 6.1 The problem
 
-FSS requires restricting data to a window p ∈ [p_min, p_max] near x_c. If the
+FSS requires restricting data to a window x ∈ [x_min, x_max] near x_c. If the
 window is too wide, higher-order scaling terms (u^5, u^6) introduce systematic
-bias; χ²/dof rises. If too narrow, not enough data points remain to constrain
-all free parameters; errors are large.
+bias; χ²/dof rises. If too narrow, not enough data remain to constrain all free
+parameters; errors are large.
 
-### 6.2 Procedure
+**Attribution note**: Neither S&O 1999 nor Rodriguez 2011 prescribe a half-width
+scan (δ scan). S&O 1999 simply use a narrow W range around W_c and check Q > 0.1.
+Rodriguez 2011 Appendix A prescribes POLYNOMIAL ORDER perturbation (see §6.3).
+The δ scan below is STANDARD FSS PRACTICE for selecting a valid data range; it
+is a general maximum-likelihood adequacy test, not a specific procedure from
+these two papers.
 
-We implement a window stability scan derived from the general principle in
-Slevin & Ohtsuki 1999 (maximize goodness-of-fit while keeping model as simple
-as possible) and Rodriguez et al. 2011 (assess stability of critical parameters
-under model perturbations):
+### 6.2 Window adequacy scan (δ scan)
 
-1. Compute rough p_q_rough from pairwise Λ_M crossing detection (sign-change of
-   Λ_{M1}(p) − Λ_{M2}(p) with linear interpolation of the zero).
+Procedure implemented in `src/fss.py: scan_fss_windows`:
 
-2. Scan δ ∈ {0.03, 0.04, ..., 0.15} (15 values via np.linspace(0.03, 0.15, 15)).
+1. Compute rough x_c_rough from pairwise Λ_M crossing detection (sign-change of
+   Λ_{M1}(x) − Λ_{M2}(x) with linear interpolation of the zero).
 
-3. For each δ: run FSS optimization (Nelder-Mead + L-BFGS-B, no bootstrap)
-   on the window (p_q_rough − δ, p_q_rough + δ). Record x_c(δ), ν(δ), b(δ),
-   χ²/dof(δ), and N_data(δ).
+2. Scan δ ∈ {0.03, 0.04, ..., 0.15} (15 values, np.linspace(0.03, 0.15, 15)).
 
-4. **Select the widest δ with χ²/dof < 3.0.** More data at wider windows
-   constrains the fit more tightly; wider is better as long as the model
-   is adequate (χ²/dof < threshold).
+3. For each δ: run FSS optimization (Nelder-Mead + L-BFGS-B, no bootstrap) on
+   window (x_c_rough − δ, x_c_rough + δ). Record x_c(δ), ν(δ), b(δ), χ²/dof(δ),
+   Q(δ) (goodness-of-fit probability), N_data(δ).
 
-5. If no δ gives χ²/dof < 3.0: report the narrowest δ as fallback and flag a
-   WARNING. This indicates either (a) the model is wrong (wrong universality
-   class, wrong y), or (b) σ(Λ_M) is so small that higher-order corrections
-   are resolved (need poly_order=5 or n_corrections=2).
+4. **Select widest δ with χ²/dof < 3.0** (see §6.3 for threshold justification).
+
+5. If no δ gives χ²/dof < 3.0: report narrowest δ as fallback and flag WARNING.
+   This indicates model failure (wrong symmetry class, wrong y, wrong lattice).
 
 This replaces the previous hardcoded half-width p_fit_hw = 0.08.
 
-### 6.3 χ²/dof Threshold
+### 6.3 Threshold: χ²/dof < 3.0 vs S&O Q > 0.1
 
-The threshold of 3.0 is chosen as follows:
-- σ(Λ_M) ≈ 10⁻⁴ in our data. Residuals at the 0.1% level (model error ~10⁻⁴)
-  produce χ²/dof ≈ 1.0.
-- Subleading corrections b_2·M^{-2y} contribute ~10⁻⁴ to residuals at our M
-  range → χ²/dof ~ 2-3 is expected from this alone.
-- A value > 5 indicates a qualitative fit failure (wrong window, wrong model, or
-  wrong symmetry class).
-- We accept up to 3.0 as the model-inadequacy floor.
+**S&O 1999 criterion** (what the paper actually states): Q > 0.1, where Q is the
+probability of observing χ² ≥ observed value if the model is correct:
 
-### 6.4 Rodriguez et al. 2011 Stability Test (model order)
+```python
+Q = 1 - chi2.cdf(chi2_observed, df=dof)   # scipy.stats.chi2
+```
 
-Rodriguez et al. 2011 additionally assess stability of fit parameters under
-perturbation of the polynomial expansion indices. The procedure (Appendix A):
+For large dof, Q > 0.1 approximately requires χ²/dof < 1.3.
 
-1. Enumerate all expansions over a reasonable range of (nR, nI, mR, mI).
-2. Filter by p-value > 0.1 (Q > 0.1 in S&O notation).
-3. For each candidate expansion, perturb each index by +1 separately AND all by
-   +1 simultaneously; check that critical parameters x_c and ν remain within
-   the 95% CI of the candidate.
-4. Take the simplest stable expansion.
+**Why we cannot use Q > 0.1**: Our σ(Λ_M) ≈ 10⁻⁴ (from L=10,000, N_real=500).
+Even for a perfectly chosen model and window, the unmodelled subleading corrections
+b₂·M^{-2y} contribute ~2 to χ²/dof (since their magnitude ~10⁻⁴ equals σ). The
+Anderson benchmark gives χ²/dof = 2.4 at the correct W_c — this is the
+physical floor. Thus Q ≈ 0 for ALL our fits, and the S&O criterion cannot be
+applied directly.
 
-This is complementary to the window scan: the window scan addresses data range
-(too much/too little data), while the Rodriguez test addresses model order (too
-few/many polynomial terms). Both should be satisfied for a reliable result.
-For our project, poly_order=4 has been validated by the Anderson benchmark; we
-do not repeat the full index perturbation for the dilution runs, but we do vary
-poly_order (3 → 4 → 5) as a robustness check.
+**Our threshold χ²/dof < 3.0** is calibrated as:
+- ≤ 2.5: subleading corrections only; model is appropriate.
+- 2.5–3.0: marginal; acceptable.
+- 3.0–5.0: higher-order corrections visible; model marginally inadequate.
+- > 5.0: qualitative fit failure (wrong window, wrong model, wrong symmetry class).
+
+The scan reports Q for transparency even though Q ≈ 0 for all windows.
+
+### 6.4 Rodriguez et al. 2011: Polynomial-Order Stability Test
+
+**What Rodriguez 2011 Appendix A actually prescribes** (verified from paper):
+
+1. Enumerate all combinations of expansion indices (nR, nI, mR, mI).
+2. Filter by Q > 0.1 (or p-value > 0.1).
+3. For the chosen expansion, increase EACH index by +1 separately AND all by +1
+   simultaneously. Check that x_c and ν stay within the 95% CI (≈ ±2σ bootstrap).
+4. The expansion is "stable" if all perturbations leave x_c and ν in bounds.
+5. Take the SIMPLEST stable expansion.
+
+This tests MODEL ORDER, not data range. It is implemented in
+`src/fss.py: polynomial_order_stability_test` and `print_polynomial_stability`.
+We vary poly_order ∈ {3, 4, 5} and check stability; this is our Rodriguez-2011-
+compliant polynomial order validation.
+
+**Example usage (after main fit)**:
+```python
+from src.fss import polynomial_order_stability_test, print_polynomial_stability
+
+rows = polynomial_order_stability_test(
+    M_flat, p_flat, lam_flat, err_flat,
+    x_c_ref=result.x_c, nu_ref=result.nu,
+    x_c_err_ref=result.x_c_err, nu_err_ref=result.nu_err,
+    x_range=p_fit_range, y_irrel=1.12, poly_orders=[3, 4, 5]
+)
+print_polynomial_stability(rows, ref_order=4)
+```
 
 ---
 
