@@ -20,7 +20,7 @@ Energy choice: E=0.7 (not E=0 or E=0.1).
   - E=0.1: Only 1.7% of half-bandwidth from E=0. BDI-AI crossover length
     ξ_cross ~ (1/E)^{1/Δ_E} ≈ 10 lattice spacings ~ M_max. Corrections
     b·M^{-y} dominate: b=−0.153 at E=0.1, causing spurious crossings at
-    p≈0.35 and χ²/dof=1543. Data in sc_dilution_E0p7.h5.
+    p≈0.35 and χ²/dof=1543. Data in sc_dilution_E0p1.h5.
   - E=0.7: 11.7% of half-bandwidth (6t). ξ_cross << M_min=4. Corrections
     expected similar to Anderson benchmark (b≈0.1). p_c^Q(E=0.7)≈0.384 is
     the mobility-edge minimum (Ujfalusi 2014, Table I/Figure 2).
