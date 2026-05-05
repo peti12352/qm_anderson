@@ -25,10 +25,19 @@ where x is the control parameter (W for Anderson disorder, p for dilution).
 | `n_corrections` | 1 | See identifiability argument below |
 | `n_boot` | 500 | Sufficient for σ < 1% on bootstrap CIs |
 
+### Window selection (Rodriguez et al. 2011 method)
+
+Instead of a hardcoded window half-width, we run a **stability scan**: fit FSS at
+δ ∈ {0.03..0.15} in 15 steps, record χ²/dof(δ), select the widest δ with χ²/dof < 3.0.
+This is the non-ad-hoc procedure. Manual override via `--p-min`/`--p-max` is available
+for diagnosis only. See `src/fss.py: scan_fss_windows` and `docs/methodology.md §6`.
+
 ### Why y is fixed at 1.12, not fitted
 
-y is the irrelevant scaling exponent of the 3D orthogonal universality class. S&O99
-measured y = 1.12 ± 0.08 using M ∈ {8..20}. With M = {4..12}, y cannot be identified
+y is the effective irrelevant scaling exponent for our M range. S&O 1999 (PRL 82, 382)
+actually FIT y freely (not fixed) and obtain |y|≈2.8 (box disorder). Rodriguez 2011
+(PRB 84, 134209) obtain |y|≈1.7 for a different observable. Our effective y=1.12 is
+empirical: it gives χ²/dof=2.4 on the Anderson benchmark (all gates pass). With M = {4..12}, y cannot be identified
 from our TMM data. Two explicit failures confirmed this:
 
 **Attempt 1** — `fit_y_irrel=True, n_corrections=2, poly_order=4`:
@@ -107,18 +116,20 @@ Data regenerated for M=8 and M=10. Results unchanged (same statistics, correct p
 
 ---
 
-## Step 3 — SC quantum percolation at E=0.1
+## Step 3 — SC quantum percolation at E=0.7
 
-Validates the quantum percolation setup against Ujfalusi & Varga (2014) Table II: p_c^Q(E=0.1) = 0.45384.
+Validates the quantum percolation setup against Ujfalusi & Varga (2014) Table I: p_c^Q(E=0.7) ≈ 0.384.
 Uses same FSS model as benchmark (y=1.12 fixed, poly_order=4, n_corrections=1).
+Window selected automatically by the stability scan (§FSS Model above).
 
-**Why E=0.1, not E=0:** The SC lattice is bipartite (chiral symmetry: H → −H under sublattice flip).
-At E=0, this places the system in symmetry class AIII/BDI, not class AI (3D orthogonal). Measured
-consequence: p_q(E=0) ≈ 0.591 for M={4..10}, ν ≈ 2.0, χ²/dof = 10.5 — consistent with Ujfalusi's
-observation that p_c^Q(E→0)→1 and MFSS "severely fails to converge" at E<0.1. E=0.1 is the smallest
-energy where Ujfalusi's MFSS converges and gives the 3D-AI universality class (ν=1.62±0.035).
+**Why E=0.7:**
+- E=0 → class BDI (chiral anomaly): p_q=0.591, ν=2.0, wrong class. Data in `sc_dilution_E0.h5`.
+- E=0.1 → BDI-AI crossover: ξ_cross ≈ 10 ≈ M_max. Corrections dominate (b=−0.153, χ²=1543).
+  Spurious crossings at p≈0.35. Data in `sc_dilution_E0p1.h5`. See Failure E below.
+- E=0.7 → 11.7% of half-bandwidth: ξ_cross ≪ M_min=4. Corrections expected b≈0.1 (like benchmark).
+  p_c^Q(E=0.7)≈0.384 is the mobility-edge minimum (Ujfalusi 2014, Figure 2).
 
-Output files: `data/sc_dilution_E0p1.h5`, checkpoints `sc_dilution_E0p1_M{M}.npz`.
+Output files: `data/sc_dilution_E0p7.h5`, checkpoints `sc_dilution_E0p7_M{M}.npz`.
 
 ```bash
 pixi run sc-dilution
@@ -132,46 +143,51 @@ Kill-safe: per-M and per-p checkpoints written throughout. Resume with same comm
          p    Λ(M=4)    Λ(M=6)    Λ(M=8)   Λ(M=10)
     0.3200   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx
     ...
-    0.4540   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx   ← all close here
+    0.3840   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx   ← crossings here
     ...
 
-  Rough p_q (pairwise crossings): 0.45x  [individual: ['0.44x', '0.45x', '0.46x']]
-  FSS fit window: p ∈ [0.37x, 0.53x]
+  Rough p_q (pairwise crossings): 0.38x  [individual: ['0.37x', '0.38x', '0.39x']]
 
-  p_q = 0.454xx ± 0.000xx (stat) ± 0.000xx (syst)
+  Window stability scan  [χ²/dof < 3.0 = ✓]
+    δ        window     p_q        ν        b     χ²/dof   N
+  0.030  [0.354, 0.414]  0.38xxx  1.6xxx  0.0xxx    x.xxx ✓  xx
+  ...
+  0.1xx  [0.2xx, 0.5xx]  0.38xxx  1.6xxx  0.0xxx    x.xxx ✓  xx
+
+  p_q = 0.384xx ± 0.000xx (stat) ± 0.000xx (syst)
   ν   = 1.6xxx  ± 0.0xxx (stat) ± 0.0xxx (syst)
   χ²/dof = x.xxx
 ```
 
-Crossings at E=0.1 should be staggered by ~0.01–0.04 (corrections-to-scaling at this energy are
-smaller than at E=0 where b≈0 but ν≠1.62). Λ_M ordering: insulating (Λ_4>Λ_10 at low p), metallic
-(Λ_4<Λ_10 at high p).
-
 **Success criterion:**
-- |p_q − 0.454| < 0.01
-- |ν − 1.622| < 0.10  (Ujfalusi 2014: 1.622±0.035)
-- χ²/dof < 5.0
+- |p_q − 0.384| < 0.01
+- |ν − 1.622| < 0.10  (3D-AI class)
+- χ²/dof < 3.0  (window scan threshold)
 - b_err/b < 0.5  (correction amplitude well-constrained)
+- Window scan shows a plateau: multiple δ values give consistent p_q within errors
 
-If p_q deviates by > 0.02 from 0.454: **stop, do not run BCC**. Check energy E in sc_dilution.py.
+If χ²/dof > 5.0 after window scan: **stop, do not run BCC**. Diagnose (wrong energy? wrong M?).
 
 **Refit without re-running TMM:**
 ```bash
-# Refit with default window (crossing-based):
+# Refit with window scan (default):
 pixi run python runs/sc_dilution.py --refit
 
-# Force window to literature region [0.39, 0.52]:
-pixi run python runs/sc_dilution.py --refit --p-min 0.39 --p-max 0.52
+# Force window manually (e.g., for diagnosis):
+pixi run python runs/sc_dilution.py --refit --p-min 0.32 --p-max 0.45
 
-# Refit the old E=0 data (crossings at ~0.59, different symmetry class):
-pixi run python runs/sc_dilution.py --refit --data-file data/sc_dilution.h5 --p-min 0.54 --p-max 0.64
+# Refit old E=0.1 data:
+pixi run python runs/sc_dilution.py --refit --data-file data/sc_dilution_E0p1.h5
+
+# Refit old E=0 data:
+pixi run python runs/sc_dilution.py --refit --data-file data/sc_dilution_E0.h5 --p-min 0.54 --p-max 0.64
 
 # Test sensitivity to y:
 pixi run python runs/sc_dilution.py --refit --y-irrel 1.04
 pixi run python runs/sc_dilution.py --refit --y-irrel 1.20
 ```
 
-Expected runtime: ~9 hours (same parameters as benchmark: L=10k, N_real=500, M=[4,6,8,10]).
+Expected runtime: ~9 hours (L=10k, N_real=500, M=[4,6,8,10]).
 
 ---
 
@@ -266,22 +282,24 @@ combined with higher-order correction terms b₂·M^{-2y} not captured by the si
 _Confirmed_: SC E=0.1 run completed 2026-05-05, data in `data/sc_dilution_E0p1.h5` (greengoblin).
 Runtime: 701.7 min. M=10: 849s/point.
 
-_Fix_: Two options:
-1. **Add M=12, 16**: At M=16, correction = 0.153×16^{-1.12} = 0.006 (4% of signal). Crossings
-   shift toward true p_q. Add to M_LIST, rerun. ~20h additional compute.
-2. **Use E=0.7**: p_c^Q(E=0.7)=0.384 (Ujfalusi min). E=0.7 is 11.7% of half-bandwidth — far from
-   BDI crossover. Corrections expected similar to Anderson benchmark (b≈0.1). Clean crossings
-   and χ²/dof<5 expected with M={4..10}. Requires new 9h run with E=0.7.
+_Fix (applied)_: **E=0.7** is now the default energy in `sc_dilution.py`. At E=0.7,
+ξ_cross ~ (1/0.7)^{1/Δ_E} ≪ M_min=4 for any reasonable Δ_E. Corrections expected
+similar to Anderson benchmark (b≈0.1). New output file: `data/sc_dilution_E0p7.h5`.
 
-_Constrained refit (partial diagnosis — won't fix χ²)_:
+_Alternative fix (not used)_: Add M=12, 16. At M=16, correction 0.153×16^{-1.12}=0.006 (4%
+of signal) — crossings shift toward true p_q. Adds ~20h compute. Only needed if E=0.7 also
+fails (unlikely given ξ_cross argument).
+
+_Constrained refit on E=0.1 data (diagnosis only)_:
 ```bash
 pixi run python runs/sc_dilution.py --refit --data-file data/sc_dilution_E0p1.h5 --p-min 0.41 --p-max 0.50
 ```
-Forces the fit window to straddle Ujfalusi's p_q=0.454. Still expects poor χ² because correction
-dominance persists throughout this window.
+Forces the fit window near Ujfalusi's p_q=0.454. Still gives poor χ² (b=−1.298 unphysical)
+because correction dominance persists throughout this window. Confirms M range is insufficient.
 
 _BCC warning_: BCC has bandwidth 16t → E=0.1 is 1.25% of half-bandwidth, even closer to BDI
 crossover than SC. Same correction-dominance failure expected for BCC at E=0.1 with M={4..10}.
+BCC energy will be selected after SC E=0.7 result is confirmed (same ξ_cross argument applies).
 
 ---
 
@@ -385,10 +403,11 @@ pixi run python runs/sc_benchmark.py --refit --y-irrel 1.20
 |-----------|-----------|-----------------|
 | `data/checkpoints/sc_benchmark_M{M}.npz` | sc_benchmark | M fully complete |
 | `data/checkpoints/sc_benchmark_M{M}_partial/W_{i}.npy` | sc_benchmark | after each W point |
-| `data/checkpoints/sc_dilution_M{M}.npz` | sc_dilution | M fully complete |
-| `data/checkpoints/sc_dilution_M{M}_partial/p_{i}.npy` | sc_dilution | after each p point |
-| `data/checkpoints/bcc_dilution_M{M}.npz` | bcc_dilution | M fully complete |
-| `data/checkpoints/bcc_dilution_M{M}_partial/p_{i}.npy` | bcc_dilution | after each p point |
+| `data/checkpoints/sc_dilution_E0p7_M{M}.npz` | sc_dilution (E=0.7) | M fully complete |
+| `data/checkpoints/sc_dilution_E0p7_M{M}_partial/p_{i}.npy` | sc_dilution (E=0.7) | after each p point |
+| `data/checkpoints/sc_dilution_E0p1_M{M}.npz` | sc_dilution (E=0.1, failed) | M fully complete |
+| `data/checkpoints/bcc_dilution_E0p1_M{M}.npz` | bcc_dilution (E=0.1) | M fully complete |
+| `data/checkpoints/bcc_dilution_E0p1_M{M}_partial/p_{i}.npy` | bcc_dilution (E=0.1) | after each p point |
 
 To force a full rerun of one M: `rm data/checkpoints/{run}_M{M}.npz`
 To force a full rerun of everything: `rm -rf data/checkpoints/ data/*.h5`

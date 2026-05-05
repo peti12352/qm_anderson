@@ -274,3 +274,105 @@ def fss_curve(x_c: float, nu: float, coeffs: np.ndarray,
     """Evaluate the fitted FSS curve Λ_M(x) for plotting."""
     u = M ** (1.0 / nu) * (x_grid - x_c) / x_c
     return sum(c * u**k for k, c in enumerate(coeffs))
+
+
+# ---------------------------------------------------------------------------
+# Window stability scan (Rodriguez et al. 2011, PRB 84, 134209)
+# ---------------------------------------------------------------------------
+
+def scan_fss_windows(
+    M_list:         list[int],
+    x_list:         list[float],
+    lam_list:       list[float],
+    err_list:       list[float],
+    x_c_rough:      float,
+    y_irrel:        float = 1.12,
+    poly_order:     int   = 4,
+    delta_values:   np.ndarray | None = None,
+    chi2_threshold: float = 3.0,
+    x_min_bound:    float = 0.0,
+    x_max_bound:    float = 1.0,
+) -> tuple[tuple[float, float], list[dict]]:
+    """Scan FSS window half-width δ to identify the stable plateau.
+
+    Implements the Rodriguez et al. 2011 (PRB 84, 134209) methodology:
+      - For each δ ∈ delta_values, fit FSS in window (x_c_rough−δ, x_c_rough+δ).
+      - Record x_c, ν, b, χ²/dof for each δ (no bootstrap — fast scan).
+      - Select: widest δ with χ²/dof < chi2_threshold. If none satisfies the
+        threshold the smallest δ is returned as a fallback.
+
+    No bootstrap resampling is done here. Run fit_fss with n_boot=500 on the
+    returned window for final uncertainties.
+
+    Returns
+    -------
+    best_range  : (x_lo, x_hi) of the selected window
+    scan_table  : list of dicts with keys δ, x_lo, x_hi, x_c, nu, b, chi2_dof, n_data
+    """
+    if delta_values is None:
+        delta_values = np.linspace(0.03, 0.15, 15)
+
+    M_arr   = np.array(M_list,   dtype=np.float64)
+    x_arr   = np.array(x_list,   dtype=np.float64)
+    lam_arr = np.array(lam_list, dtype=np.float64)
+    err_arr = np.array(err_list, dtype=np.float64)
+
+    n_poly   = poly_order + 1
+    n_params = 2 + n_poly + 1   # x_c, ν, a_0..a_p, b
+
+    scan_table: list[dict] = []
+    for delta in delta_values:
+        x_lo = max(x_min_bound, x_c_rough - float(delta))
+        x_hi = min(x_max_bound, x_c_rough + float(delta))
+        mask = (x_arr >= x_lo) & (x_arr <= x_hi)
+        M_w, x_w = M_arr[mask], x_arr[mask]
+        lam_w, err_w = lam_arr[mask], err_arr[mask]
+        if len(x_w) < n_params + 1:
+            continue
+
+        p0 = np.array(
+            [x_c_rough, 1.57, 0.5, 0.1] + [0.0] * (poly_order - 1) + [0.0]
+        )
+        _args = (M_w, x_w, lam_w, err_w, poly_order, y_irrel, False, 1)
+
+        res1 = minimize(_chi2, p0, args=_args, method="Nelder-Mead",
+                        options={"xatol": 1e-6, "fatol": 1e-8, "maxiter": 100_000})
+        res2 = minimize(_chi2, res1.x, args=_args, method="L-BFGS-B",
+                        options={"ftol": 1e-11, "gtol": 1e-7, "maxiter": 20_000})
+        best  = res2.x if res2.fun < res1.fun else res1.x
+        dof   = max(1, len(x_w) - n_params)
+        chi2v = _chi2(best, M_w, x_w, lam_w, err_w, poly_order, y_irrel, False, 1) / dof
+
+        scan_table.append({
+            "delta":    float(delta),
+            "x_lo":     float(x_lo),
+            "x_hi":     float(x_hi),
+            "x_c":      float(best[0]),
+            "nu":       float(best[1]),
+            "b":        float(best[2 + n_poly]),
+            "chi2_dof": float(chi2v),
+            "n_data":   int(np.sum(mask)),
+        })
+
+    good = [row for row in scan_table if row["chi2_dof"] < chi2_threshold]
+    if good:
+        best_row = good[-1]         # widest acceptable window
+    elif scan_table:
+        best_row = scan_table[0]    # fallback: narrowest window
+    else:
+        return (x_c_rough - 0.08, x_c_rough + 0.08), []
+
+    return (best_row["x_lo"], best_row["x_hi"]), scan_table
+
+
+def print_window_scan(scan_table: list[dict], chi2_threshold: float = 3.0) -> None:
+    """Print window stability scan table (companion to scan_fss_windows)."""
+    print(f"\n  Window stability scan  [χ²/dof < {chi2_threshold:.1f} = ✓]")
+    print(f"  {'δ':>6}  {'window':>20}  {'x_c':>9}  {'ν':>7}  {'b':>8}  {'χ²/dof':>8}  {'N':>4}")
+    print("  " + "-"*72)
+    for row in scan_table:
+        flag = " ✓" if row["chi2_dof"] < chi2_threshold else (
+               " !" if row["chi2_dof"] < 20.0 else " ✗")
+        print(f"  {row['delta']:6.3f}  [{row['x_lo']:.3f}, {row['x_hi']:.3f}]  "
+              f"{row['x_c']:9.5f}  {row['nu']:7.4f}  {row['b']:8.4f}  "
+              f"{row['chi2_dof']:8.3f}{flag}  {row['n_data']:4d}")

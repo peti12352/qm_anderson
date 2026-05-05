@@ -439,19 +439,19 @@ Both study: 3D simple cubic lattice, random site dilution at probability p, near
 
 ### Method comparison
 
-| Aspect | Ujfalusi MFSS | Our TMM+FSS |
-|--------|--------------|-------------|
-| **Geometry** | L³ cube (3D isotropic) | M²×L quasi-1D bar |
-| **Observable** | Multifractal exponents D_q from full eigenstates | Minimum Lyapunov exponent λ_min |
-| **Derived FSS variable** | Ã_q = P_q · L^{(q-1)D_q} | Λ_M = 1/(2M·λ_min) |
-| **Eigensolver** | Jacobi-Davidson (interior, sparse 3D) | Transfer matrix (product, sequential) |
-| **System sizes** | L=20..140 (factor 7, 7 sizes) | M=4..10 (factor 2.5, 4 sizes) |
-| **Realizations** | 10k–50k per (p,L) | N=500 per (p,M) |
-| **Corrections** | (1/ln L)·f(u) — exact from multifractal | b·M^{-1.12} — phenomenological, AI class |
-| **Energy handling** | Eigenstate energy window ΔE≈0.1 around E | TMM at fixed E (resolvent H-E·I) |
-| **Memory per run** | L³ sparse matrix + eigenvectors (GBs at L=140) | M²×M² matrix only (KB at M=10) |
-| **Parallelism** | Many realizations, independently diagonalizable | vmap over realizations (GPU batching) |
-| **GPU suitability** | Moderate (sparse solvers, not GPU-optimal) | High (dense batched matmul) |
+| Aspect                   | Ujfalusi MFSS                                    | Our TMM+FSS                              |
+| ------------------------ | ------------------------------------------------ | ---------------------------------------- |
+| **Geometry**             | L³ cube (3D isotropic)                           | M²×L quasi-1D bar                        |
+| **Observable**           | Multifractal exponents D_q from full eigenstates | Minimum Lyapunov exponent λ_min          |
+| **Derived FSS variable** | Ã_q = P_q · L^{(q-1)D_q}                         | Λ_M = 1/(2M·λ_min)                       |
+| **Eigensolver**          | Jacobi-Davidson (interior, sparse 3D)            | Transfer matrix (product, sequential)    |
+| **System sizes**         | L=20..140 (factor 7, 7 sizes)                    | M=4..10 (factor 2.5, 4 sizes)            |
+| **Realizations**         | 10k–50k per (p,L)                                | N=500 per (p,M)                          |
+| **Corrections**          | (1/ln L)·f(u) — exact from multifractal          | b·M^{-1.12} — phenomenological, AI class |
+| **Energy handling**      | Eigenstate energy window ΔE≈0.1 around E         | TMM at fixed E (resolvent H-E·I)         |
+| **Memory per run**       | L³ sparse matrix + eigenvectors (GBs at L=140)   | M²×M² matrix only (KB at M=10)           |
+| **Parallelism**          | Many realizations, independently diagonalizable  | vmap over realizations (GPU batching)    |
+| **GPU suitability**      | Moderate (sparse solvers, not GPU-optimal)       | High (dense batched matmul)              |
 
 ### FSS equation comparison
 
@@ -483,7 +483,7 @@ At E=0.1:
 | ν | 1.622 ± 0.035 | ≈ 1.62 ± 0.05 |
 
 Their precision is ~10× better because of 7 system sizes (vs our 4) spanning factor 7 (vs our 2.5). Our precision is sufficient to confirm the same universality class and measure BCC p_q to ±0.005, which is the project goal.
-
+	
 ### Goals comparison
 
 | Aspect | Ujfalusi & Varga (2014) | This project |

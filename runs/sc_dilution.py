@@ -5,25 +5,27 @@ Prerequisite: sc_benchmark.py must PASS (W_c and ν within 5% of expected).
 
 What this measures
 ------------------
-At fixed W=0 (no Anderson disorder) and E=0.1 (off band centre), we scan the
-site occupation probability p from p_c=0.3115 up to p=0.65 and compute Λ_M
-for M ∈ {4,6,8,10}. The crossing point of Λ_M(p) curves is the quantum
-percolation threshold p_q at this energy.
+At fixed W=0 (no Anderson disorder) and E=0.7 (interior of band, away from
+chiral anomaly), we scan the site occupation probability p and compute Λ_M
+for M ∈ {4,6,8,10}. The crossing of Λ_M(p) curves gives p_q at this energy.
 
 Physical interpretation: p_q is the minimum fraction of occupied sites for
 quantum transport to survive at this energy. Below p_q, all eigenstates are
 localized despite there being a classical connected path (for p > p_c). The
-gap p_q - p_c quantifies the "quantum localization cost".
+gap p_q − p_c quantifies the "quantum localization cost".
 
-Energy choice: E=0.1 (not E=0). At E=0, the SC lattice has chiral symmetry
-(bipartite + H → -H under sublattice flip), creating a DOS pseudogap at the
-band centre. Ujfalusi (2014) explicitly shows p_c^Q(E→0)→1 and reports "severe
-convergence troubles" for MFSS at E<0.1. At E=0.1, Ujfalusi Table II gives
-p_c^Q = 0.45384, close to the S&E (1983) value of ~0.44 which was likely
-measured at E slightly above zero. E=0.1 is therefore the correct validation
-target. E=0 data is stored separately in sc_dilution_E0.h5 if needed.
+Energy choice: E=0.7 (not E=0 or E=0.1).
+  - E=0: SC is bipartite → ΓHΓ=−H → class BDI, not AI. p_c^Q(E→0)→1 (Ujfalusi
+    2014). Data stored in sc_dilution_E0.h5.
+  - E=0.1: Only 1.7% of half-bandwidth from E=0. BDI-AI crossover length
+    ξ_cross ~ (1/E)^{1/Δ_E} ≈ 10 lattice spacings ~ M_max. Corrections
+    b·M^{-y} dominate: b=−0.153 at E=0.1, causing spurious crossings at
+    p≈0.35 and χ²/dof=1543. Data in sc_dilution_E0p7.h5.
+  - E=0.7: 11.7% of half-bandwidth (6t). ξ_cross << M_min=4. Corrections
+    expected similar to Anderson benchmark (b≈0.1). p_c^Q(E=0.7)≈0.384 is
+    the mobility-edge minimum (Ujfalusi 2014, Table I/Figure 2).
 
-Expected: p_q(SC, E=0.1) ≈ 0.454 (Ujfalusi & Varga 2014, Table II)
+Expected: p_q(SC, E=0.7) ≈ 0.384 (Ujfalusi & Varga 2014, Table I)
 Our target precision: ±0.005
 """
 from __future__ import annotations
@@ -41,7 +43,7 @@ import sys; sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import src.config
 from src.tmm      import make_tmm_fns, lambda_M
-from src.fss      import fit_fss
+from src.fss      import fit_fss, scan_fss_windows, print_window_scan
 from src.io_utils  import save_run, load_lambda
 from src.monitor   import print_system_info, CompileMonitor
 
@@ -51,19 +53,19 @@ CKPT_DIR = Path("data/checkpoints")
 # Configuration
 # ---------------------------------------------------------------------------
 M_LIST = [4, 6, 8, 10]   # M=12 deferred: adds ~22h, 4 sizes proven sufficient for FSS
-# Dense coverage around the expected p_q ≈ 0.44; sparse far from it.
-P_COARSE = list(np.linspace(0.32, 0.65, 20))
-P_FINE   = list(np.linspace(0.38, 0.52, 20))
+# Dense coverage around the expected p_q ≈ 0.384 (E=0.7 mobility-edge minimum).
+P_COARSE = list(np.linspace(0.28, 0.55, 18))
+P_FINE   = list(np.linspace(0.33, 0.44, 15))
 P_LIST   = sorted(set(P_COARSE + P_FINE))
 
-# L=10k: at p≈0.44, γ_min≈0.3 for M=8 → L×γ_min=3000 >> 1. Proven convergent at
+# L=10k: at p≈0.38, γ_min≈0.3 for M=8 → L×γ_min=3000 >> 1. Proven convergent at
 # benchmark. L=100k was 10× overkill; N_real=500 sufficient (same as benchmark).
 L       = 10_000
 N_REAL  = 500
 W       = 0.0    # pure geometric disorder (site dilution only)
-E       = 0.1    # off band centre — avoids chiral-symmetry anomaly (see docstring)
+E       = 0.7    # interior of band — far from BDI crossover (see docstring)
 T_HOP   = 1.0
-OUTFILE = Path("data/sc_dilution_E0p1.h5")   # E=0 data in sc_dilution_E0.h5
+OUTFILE = Path("data/sc_dilution_E0p7.h5")
 SEED    = 43
 
 # ---------------------------------------------------------------------------
@@ -170,7 +172,7 @@ def main() -> None:
         all_gammas[M] = {}
         N = M * M
 
-        ckpt = CKPT_DIR / f"sc_dilution_E0p1_M{M}.npz"
+        ckpt = CKPT_DIR / f"sc_dilution_E0p7_M{M}.npz"
         if ckpt.exists():
             data = np.load(ckpt)
             all_gammas[M] = {P_LIST[i]: data[f"p_{i}"] for i in range(len(P_LIST))}
@@ -183,7 +185,7 @@ def main() -> None:
         with CompileMonitor(label=f"M={M} warmup", interval=10):
             _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
-        ckpt_w_dir = CKPT_DIR / f"sc_dilution_E0p1_M{M}_partial"
+        ckpt_w_dir = CKPT_DIR / f"sc_dilution_E0p7_M{M}_partial"
         ckpt_w_dir.mkdir(exist_ok=True)
         done_p = set()
         for i, p in enumerate(P_LIST):
@@ -271,18 +273,23 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
         print(f"\n  Rough p_q (min-spread fallback, no crossings found): {p_q_rough:.3f}")
         print("  WARNING: No curve crossings found. Critical point may lie outside P_LIST.")
 
+    Y_IRREL = args.y_irrel
+
     if args.p_min is not None and args.p_max is not None:
         p_fit_range = (args.p_min, args.p_max)
-        print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]  "
-              f"(manual override)")
+        print(f"  FSS fit window: [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]  (manual)")
     else:
-        p_fit_hw = 0.08
-        p_fit_range = (max(0.25, p_q_rough - p_fit_hw), min(0.75, p_q_rough + p_fit_hw))
-        print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]")
-
-    # y fixed at 1.12 (S&O99). With M={4..12}, y is non-identifiable from data:
-    # b·M^{-y} degenerates with a_0 as y→0, optimizer exploits this. See RUNBOOK §FSS.
-    Y_IRREL = args.y_irrel
+        # Window stability scan — selects widest δ with χ²/dof < 3.0.
+        # No bootstrap here (fast scan); full bootstrap runs on the selected window.
+        delta_vals = np.linspace(0.03, 0.15, 15)
+        p_fit_range, scan_table = scan_fss_windows(
+            M_flat, p_flat, lam_flat, err_flat,
+            x_c_rough=p_q_rough, y_irrel=Y_IRREL,
+            poly_order=4, delta_values=delta_vals,
+            chi2_threshold=3.0, x_min_bound=0.25, x_max_bound=0.75,
+        )
+        print_window_scan(scan_table, chi2_threshold=3.0)
+        print(f"\n  Selected window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]")
     result = fit_fss(M_flat, p_flat, lam_flat, err_flat,
                      x_c_guess=p_q_rough, nu_guess=1.57, poly_order=4,
                      x_range=p_fit_range, y_irrel=Y_IRREL,
@@ -303,9 +310,9 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
     print("\n" + "="*55)
     print("FSS RESULT (SC site-diluted quantum percolation)")
     print(f"  y   = {Y_IRREL} fixed (S&O99: 1.12±0.08)")
-    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat)  (literature: ~0.44)")
+    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat)  (Ujfalusi 2014 E=0.7: ~0.384)")
     print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat)  "
-          "(Ujfalusi 2014: 1.62±0.035)")
+          "(3D-AI class: 1.622)")
     print(f"  b   = {result.b:.4f}  ± {result.b_err:.4f} (stat)")
     print(f"  χ²/dof = {result.chi2_dof:.3f}")
     print(f"  Systematic from y±0.08: p_q syst=±{pq_syst:.5f}  ν syst=±{nu_syst:.4f}")

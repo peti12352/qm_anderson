@@ -45,7 +45,7 @@ import sys; sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import src.config
 from src.tmm      import make_tmm_fns, lambda_M
-from src.fss      import fit_fss
+from src.fss      import fit_fss, scan_fss_windows, print_window_scan
 from src.io_utils  import save_run, load_lambda
 from src.monitor   import print_system_info, CompileMonitor
 
@@ -271,16 +271,21 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
         print(f"\n  Rough p_q(BCC) (min-spread fallback, no crossings found): {p_q_rough:.3f}")
         print("  WARNING: No curve crossings found. Critical point may lie outside P_LIST.")
 
+    Y_IRREL = args.y_irrel
+
     if args.p_min is not None and args.p_max is not None:
         p_fit_range = (args.p_min, args.p_max)
-        print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]  "
-              f"(manual override)")
+        print(f"  FSS fit window: [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]  (manual)")
     else:
-        p_fit_hw = 0.08
-        p_fit_range = (max(0.22, p_q_rough - p_fit_hw), min(0.65, p_q_rough + p_fit_hw))
-        print(f"  FSS fit window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]")
-
-    Y_IRREL = args.y_irrel
+        delta_vals = np.linspace(0.03, 0.15, 15)
+        p_fit_range, scan_table = scan_fss_windows(
+            M_flat, p_flat, lam_flat, err_flat,
+            x_c_rough=p_q_rough, y_irrel=Y_IRREL,
+            poly_order=4, delta_values=delta_vals,
+            chi2_threshold=3.0, x_min_bound=0.22, x_max_bound=0.65,
+        )
+        print_window_scan(scan_table, chi2_threshold=3.0)
+        print(f"\n  Selected window: p ∈ [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]")
     result = fit_fss(M_flat, p_flat, lam_flat, err_flat,
                      x_c_guess=p_q_rough, nu_guess=1.57, poly_order=4,
                      x_range=p_fit_range, y_irrel=Y_IRREL,
