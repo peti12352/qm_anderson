@@ -162,9 +162,17 @@ for disordered systems: ν must be at least 2/3 in any dimension.)
 
 ### 4.1 Zoom out
 
-RG is a systematic way of asking what does the system look like at long length
-scales? The operation is: replace every block of b^d () sites with one effective site,
-re-expressing the Hamiltonian in terms of coarse-grained variables.
+RG is a systematic way of asking: what does the system look like at long length
+scales? The operation is: group every b^d sites (b is the rescaling factor, d the
+dimension) into a single effective site. The original Hamiltonian has parameters
+defined at each site - on-site energies and hopping amplitudes to neighbours.
+After grouping, you integrate out the degrees of freedom inside each block to
+produce an effective Hamiltonian acting on the effective sites. The parameters of
+this effective Hamiltonian - effective on-site energies and effective hoppings
+between adjacent blocks - are the coarse-grained variables. They are derived from
+the original parameters by eliminating the short-distance detail. The lattice
+constant has grown by b; the site count has shrunk by b^d; the form of the
+Hamiltonian is the same.
 
 At the critical point, the system is **scale-invariant**: the coarse-grained
 Hamiltonian looks the same as the original (just with renormalized parameters). This
@@ -209,7 +217,7 @@ This is the derivation. ν is an RG eigenvalue; ξ ~ |x − x_c|^{−ν} is the 
 ### 4.3 Relevant vs irrelevant operators
 
 **Relevant operators** (eigenvalue > 0): grow under coarse-graining. x − x_c is
-relevant - it drives the system away from the critical point. You must tune x to x_c
+relevant -> it drives the system away from the critical point. We must tune x to x_c
 to stay at the fixed point.
 
 **Irrelevant operators** (eigenvalue < 0): shrink under coarse-graining. At infinite
@@ -224,17 +232,24 @@ logarithmic corrections.
 
 ## 5. Finite-Size Scaling (FSS)
 
-### 5.1 The problem
+### 5.1 Problem
 
-In an infinite system at x_c, ξ → ∞ and the transition is sharp. In a finite system
-of size L, ξ is cut off at L: the system cannot know it is at the critical point
-more precisely than |x − x_c| ~ L^{−1/ν} (the scale at which ξ ~ L). So the
-"transition" in a finite system is a crossover, smeared over a range δx ~ L^{−1/ν}.
+In an infinite system, all observables are non-analytic (singular) at x_c: Λ_M
+jumps, ξ diverges, etc. The transition is a sharp point.
 
-FSS turns this from a problem into a tool: the shape of the smearing, controlled by
-L, tells you ν.
+In a finite system of linear size L, all observables are smooth analytic functions
+of x everywhere - a finite system has no phase transitions in the strict sense.
+The divergence of ξ is cut off: once ξ reaches L, the system cannot develop
+further correlations. Equivalently, the system cannot resolve the difference between
+being exactly at x_c and being at a distance |x − x_c| ~ L^{-1/ν} away (the
+distance at which ξ(x) ~ L). The sharp singularity of the infinite-system
+transition is therefore replaced by a smooth crossover of width δx ~ L^{-1/ν}.
 
-### 5.2 The FSS hypothesis
+FSS turns this from a problem into a tool: the width of the crossover, and the
+shape of how observables vary across it, both depend on L through L^{-1/ν}, which
+is how ν is extracted.
+
+### 5.2 FSS hypothesis
 
 Near x_c, ξ is the only relevant length scale. Any dimensionless observable O(L, x)
 can only depend on L and x through the dimensionless ratio L/ξ:
