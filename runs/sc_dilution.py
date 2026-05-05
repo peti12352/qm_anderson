@@ -31,6 +31,7 @@ Our target precision: ±0.005
 from __future__ import annotations
 
 import argparse
+import gc
 import time
 from pathlib import Path
 
@@ -227,6 +228,9 @@ def main() -> None:
         print(f"  ✓ checkpoint saved → {ckpt}")  # E0p1 checkpoint
         for f in ckpt_w_dir.iterdir(): f.unlink()
         ckpt_w_dir.rmdir()
+        del tmm_batched
+        gc.collect()
+        jax.clear_caches()
 
     elapsed = time.time() - t0
     print(f"\nData collected in {elapsed/60:.1f} min")
