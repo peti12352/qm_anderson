@@ -83,8 +83,7 @@ far the wavefunction of a specific state extends before decaying. States deep in
 localized phase have small ξ_loc. States near the mobility edge have large ξ_loc.
 
 **Correlation length ξ_corr**: a property of the phase transition itself. It measures
-the spatial scale over which the critical fluctuations of the system are correlated -
-the length scale up to which critical fluctuations are correlated. ξ_corr diverges at the critical
+the spatial scale over which critical fluctuations are correlated. ξ_corr diverges at the critical
 point regardless of which side you approach from.
 
 **How they relate at the Anderson or percolation transition:**
@@ -159,12 +158,12 @@ for disordered systems: ν must be at least 2/3 in any dimension.)
 
 ---
 
-## 4. The Renormalization Group (RG)
+## 4. Renormalization Group (RG)
 
-### 4.1 zoom out
+### 4.1 Zoom out
 
-The RG is a systematic way of asking "what does the system look like at long length
-scales?" The operation is: replace every block of b^d sites with one effective site,
+RG is a systematic way of asking what does the system look like at long length
+scales? The operation is: replace every block of b^d () sites with one effective site,
 re-expressing the Hamiltonian in terms of coarse-grained variables.
 
 At the critical point, the system is **scale-invariant**: the coarse-grained
