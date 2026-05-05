@@ -22,16 +22,16 @@ $$
 
 where the sum runs over nearest-neighbour pairs $\langle i,j \rangle$ with both sites occupied.
 Each site is independently occupied with probability $p$; empty otherwise. No on-site
-disorder ($W = 0$). The only randomness is geometric: which sites exist.
+disorder ($W = 0$). The only randomness is geometric (which sites are occupied).
 
 ### 1.2 Classical vs quantum percolation
 
-**Classical percolation** asks: is there a connected path of occupied sites spanning
+**Classical percolation**: existence of connected path of occupied sites spanning
 the system? Below $p_c$ (the classical threshold), all clusters are finite - no spanning
 path exists. Above $p_c$, a giant cluster appears. For SC: $p_c = 0.3115$.
 
-**Quantum percolation** asks the harder question: even given a connected spanning
-cluster, do the quantum eigenstates on that cluster extend across the system, or do
+**Quantum percolation**: even given a connected spanning
+cluster ($p > p_c$), do the quantum eigenstates on that cluster extend across the system, or do
 they localize? The answer is not automatic - quantum interference can localize states
 even on a connected graph. The quantum threshold $p_q > p_c$. The gap $p_q - p_c$ is the
 quantum localization cost.
@@ -116,7 +116,7 @@ At $p_q$ itself: $\xi_\text{corr} \to \infty$. The system is scale-invariant. Wa
 
 ## 3. Phase Transition and What $\nu$ Means Physically
 
-### 3.1 This is a continuous (second-order) phase transition
+### 3.1 Continuous (2nd-order) phase transition
 
 The transition at $p_q$ is continuous: there is no discontinuous jump in any observable.
 Instead, everything changes smoothly and the localization length diverges as a power
@@ -170,27 +170,68 @@ for disordered systems: $\nu$ must be at least $2/3$ in any dimension.)
 
 ## 4. Renormalization Group (RG)
 
-### 4.1 Zoom out
+### 4.1 The RG operation
 
-RG is a systematic way of asking: what does the system look like at long length
-scales? The operation is: group every $b^d$ sites ($b$ is the rescaling factor, $d$ the
-dimension) into a single effective site. The original Hamiltonian has parameters
-defined at each site - on-site energies and hopping amplitudes to neighbours.
-After grouping, you integrate out the degrees of freedom inside each block to
-produce an effective Hamiltonian acting on the effective sites. The parameters of
-this effective Hamiltonian - effective on-site energies and effective hoppings
-between adjacent blocks - are the coarse-grained variables. They are derived from
-the original parameters by eliminating the short-distance detail. The lattice
-constant has grown by $b$; the site count has shrunk by $b^d$; the form of the
-Hamiltonian is the same.
+**What problem does RG solve?** Near a phase transition, fluctuations occur on all
+length scales from the lattice spacing $a$ up to $\xi$. Direct calculation is
+intractable. RG disentangles this by systematically eliminating the short-distance
+degrees of freedom, producing an effective theory for the long-distance physics.
 
-At the critical point, the system is **scale-invariant**: the coarse-grained
-Hamiltonian looks the same as the original (just with renormalized parameters). This
-is the **RG fixed point**.
+**The blocking step.** Group every $b^d$ sites into a block (here $d = 3$; typically $b = 2$):
 
-Away from the critical point, the coarse-graining reveals that some parameters grow
-(relevant operators) and others shrink (irrelevant operators) under successive
-applications.
+```
+original (spacing a):        blocked (spacing ba):
+□ □ │ □ □ │ □ □             ■  │  ■  │  ■
+□ □ │ □ □ │ □ □   →         ───┼─────┼───
+□ □ │ □ □ │ □ □             ■  │  ■  │  ■
+```
+
+Within each block there are $b^d$ sites with their internal Hamiltonian $H_\text{block}$.
+Identify the lowest-energy eigenstate of each block - this becomes the **effective
+site** (the "super-site"). Compute the effective hopping between adjacent super-sites
+as the matrix element of the inter-block coupling in this low-energy subspace. This
+gives a new Hamiltonian $H'$ that:
+
+- acts on a lattice with spacing $ba$ (coarser by $b$)
+- has the same tight-binding form as $H$
+- has renormalized parameters: effective hopping $t'$, effective occupation $p'$
+
+Eliminating the intra-block degrees of freedom to produce $H'$ is what **integrating
+out** means: the $b^d - 1$ internal modes per block are removed by projecting onto the
+low-energy subspace, not discarded - their effect is encoded in the renormalized $t'$, $p'$.
+
+**The RG map.** Let $\{g\} = \{p, t, E, \ldots\}$ denote all parameters of $H$. One
+blocking step defines a map:
+
+$$\{g\} \;\xrightarrow{\;R_b\;}\; \{g'\} = R_b\bigl[\{g\}\bigr]$$
+
+Repeated application traces a **trajectory** in the space of Hamiltonians: the RG flow.
+
+**Fixed points.** A fixed point $\{g^*\}$ satisfies $R_b[\{g^*\}] = \{g^*\}$: coarse-graining
+leaves $H$ unchanged. This is **scale invariance** - the system looks identical at all
+length scales. Scale invariance requires no characteristic length scale, i.e. $\xi \to \infty$.
+Therefore **every critical point is an RG fixed point**.
+
+For our system there are three fixed points:
+
+- **Insulating** ($p \to 0$): localized systems flow here under repeated blocking.
+- **Metallic** ($p \to 1$): extended systems flow here.
+- **Critical** ($p = p_q$): the transition. Unstable - any $\delta p \neq 0$ flows away.
+
+```
+p = 0            p_q           p = 1
+  ●  ←←←←←←←←←  ★  →→→→→→→→→  ●
+insulating      critical      metallic
+```
+
+**Linearization.** Near $p_q$, write $\delta p = p - p_q$ and linearize $R_b$:
+
+$$\delta p \;\to\; \delta p' = b^{1/\nu} \cdot \delta p$$
+
+The exponent $1/\nu$ is the RG eigenvalue at the fixed point - it comes from
+diagonalizing the linearized map $\partial R_b / \partial g\big|_{g^*}$, not from assumption.
+Since $b^{1/\nu} > 1$, $\delta p$ grows under coarse-graining: $p - p_q$ is a **relevant
+operator** that drives the system away from criticality. This is the input to section 4.2.
 
 ### 4.2 Why $\xi \sim |x - x_c|^{-\nu}$ emerges from RG
 
@@ -395,12 +436,12 @@ the mode closest to the mobility edge.
 
 ### 6.5 What $M$ and $L$ are (critical distinction)
 
-|                   | $M$ (cross-section)                          | $L$ (strip length)                        |
-| ----------------- | -------------------------------------------- | ----------------------------------------- |
-| Role              | **Finite-size variable** (the $L$ in FSS)    | Statistical averaging device              |
-| Physical meaning  | The system size that competes with $\xi_{3D}$ | Must be $\gg \xi_M$ to converge          |
-| Varies in FSS?    | Yes - $\{4, 6, 8, 10\}$                     | No - fixed at 10,000                      |
-| Limit of interest | $M \to \infty$ recovers 3D physics           | $L \to \infty$ taken first (converges)    |
+|                   | $M$ (cross-section)                       | $L$ (strip length)                     |
+| ----------------- | ----------------------------------------- | -------------------------------------- |
+| Role              | **Finite-size variable** (the $L$ in FSS) | Statistical averaging                  |
+| Physical meaning  | system size that competes with $\xi_{3D}$ | must be $\gg \xi_M$ to converge        |
+| Varies in FSS     | Yes -> $\{4, 6, 8, 10\}$                  | No -> fixed at 10,000                  |
+| Limit of interest | $M \to \infty$ recovers 3D physics        | $L \to \infty$ taken first (converges) |
 
 **Why $M$ plays the role of $L$ in FSS**: the TMM has already taken $L \to \infty$ (Oseledec's
 theorem). What remains is a well-defined number $\xi_M$ for each $M$. Now $M$ is the only
@@ -411,7 +452,7 @@ The ratio $M/\xi_{3D}$ controls whether the strip looks localized or metallic.
 
 ## 7. How $\Lambda_M$ Encodes the Phase Transition
 
-### 7.1 The three regimes
+### 7.1 Three regimes
 
 **$p \ll p_q$ (deep localized phase):**
 $\xi_{3D}$ is small (few lattice spacings). The strip width $M \gg \xi_{3D}$. The strip "contains"
@@ -556,7 +597,7 @@ $$
 
 ## 10. Symmetry Classes and Why Energy Matters
 
-### 10.1 The three Wigner-Dyson classes
+### 10.1 Three Wigner-Dyson classes
 
 Random matrix theory classifies disordered quantum systems by their symmetries:
 
@@ -601,7 +642,7 @@ Physical system
 │
 ├── Site-diluted lattice (control parameter p)
 │   ├── p < p_c: no connected cluster (trivially localized)
-│   ├── p_c < p < p_q: connected cluster but all states localized (quantum percolation)
+│   ├── p_c < p < p_q: connected cluster but all states localized (q percolation)
 │   └── p > p_q: extended states exist → quantum transport
 │
 ├── Key quantity: ξ ~ |p − p_q|^{−ν}
@@ -630,18 +671,13 @@ Method
 ## References
 
 1. **Anderson P W 1958** Phys. Rev. **109** 1492 - original localization paper
-
 2. **Fisher M E and Barber M N 1972** Phys. Rev. Lett. **28** 1516 - finite-size scaling
    introduced
-
 3. **MacKinnon A and Kramer B 1983** Z. Phys. B **53** 1 - transfer matrix method for
    Anderson localization; original $\Lambda_M$ observable
-
 4. **Slevin K and Ohtsuki T 1999** Phys. Rev. Lett. **82** 382 - corrections-to-scaling
    in 3D Anderson TMM; $y$ fitted freely, $|y| \approx 2.8$; $\nu = 1.57\text{--}1.58$; bootstrap CIs
-
 5. **Rodriguez A, Vasquez L J, Slevin K and Römer R A 2011** Phys. Rev. B **84** 134209
    - multifractal FSS; polynomial-order stability test (Appendix A); $\nu = 1.590$
-
-6. **Ujfalusi L and Varga I 2014** Phys. Rev. B **90** 245136 - quantum percolation
+1. **Ujfalusi L and Varga I 2014** Phys. Rev. B **90** 245136 - quantum percolation
    on SC lattice; mobility edge $p_c^Q(E)$; BDI anomaly at $E = 0$; $p_c^Q(E = 0.7) \approx 0.384$
