@@ -535,7 +535,7 @@ $$
 by the ordinary LLN applied to $\log a_i$. So $P_n \sim e^{n\gamma}$ almost surely: one
 Lyapunov exponent, given directly by averaging the log.
 
-**The matrix obstacle.** For matrices $A_i \in GL(d)$, the same step fails:
+**Matrix obstacle.** For matrices $A_i \in GL(d)$, the same step fails:
 
 $$
 \log(A_n \cdots A_1) \neq \sum_{i=1}^n \log A_i \quad \text{when } [A_i, A_j] \neq 0
@@ -543,7 +543,7 @@ $$
 
 Non-commutativity breaks additivity. LLN cannot be applied directly to the matrix logarithm.
 
-**The bridge: Kingman's subadditive ergodic theorem.** Define $f_n = \log\|A_n \cdots A_1\|$.
+**-> Kingman's subadditive ergodic theorem.** Define $f_n = \log\|A_n \cdots A_1\|$.
 Submultiplicativity of the matrix norm gives:
 
 $$
@@ -580,7 +580,7 @@ replaces the single mean $\mathbb{E}[\log a]$ of the scalar case.
 Non-commutativity is physical: the order in which wavefunction amplitudes propagate
 through slices matters. Oseledec guarantees that despite this, all $2M^2$ growth rates
 converge to definite values $\gamma_i$ for almost every disorder realization — this is
-why $\xi_M = 1/\gamma_\text{min}$ is well-defined and self-averaging.
+why $\xi_M = 1/\gamma_\text{min}$ is well-defined and self-averaging.x
 
 ### 6.4 Normalized localization length $\Lambda_M$
 
@@ -668,7 +668,7 @@ $a_0 = \Lambda_M(p_q)$ is the value at the critical point (same for all $M$ by d
 $a_1$ controls the slope - positive for the metallic side, negative for the localized side.
 Higher terms account for the curvature of $F$ away from $u = 0$.
 
-The polynomial is valid for small $|u|$ - i.e., close to $p_q$. This is why we need a
+The polynomial is valid for small $|u|$ (close to $p_q$). This is why we need a
 fitting window.
 
 ### 8.2 Free parameters and what the fit extracts
@@ -800,34 +800,98 @@ dominance: $b = -0.153$, $\chi^2/\text{dof} = 1543$, spurious crossings at $p \a
 
 ## 11. Summary of Concepts
 
-```
-Physical system
-│
-├── Site-diluted lattice (control parameter p)
-│   ├── p < p_c: no connected cluster (trivially localized)
-│   ├── p_c < p < p_q: connected cluster but all states localized (q percolation)
-│   └── p > p_q: extended states exist → quantum transport
-│
-├── Key quantity: ξ ~ |p − p_q|^{−ν}
-│   ├── = ξ_loc on the localized side
-│   └── = transport coherence length on the metallic side
-│
-└── Critical exponent ν = 1.622 (3D-AI class; same for SC and BCC)
+### Physical system
 
-Method
-│
-├── TMM: quasi-1D strip M × M × L → Lyapunov exponents → ξ_M → Λ_M = ξ_M/M
-│   ├── L = 10,000: statistical averaging (Oseledec limit)
-│   └── M = {4,6,8,10}: the finite-size variable for FSS
-│
-└── FSS: Λ_M(p) = F(M^{1/ν}·(p−p_q)/p_q) + b·M^{−y}
-    ├── F: universal scaling function (polynomial approx.)
-    ├── b·M^{−y}: leading irrelevant correction
-    ├── Fit: 8 parameters {p_q, ν, a_0..a_4, b}
-    ├── Window: δ adequacy scan (widest δ with χ²/dof < 3.0)
-    ├── Stability: Rodriguez polynomial-order perturbation test
-    └── Uncertainties: bootstrap (stat) + y-variation (syst)
-```
+The Hamiltonian is
+
+$$H = -t \sum_{\langle i,j \rangle} c_i^\dagger c_j,$$
+
+with site occupancy drawn i.i.d. with probability $p$ (site-diluted lattice, $W = 0$).
+Three regimes are separated by two thresholds:
+
+| Regime | Condition | Physics |
+|---|---|---|
+| Insulating (no cluster) | $p < p_c$ | No percolating backbone; all states trivially localized |
+| Quantum-percolation | $p_c < p < p_q$ | Percolating cluster exists; quantum interference localizes every state |
+| Metallic (extended) | $p > p_q$ | Extended eigenstates appear; quantum transport is possible |
+
+The classical percolation threshold $p_c$ (SC: 0.3115, BCC: 0.2457) is a geometric fact.
+The quantum percolation threshold $p_q > p_c$ is dynamical: interference localizes states
+even on a connected cluster. The diverging length scale near $p_q$ is
+
+$$\xi \sim |p - p_q|^{-\nu},$$
+
+where $\nu$ is the correlation-length exponent. Both sides share the same $\nu$:
+$\xi_\text{loc}$ diverges from below, the transport coherence length diverges from above.
+
+**Universality class.** The transition belongs to the 3D Anderson (orthogonal, AI) class,
+giving $\nu = 1.622 \pm 0.010$ (our fit; consistent with Slevin-Ohtsuki 1999 $\nu = 1.57$-$1.58$
+and Rodriguez 2011 $\nu = 1.590$). The Harris criterion requires $\nu \geq 2/d = 2/3$;
+the measured value satisfies this comfortably.
+
+---
+
+### Method: Transfer Matrix
+
+The Hamiltonian is sliced along one axis. Slice $k$ has $M^2$ sites with on-site matrix
+$C_k$ and inter-slice hopping matrices $V_k$, $V_k^\dagger$:
+
+$$H = \sum_k C_k + \sum_k \bigl(V_k + V_k^\dagger\bigr).$$
+
+Projecting the Schrodinger equation onto slice $k$ and solving for $\psi_{k+1}$ gives the
+two-component recursion
+
+$$\begin{pmatrix}\psi_{k+1}\\\psi_k\end{pmatrix}
+= \underbrace{\begin{pmatrix}T_k & -V^{-1}V_\text{back}\\I & 0\end{pmatrix}}_{\mathcal{T}_k}
+\begin{pmatrix}\psi_k\\\psi_{k-1}\end{pmatrix},
+\quad T_k = V_k^{-1}(E\cdot I - C_k).$$
+
+The product $P_L = \mathcal{T}_L \cdots \mathcal{T}_1$ is a $2M^2 \times 2M^2$ symplectic matrix.
+By Oseledec's theorem (the matrix analog of the law of large numbers, proved via Kingman's
+subadditive ergodic theorem), the singular values of $P_L$ grow exponentially:
+$\sigma_i(P_L)^{1/L} \to e^{\gamma_i}$ almost surely. The smallest positive Lyapunov exponent
+gives the localization length $\xi_M = 1/\gamma_\text{min}$, and the dimensionless ratio
+
+$$\Lambda_M = \xi_M / M$$
+
+is the FSS observable. It is $O(1)$ at criticality and $\to\infty$ ($\to 0$) in the metallic
+(localized) phase as $M \to \infty$.
+
+| Parameter | Role | Value used |
+|---|---|---|
+| $L$ | Strip length (statistical averaging) | 10,000 |
+| $M$ | Cross-section width (FSS variable) | 4, 6, 8, 10 |
+| $E$ | Energy (sets $T_k$, must avoid $E=0$ BDI anomaly) | 0.7 |
+
+---
+
+### Method: Finite-Size Scaling
+
+Near $p_q$, the one-parameter scaling hypothesis gives
+
+$$\Lambda_M(p) = F\!\left(M^{1/\nu}\cdot\frac{p - p_q}{p_q}\right) + b\cdot M^{-y} + \cdots$$
+
+$F$ is the universal scaling function (approximated by a polynomial $\sum_n a_n u^n$ where
+$u = M^{1/\nu}(p-p_q)/p_q$), $b\cdot M^{-y}$ is the leading irrelevant correction (exponent
+$y > 0$), and $\eta = 0$ so no $M^\eta$ prefactor appears. All $\Lambda_M$ curves cross near
+$p_q$ because $F(0)$ is constant.
+
+**Fitting procedure.**
+
+1. **Window scan.** Restrict data to $|p - p_q^\text{rough}| < \delta$ and scan $\delta$
+   downward. Accept the widest $\delta$ giving $\chi^2/\text{dof} < 3.0$.
+
+2. **Minimize** $\chi^2 = \sum_{M,p}\left[\frac{\Lambda_M^\text{meas} - F(u) - b\cdot M^{-y}}{\sigma_{M,p}}\right]^2$
+   over $\{p_q,\,\nu,\,a_0,\ldots,a_{n_p},\,b\}$ ($\sim 8$ free parameters for $n_p = 4$).
+
+3. **Statistical uncertainty.** Bootstrap over $L$-blocks of the Lyapunov sequence.
+
+4. **Systematic uncertainty.** Vary $y$ over $[y_\text{min}, y_\text{max}]$ (or fix $y = 1.12$
+   empirically) and take the envelope of $p_q$ and $\nu$ as the systematic error.
+
+The stability of the fit is checked by perturbing the polynomial order by $\pm 1$
+(Rodriguez 2011 Appendix A) and confirming that $p_q$ and $\nu$ shift by less than
+one statistical $\sigma$.
 
 ---
 
