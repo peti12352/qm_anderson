@@ -8,15 +8,15 @@
 
 | Quantity | Value | Reliability |
 |----------|-------|-------------|
-| p_q(E=0) | 0.591 ± 0.001 | **Reliable** — from crossings, not FSS |
-| ν(E=0) | 1.99 ± 0.03 | **Indicative only** — poor χ², wrong ansatz, underconstrained M range |
-| b | ≈ 0 (b_err/b = 7.7) | **Meaningful** — signature of chiral fixed point |
-| χ²/dof | 10.5 | **Expected** — grid mismatch + wrong FSS model |
+| p_q(E=0) | 0.591 ± 0.001 | **Reliable** - from crossings, not FSS |
+| ν(E=0) | 1.99 ± 0.03 | **Indicative only** - poor χ², wrong ansatz, underconstrained M range |
+| b | ≈ 0 (b_err/b = 7.7) | **Meaningful** - signature of chiral fixed point |
+| χ²/dof | 10.5 | **Expected** - grid mismatch + wrong FSS model |
 | Symmetry class | BDI (chiral orthogonal) | **Confirmed** |
 | Same as 3D AI (ν=1.62)? | **No** | Different fixed point |
 | Data file | `data/sc_dilution.h5` (greengoblin) | Full 39-point p scan, M={4,6,8,10} |
 
-**Why E=0.1 is used for the main project**: at E≠0, chiral symmetry is broken, system is 3D orthogonal class AI, ν=1.622, same as the Anderson benchmark. At E=0, system is class BDI — scientifically interesting but requires a separate research effort.
+**Why E=0.1 is used for the main project**: at E≠0, chiral symmetry is broken, system is 3D orthogonal class AI, ν=1.622, same as the Anderson benchmark. At E=0, system is class BDI - scientifically interesting but requires a separate research effort.
 
 ---
 
@@ -26,7 +26,7 @@
 
 Start with a perfect SC lattice: a 3D grid of atoms at positions (i,j,k) with i,j,k ∈ ℤ. Each atom has one orbital (s-orbital for simplicity). Electrons hop between nearest neighbors (distance 1 apart) with amplitude -t.
 
-**Site dilution** means: independently and randomly, each site is either present (occupied) with probability p, or absent with probability (1-p). Nothing else changes — no disorder in the hopping strength, no random on-site energies. The only randomness is geometric: which atoms are there?
+**Site dilution** means: independently and randomly, each site is either present (occupied) with probability p, or absent with probability (1-p). Nothing else changes - no disorder in the hopping strength, no random on-site energies. The only randomness is geometric: which atoms are there?
 
 When a site is absent:
 - Its orbital doesn't exist → it contributes no row/column to the Hamiltonian
@@ -35,7 +35,7 @@ When a site is absent:
 
 In code (`src/lattice.py`), absent sites are handled differently: they're assigned `ABSENT_ENERGY = 1e6`, which makes their on-site energy so large that they effectively decouple from everything. This is mathematically equivalent to removing them.
 
-**Physical picture**: you get a random collection of occupied clusters. For p below the classical percolation threshold p_c ≈ 0.3115 (for SC), there is no system-spanning cluster — electrons can't even classically traverse the sample. Above p_c, there's a giant connected cluster. But classical connectivity doesn't mean quantum transport: even with p > p_c, quantum interference can localize all wavefunctions on the cluster. The quantum percolation threshold p_q > p_c is the minimum occupation where quantum transport survives.
+**Physical picture**: you get a random collection of occupied clusters. For p below the classical percolation threshold p_c ≈ 0.3115 (for SC), there is no system-spanning cluster - electrons can't even classically traverse the sample. Above p_c, there's a giant connected cluster. But classical connectivity doesn't mean quantum transport: even with p > p_c, quantum interference can localize all wavefunctions on the cluster. The quantum percolation threshold p_q > p_c is the minimum occupation where quantum transport survives.
 
 ---
 
@@ -70,7 +70,7 @@ H = [ 0    T  ]
     [ T†   0  ]
 ```
 
-where T is the N_A × N_B hopping matrix between sublattices. There's nothing on the diagonal because all hoppings connect A to B — never A to A or B to B.
+where T is the N_A × N_B hopping matrix between sublattices. There's nothing on the diagonal because all hoppings connect A to B - never A to A or B to B.
 
 ---
 
@@ -90,7 +90,7 @@ In the A-B block form:
     [  0    -I_B  ]
 ```
 
-This operator does nothing physically — it's purely a bookkeeping/labeling device. It assigns +1 to A-sites and -1 to B-sites. No measurement corresponds to Γ; it's a mathematical symmetry operation.
+This operator does nothing physically - it's purely a bookkeeping/labeling device. It assigns +1 to A-sites and -1 to B-sites. No measurement corresponds to Γ; it's a mathematical symmetry operation.
 
 **What does Γ do to a wavefunction?** If `|ψ⟩` has amplitudes ψ_i, then `Γ|ψ⟩` flips the sign of all B-site amplitudes:
 
@@ -120,7 +120,7 @@ Compute ΓHΓ using the block form:
     = -H  ✓
 ```
 
-This is an exact algebraic identity — it follows purely from the bipartite block structure. No approximations, no assumptions about the specific hoppings or disorder realization. It holds for every disorder realization, for every occupation pattern.
+This is an exact algebraic identity - it follows purely from the bipartite block structure. No approximations, no assumptions about the specific hoppings or disorder realization. It holds for every disorder realization, for every occupation pattern.
 
 This is **chiral symmetry**: `ΓHΓ = -H`, i.e., conjugation by Γ negates H.
 
@@ -130,11 +130,11 @@ This is **chiral symmetry**: `ΓHΓ = -H`, i.e., conjugation by Γ negates H.
 
 In the Schrödinger equation `H|ψ⟩ = E|ψ⟩`, E is the **energy of the eigenstate**. In a metal, electrons are spread across all energies from the bottom to the top of the band. In a TMM calculation, we probe transport at a *specific* energy E: we ask "if we inject an electron with energy E into the left end of the bar, does it come out the right end, or does it decay exponentially?"
 
-More precisely: the TMM computes the transfer matrix at fixed E, which propagates the wavefunction amplitude from slice to slice along the bar. The input E appears in the transfer matrix via the resolvent `H - E·I` (the on-site energies become (ε_i - E) in the resolvent). Different E values probe different parts of the spectrum — near the band center (E≈0), near the band edge (E≈±6), or anywhere in between.
+More precisely: the TMM computes the transfer matrix at fixed E, which propagates the wavefunction amplitude from slice to slice along the bar. The input E appears in the transfer matrix via the resolvent `H - E·I` (the on-site energies become (ε_i - E) in the resolvent). Different E values probe different parts of the spectrum - near the band center (E≈0), near the band edge (E≈±6), or anywhere in between.
 
 In a localized system, the electron's amplitude decays exponentially with distance: `|ψ(z)| ~ exp(-z/ξ)`. The TMM measures the localization length ξ. At the metal-insulator transition (quantum percolation threshold), ξ diverges.
 
-**Why scan E at all?** The critical occupation p_c^Q depends on energy: near the band edges, states are easier to localize (narrow DOS, low connectivity), so p_c^Q is higher there. Near mid-band, states are harder to localize, so p_c^Q can be lower. This creates an energy-dependent mobility edge p_c^Q(E) — a surface in (p, E) space separating localized from extended states.
+**Why scan E at all?** The critical occupation p_c^Q depends on energy: near the band edges, states are easier to localize (narrow DOS, low connectivity), so p_c^Q is higher there. Near mid-band, states are harder to localize, so p_c^Q can be lower. This creates an energy-dependent mobility edge p_c^Q(E) - a surface in (p, E) space separating localized from extended states.
 
 ---
 
@@ -142,7 +142,7 @@ In a localized system, the electron's amplitude decays exponentially with distan
 
 At E=0, chiral symmetry applies. Here is the full argument chain:
 
-**Step 1 — Eigenstates pair under Γ**
+**Step 1 - Eigenstates pair under Γ**
 
 If H|ψ⟩ = E|ψ⟩, apply Γ to both sides:
 
@@ -160,7 +160,7 @@ H(Γ|ψ⟩) = -E(Γ|ψ⟩)
 
 So `Γ|ψ⟩` is an eigenstate with energy -E. For every eigenstate at +E there is a partner at -E. The spectrum is symmetric around zero.
 
-**Step 2 — At E=0, states are self-paired**
+**Step 2 - At E=0, states are self-paired**
 
 If E=0, the partner state is `Γ|ψ⟩`, also at E=0. So the partner and the original are in the same eigenspace. The eigenspace at E=0 is invariant under Γ. This means we can choose a basis for the E=0 eigenspace where each basis vector is an eigenstate of Γ:
 
@@ -171,7 +171,7 @@ If E=0, the partner state is `Γ|ψ⟩`, also at E=0. So the partner and the ori
 
 **An E=0 eigenstate lives entirely on one sublattice.** It has zero amplitude on all sites of the other sublattice.
 
-**Step 3 — Physical consequence: sublattice-polarized states**
+**Step 3 - Physical consequence: sublattice-polarized states**
 
 An A-sublattice state has zero amplitude at every B-site. For this state to propagate in the z-direction (along the TMM bar), it needs to hop from layer to layer. But each hop in SC connects an A-site to a B-site. An A-only state cannot hop without touching B-sites. So E=0 states cannot propagate: they are geometrically confined to a single sublattice, which is a disconnected set (all A-sites, no B-sites). They are localized by the sublattice structure itself, regardless of occupation p.
 
@@ -199,7 +199,7 @@ By a theorem on bipartite graphs (a consequence of the Perron-Frobenius theorem 
 - Do not participate in transport at all (localized by sublattice constraint)
 - Grow in number as p decreases (more sublattice imbalance)
 
-As p → 1, the imbalance |N_A - N_B|/N → 0, zero modes become sparse, and E=0 states can potentially delocalize. This is why p_c^Q(E=0) is large — you need near-perfect occupation before even a small fraction of E=0 states can avoid being zero modes.
+As p → 1, the imbalance |N_A - N_B|/N → 0, zero modes become sparse, and E=0 states can potentially delocalize. This is why p_c^Q(E=0) is large - you need near-perfect occupation before even a small fraction of E=0 states can avoid being zero modes.
 
 ---
 
@@ -219,7 +219,7 @@ At E≠0: We probe H - E·I. Does Γ(H-EI)Γ = -(H-EI)?
 Γ(H-EI)Γ = ΓHΓ - EΓ²= -H - EI = -(H+EI) ≠ -(H-EI)
 ```
 
-No — there's an extra 2E term. **Chiral symmetry is broken at E≠0.** The system has only time-reversal symmetry → class AI (3D orthogonal). This is the standard Anderson localization universality class with ν = 1.622 ± 0.035.
+No - there's an extra 2E term. **Chiral symmetry is broken at E≠0.** The system has only time-reversal symmetry → class AI (3D orthogonal). This is the standard Anderson localization universality class with ν = 1.622 ± 0.035.
 
 At E=0: ΓHΓ = -H holds exactly. The system also has T (real Hamiltonian, spinless → T² = +1) and the bipartite structure gives an effective particle-hole symmetry C. Together: class BDI.
 
@@ -228,7 +228,7 @@ E ≠ 0:   Class AI  (3D orthogonal)    ν = 1.622 ± 0.035  (Ujfalusi 2014)
 E = 0:   Class BDI (chiral orthogonal) ν = unknown for 3D quantum percolation
 ```
 
-This is not a small perturbative effect — it is a categorical change in what fixed point governs the critical behavior. The FSS equations, the corrections-to-scaling, the irrelevant exponents, the amplitude b — all are different.
+This is not a small perturbative effect - it is a categorical change in what fixed point governs the critical behavior. The FSS equations, the corrections-to-scaling, the irrelevant exponents, the amplitude b - all are different.
 
 ---
 
@@ -240,7 +240,7 @@ In 2D, Gade and Wegner showed that the chiral class has an anomalous density of 
 ρ(E) ~ exp(-c |ln|E|| ^{1/2})   (Gade-Wegner singularity in 2D)
 ```
 
-This is a singularity that is not a simple power law — it diverges faster than any polynomial at E=0 but slower than a pole.
+This is a singularity that is not a simple power law - it diverges faster than any polynomial at E=0 but slower than a pole.
 
 In 3D, the situation is less studied. For disordered bipartite systems in 3D, the DOS near E=0 is expected to have anomalous behavior (related to the sublattice-imbalance zero modes described above), but the precise functional form is an active research question.
 
@@ -260,7 +260,7 @@ They ran 11 energy points: E ∈ {0.1, 0.3, 0.7, 1.0, 1.3, 1.5, 2.0, 2.5, 3.0, 3
 
 ### What they observed near E=0
 
-They also attempted E = 0.001 and E = 0.01 (shown in their Fig. 6a). At these energies, the MFSS **severely failed to converge** — their words. The scaling collapses did not work; the extracted p_c^Q and ν had huge uncertainties and were inconsistent between system sizes.
+They also attempted E = 0.001 and E = 0.01 (shown in their Fig. 6a). At these energies, the MFSS **severely failed to converge** - their words. The scaling collapses did not work; the extracted p_c^Q and ν had huge uncertainties and were inconsistent between system sizes.
 
 They argued (Section III.B) that this failure is physical, not numerical:
 1. The DOS pseudogap at E=0 means fewer eigenstates fall in the energy window → poor statistics
@@ -271,13 +271,13 @@ Their Fig. 6a shows the mobility edge p_c^Q(E): a smooth curve with minimum at E
 
 ### How our E=0 result compares
 
-Our TMM gave p_q(E=0) = 0.591 for M={4..10}, N=500, L=10,000. The Ujfalusi curve at E=4.1 (the other end of the spectrum, near band edge) gives p_c^Q = 0.638. Our E=0 value of 0.591 is lower than their E=4.1 value — this means our finite-M result is still far from the E=0 thermodynamic limit.
+Our TMM gave p_q(E=0) = 0.591 for M={4..10}, N=500, L=10,000. The Ujfalusi curve at E=4.1 (the other end of the spectrum, near band edge) gives p_c^Q = 0.638. Our E=0 value of 0.591 is lower than their E=4.1 value - this means our finite-M result is still far from the E=0 thermodynamic limit.
 
-As M→∞, our Λ_M crossings should shift toward p=1 (consistent with Ujfalusi's divergence). For M={4..10}, we're seeing the beginning of this shift: the crossings at 0.589–0.594 are well above the E≠0 minimum (0.384) but well below the expected thermodynamic limit (>>0.65). This is a finite-size precursor — the crossings will drift toward p=1 as M increases. **We have NOT measured the thermodynamic p_c^Q(E=0). We've measured a finite-size crossing that is on the way toward it.**
+As M→∞, our Λ_M crossings should shift toward p=1 (consistent with Ujfalusi's divergence). For M={4..10}, we're seeing the beginning of this shift: the crossings at 0.589–0.594 are well above the E≠0 minimum (0.384) but well below the expected thermodynamic limit (>>0.65). This is a finite-size precursor - the crossings will drift toward p=1 as M increases. **We have NOT measured the thermodynamic p_c^Q(E=0). We've measured a finite-size crossing that is on the way toward it.**
 
 ---
 
-## Part III: Our E=0 Results — Detailed Analysis
+## Part III: Our E=0 Results - Detailed Analysis
 
 ### Data collected (greengoblin, 2026-05-04)
 
@@ -327,7 +327,7 @@ The AI-class irrelevant correction b·M^{-1.12} is expected to be O(0.05-0.1) fo
 
 ---
 
-## Part IV: Why the FSS Analysis Fails — Two Independent Reasons
+## Part IV: Why the FSS Analysis Fails - Two Independent Reasons
 
 ### Reason 1: Grid mismatch (fixable)
 
@@ -338,7 +338,7 @@ FSS parameters: {a_0, a_1, a_2, a_3, a_4, b, p_q, ν} = 8 free parameters.
 Degrees of freedom: 24 - 8 = 16.
 χ² = χ²/dof × dof = 10.5 × 16 = 168.
 
-This is enormous for 24 data points. The FSS polynomial is being asked to constrain 8 parameters from 6 loosely spaced p values per M — it's statistically underdetermined near the critical region.
+This is enormous for 24 data points. The FSS polynomial is being asked to constrain 8 parameters from 6 loosely spaced p values per M - it's statistically underdetermined near the critical region.
 
 **The fix for E=0 research**: Change P_FINE to linspace(0.55, 0.63, 20). This puts 20 high-resolution points directly in the critical region. With the coarse grid, total data in [0.54, 0.64] becomes 6 + 20 = 26 points × 4 = 104 data points → dof = 96. The grid contribution to χ² drops dramatically.
 
@@ -391,7 +391,7 @@ Or alternatively: move to complex128 and use a hybrid MGS/cuSOLVER approach for 
 
 ### Step C: Fix the FSS ansatz
 
-**Option 1 — Phenomenological**: Keep the AI ansatz but allow y_BDI to float. With 6+ M values, y_BDI becomes identifiable. Check if the fitted y_BDI is consistent across different p windows.
+**Option 1 - Phenomenological**: Keep the AI ansatz but allow y_BDI to float. With 6+ M values, y_BDI becomes identifiable. Check if the fitted y_BDI is consistent across different p windows.
 
 ```python
 result = fit_fss(..., fit_y_irrel=True, n_corrections=1)
@@ -399,7 +399,7 @@ result = fit_fss(..., fit_y_irrel=True, n_corrections=1)
 
 This is the simplest change and tests whether the AI-class correction structure is at all applicable.
 
-**Option 2 — Add logarithmic correction**: If the Gade-Wegner singularity produces logarithmic corrections in 3D analogous to the 2D case, the FSS function should include:
+**Option 2 - Add logarithmic correction**: If the Gade-Wegner singularity produces logarithmic corrections in 3D analogous to the 2D case, the FSS function should include:
 
 ```
 Λ_M(p) = Σ a_k u^k + b · M^{-y} + c · (ln M)^{-α}
@@ -407,7 +407,7 @@ This is the simplest change and tests whether the AI-class correction structure 
 
 The exponent α is unknown for 3D BDI quantum percolation. This is a 2-parameter correction (b,c or just c if b=0 as suggested by our data).
 
-**Option 3 — Use MFSS**: Implement the multifractal approach for comparison. Compute full eigenstates of the 3D cube at E=0 and apply MFSS. This is Ujfalusi's approach applied to E=0 where their method failed. With a different computational method (TMM provides different statistical probing), you might converge where MFSS couldn't.
+**Option 3 - Use MFSS**: Implement the multifractal approach for comparison. Compute full eigenstates of the 3D cube at E=0 and apply MFSS. This is Ujfalusi's approach applied to E=0 where their method failed. With a different computational method (TMM provides different statistical probing), you might converge where MFSS couldn't.
 
 ### Step D: Extrapolate crossings to M→∞
 
@@ -431,7 +431,7 @@ With a proper grid and 6 M values, you'd get a reliable ν with small χ²/dof, 
 
 ---
 
-## Part VI: Complete Comparison — Our TMM vs Ujfalusi MFSS
+## Part VI: Complete Comparison - Our TMM vs Ujfalusi MFSS
 
 ### Physical model (identical)
 
@@ -447,7 +447,7 @@ Both study: 3D simple cubic lattice, random site dilution at probability p, near
 | **Eigensolver**          | Jacobi-Davidson (interior, sparse 3D)            | Transfer matrix (product, sequential)    |
 | **System sizes**         | L=20..140 (factor 7, 7 sizes)                    | M=4..10 (factor 2.5, 4 sizes)            |
 | **Realizations**         | 10k–50k per (p,L)                                | N=500 per (p,M)                          |
-| **Corrections**          | (1/ln L)·f(u) — exact from multifractal          | b·M^{-1.12} — phenomenological, AI class |
+| **Corrections**          | (1/ln L)·f(u) - exact from multifractal          | b·M^{-1.12} - phenomenological, AI class |
 | **Energy handling**      | Eigenstate energy window ΔE≈0.1 around E         | TMM at fixed E (resolvent H-E·I)         |
 | **Memory per run**       | L³ sparse matrix + eigenvectors (GBs at L=140)   | M²×M² matrix only (KB at M=10)           |
 | **Parallelism**          | Many realizations, independently diagonalizable  | vmap over realizations (GPU batching)    |
@@ -461,7 +461,7 @@ Both study: 3D simple cubic lattice, random site dilution at probability p, near
 
 u = L^{1/ν} · (p - p_c^Q)
 ```
-The (1/ln L) term is exact from multifractal theory — not phenomenological.
+The (1/ln L) term is exact from multifractal theory - not phenomenological.
 
 **Ours**:
 ```
@@ -495,7 +495,7 @@ Their precision is ~10× better because of 7 system sizes (vs our 4) spanning fa
 | Lattices | SC only | SC (validation) + BCC (novel) |
 | E=0 | Studied, failed, argued p→1 | Measured (p_q=0.591), chiral class |
 
-The key difference in scientific contribution: Ujfalusi mapped the full p_c^Q(E) curve for SC. We want to measure p_q for BCC — a completely different lattice never studied with TMM. Our SC run at E=0.1 is purely a validation step.
+The key difference in scientific contribution: Ujfalusi mapped the full p_c^Q(E) curve for SC. We want to measure p_q for BCC - a completely different lattice never studied with TMM. Our SC run at E=0.1 is purely a validation step.
 
 ---
 
@@ -548,7 +548,7 @@ Priority order:
 - **Class AI**: standard 3D orthogonal universality class; ν=1.622 (Ujfalusi 2014); no chiral symmetry
 - **Class BDI**: chiral orthogonal class; ν unknown for 3D quantum percolation; our E=0 result
 - **Mobility edge p_c^Q(E)**: energy-dependent quantum percolation threshold; maps from AI minimum (~0.384 at E=0.7) to divergence as E→0
-- **FSS ansatz mismatch**: using AI correction b·M^{-1.12} on BDI data is like fitting a Gaussian to a Lorentzian — wrong in principle
+- **FSS ansatz mismatch**: using AI correction b·M^{-1.12} on BDI data is like fitting a Gaussian to a Lorentzian - wrong in principle
 - **Gade-Wegner singularity**: anomalous DOS near E=0 in chiral class; ρ(E) ~ exp(-c|ln E|^{1/2}) in 2D; 3D form unknown
 
 ---

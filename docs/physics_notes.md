@@ -9,7 +9,7 @@ to the code and RUNBOOK. Concepts are introduced in the order you need them.*
 
 ### 1.1 Electrons in a disordered solid
 
-Take a crystalline solid and randomly remove atoms — or keep all atoms but randomize
+Take a crystalline solid and randomly remove atoms - or keep all atoms but randomize
 their on-site energies. Quantum mechanics then poses the question: are the eigenstates
 of the Hamiltonian **localized** (decaying exponentially in space, like a bound state)
 or **extended** (spread across the whole system, like a Bloch wave)?
@@ -26,12 +26,12 @@ disorder (W = 0). The only randomness is geometric: which sites exist.
 ### 1.2 Classical vs quantum percolation
 
 **Classical percolation** asks: is there a connected path of occupied sites spanning
-the system? Below p_c (the classical threshold), all clusters are finite — no spanning
+the system? Below p_c (the classical threshold), all clusters are finite - no spanning
 path exists. Above p_c, a giant cluster appears. For SC: p_c = 0.3115.
 
 **Quantum percolation** asks the harder question: even given a connected spanning
 cluster, do the quantum eigenstates on that cluster extend across the system, or do
-they localize? The answer is not automatic — quantum interference can localize states
+they localize? The answer is not automatic - quantum interference can localize states
 even on a connected graph. The quantum threshold p_q > p_c. The gap p_q − p_c is the
 "quantum localization cost."
 
@@ -56,7 +56,7 @@ from some center r_0:
 The **localization length** ξ_loc is the decay length. It is specific to the eigenstate
 and depends on energy E and the disorder realization.
 
-An eigenstate is **extended** if |⟨r|ψ_E⟩|² does not decay exponentially — it spreads
+An eigenstate is **extended** if |⟨r|ψ_E⟩|² does not decay exponentially - it spreads
 across the whole system, with amplitude ~ 1/V (V = system volume).
 
 The distinction is sharp in the thermodynamic limit. At finite system size, all
@@ -68,13 +68,13 @@ A classical particle scatters off impurities and diffuses. A quantum particle al
 scatters, but its wavefunction accumulates **phase** along each scattering path.
 Paths that return to the origin interfere. In 3D with strong enough disorder, the
 constructive interference of time-reversed pairs of back-scattering paths suppresses
-diffusion — this is **weak localization**. With sufficient disorder, interference
+diffusion - this is **weak localization**. With sufficient disorder, interference
 becomes so strong that the wavefunction cannot spread at all: **Anderson localization**.
 
 The mechanism is purely quantum (interference) and has nothing to do with energy
 gaps or magnetic fields.
 
-### 2.3 Localization length vs correlation length — they are NOT the same thing
+### 2.3 Localization length vs correlation length - they are NOT the same thing
 
 This distinction is crucial and often confused.
 
@@ -83,7 +83,7 @@ far the wavefunction of a specific state extends before decaying. States deep in
 localized phase have small ξ_loc. States near the mobility edge have large ξ_loc.
 
 **Correlation length ξ_corr**: a property of the phase transition itself. It measures
-the spatial scale over which the critical fluctuations of the system are correlated —
+the spatial scale over which the critical fluctuations of the system are correlated -
 the scale below which the system "looks critical." ξ_corr diverges at the critical
 point regardless of which side you approach from.
 
@@ -106,11 +106,11 @@ it the system looks like a normal metal.
 
 **The key point**: ξ_corr diverges on BOTH sides with the SAME exponent ν. ξ_loc only
 makes sense on the localized side. They coincide on the localized side and diverge
-with the same ν — which is why people often conflate them. They are different
+with the same ν - which is why people often conflate them. They are different
 conceptual objects but the same number near the transition.
 
 At p_q itself: ξ_corr → ∞. The system is scale-invariant. Wavefunctions are fractal
-(neither localized nor extended in the usual sense) — they are multifractal.
+(neither localized nor extended in the usual sense) - they are multifractal.
 
 ---
 
@@ -134,12 +134,12 @@ less insulating until at exactly p_q it is not insulating at all.
 the transition.
 
 - ν = 1: ξ doubles every time you halve |p − p_q|. Linear approach.
-- ν = 1.622 (our case): ξ grows faster — ξ ~ |p − p_q|^{−1.62}. Halving the
+- ν = 1.622 (our case): ξ grows faster - ξ ~ |p − p_q|^{−1.62}. Halving the
   distance to p_q multiplies ξ by 2^{1.62} ≈ 3.1.
 
 Concretely: 1% away from p_q (|p − p_q|/p_q = 0.01), the correlation length is
 ξ ~ (0.01)^{−1.62} × a ≈ 1800 lattice spacings (a = lattice constant). This is why
-finite-size effects are large near the transition — your system of size M = 10 is
+finite-size effects are large near the transition - your system of size M = 10 is
 tiny compared to ξ_corr = 1800.
 
 ### 3.3 The Harris criterion
@@ -201,7 +201,7 @@ b^{n/ν} · u ~ 1  →  b^n ~ u^{−ν} ~ |x − x_c|^{−ν}
 ```
 
 But b^n is the physical length scale reached after n coarse-graining steps. So the
-correlation length — the scale at which the system stops looking critical — is:
+correlation length - the scale at which the system stops looking critical - is:
 
 ```
 ξ ~ b^n ~ |x − x_c|^{−ν}
@@ -212,7 +212,7 @@ This is the derivation. ν is an RG eigenvalue; ξ ~ |x − x_c|^{−ν} is the 
 ### 4.3 Relevant vs irrelevant operators
 
 **Relevant operators** (eigenvalue > 0): grow under coarse-graining. x − x_c is
-relevant — it drives the system away from the critical point. You must tune x to x_c
+relevant - it drives the system away from the critical point. You must tune x to x_c
 to stay at the fixed point.
 
 **Irrelevant operators** (eigenvalue < 0): shrink under coarse-graining. At infinite
@@ -269,7 +269,7 @@ O(L, x) = L^{η} · f( L^{1/ν} · (x − x_c)/x_c )
 ### 5.3 Why this is powerful
 
 Plot O vs u instead of vs x: all curves for all L collapse onto **one universal
-curve** f(u). The collapse works because f is universal — it encodes only the
+curve** f(u). The collapse works because f is universal - it encodes only the
 fixed-point structure, not the specific microscopic details. SC and BCC percolation
 (different lattices) share the same f because they are in the same universality class
 (3D orthogonal). The data collapse is both a test of the theory and a precision
@@ -345,7 +345,7 @@ the problem: the localization length of the quasi-1D strip:
 ξ_M = 1/γ_min
 ```
 
-This converges to a definite self-averaging value as L → ∞ — the law of large numbers
+This converges to a definite self-averaging value as L → ∞ - the law of large numbers
 for random matrix products. In practice L = 10,000 is "infinity": the Lyapunov
 exponents are converged to ~0.1%.
 
@@ -360,17 +360,17 @@ We define:
 Dividing by M makes this dimensionless. This is the key observable for FSS.
 
 **Why γ_min and not some other Lyapunov exponent?** γ_min controls the slowest
-decay / fastest growth in the system — the most extended mode. In the metallic phase
+decay / fastest growth in the system - the most extended mode. In the metallic phase
 this mode extends across the cross-section; in the localized phase it decays. It is
 the mode closest to the mobility edge.
 
-### 6.5 What M and L are — the critical distinction
+### 6.5 What M and L are - the critical distinction
 
 | | M (cross-section) | L (strip length) |
 |---|---|---|
 | Role | **Finite-size variable** (the "L" in FSS) | Statistical averaging device |
 | Physical meaning | The system size that competes with ξ_3D | Must be >> ξ_M to converge |
-| Varies in FSS? | Yes — {4, 6, 8, 10} | No — fixed at 10,000 |
+| Varies in FSS? | Yes - {4, 6, 8, 10} | No - fixed at 10,000 |
 | Limit of interest | M → ∞ recovers 3D physics | L → ∞ taken first (converges) |
 
 **Why M plays the role of L in FSS**: the TMM has already taken L → ∞ (Oseledec's
@@ -386,7 +386,7 @@ The ratio M/ξ_3D controls whether the strip looks localized or metallic.
 
 **p << p_q (deep localized phase):**
 ξ_3D is small (few lattice spacings). The strip width M >> ξ_3D. The strip "contains"
-many localization volumes. Λ_M = ξ_M/M is small and decreases as M grows — larger
+many localization volumes. Λ_M = ξ_M/M is small and decreases as M grows - larger
 strips show more localization, not less.
 
 **p >> p_q (metallic phase):**
@@ -413,7 +413,7 @@ slightly different p; the FSS fit extracts the true p_q from all data simultaneo
 
 ---
 
-## 8. The FSS Ansatz for Λ_M
+## 8. FSS Ansatz for Λ_M
 
 ### 8.1 Applying FSS to Λ_M
 
@@ -431,15 +431,15 @@ We approximate F by a polynomial in the scaling variable u = M^{1/ν}(p−p_q)/p
 F(u) ≈ a_0 + a_1·u + a_2·u² + a_3·u³ + a_4·u⁴
 ```
 
-**Notational note**: a_0 = Λ_M(p_q) is the value at the critical point (same for
-all M by definition). a_1 controls the slope — positive for the metallic side,
+**Notation: a_0 = Λ_M(p_q) is the value at the critical point (same for
+all M by definition). a_1 controls the slope - positive for the metallic side,
 negative for the localized side. Higher terms account for the curvature of F away
 from u=0.
 
-The polynomial is valid for small |u| — i.e., close to p_q. This is why we need a
+The polynomial is valid for small |u| - i.e., close to p_q. This is why we need a
 fitting window.
 
-### 8.2 Free parameters and what the fit extracts
+### 8.2 Free params and what the fit extracts
 
 | Parameter | Meaning | Constrained by |
 |-----------|---------|----------------|
@@ -456,7 +456,7 @@ on each Λ_M measurement. This is χ² minimization:
 χ² = Σ_{M,p} [ (Λ_M^{meas} − F(u) − b·M^{−y}) / σ_{M,p} ]²
 ```
 
-### 8.3 The irrelevant exponent y
+### 8.3 Irrelevant exponent y
 
 y is the scaling dimension of the leading irrelevant operator. It controls how fast
 corrections decay with M. In the 3D orthogonal class, the literature reports
@@ -473,7 +473,7 @@ empirical parameter with ±0.08 uncertainty propagated as a systematic error.
 
 ## 9. From Fit to Results: the Full Procedure
 
-### 9.1 Step 1 — Rough p_q from pairwise crossings
+### 9.1 Step 1: Rough p_q from pairwise crossings
 
 For each adjacent pair (M_i, M_{i+1}), find where Λ_{M_i}(p) − Λ_{M_{i+1}}(p)
 changes sign. Linear interpolation gives the crossing p. Take the median of all
@@ -483,7 +483,7 @@ This is robust against the minimum-spread estimator, which fails when correction
 are large (the global minimum of std(Λ_M over M) at each p is not at p_q when
 b·M^{−y} differentials between M values are comparable to the physical signal).
 
-### 9.2 Step 2 — Window adequacy scan (select δ)
+### 9.2 Step 2: Window adequacy scan (select δ)
 
 The polynomial F(u) is valid only for small |u|. To find the right window:
 
@@ -499,20 +499,20 @@ corrections). S&O 1999 use Q > 0.1; with our σ(Λ_M) ~ 10^{−4}, Q ≈ 0 for a
 windows due to unmodelled subleading corrections, so the Q criterion cannot be
 applied directly.
 
-### 9.3 Step 3 — Full FSS fit with bootstrap
+### 9.3 Step 3: Full FSS fit with bootstrap
 
 On the selected window: full Nelder-Mead + L-BFGS-B minimization of χ².
 Bootstrap CIs: perturb each Λ_M by N(0, σ_{M,p}) independently, refit 500 times,
 take std of the 500 estimates as the statistical uncertainty.
 
-### 9.4 Step 4 — Rodriguez polynomial stability test
+### 9.4 Step 4: Rodriguez polynomial stability test
 
 Fit FSS at poly_order ∈ {3, 4, 5}. Check that p_q and ν from each order lie within
 the 95% CI (±2σ) of the reference order-4 result. If they do: the polynomial is
 adequate and the results are stable. This is the actual Rodriguez et al. 2011
 Appendix A stability criterion (polynomial ORDER perturbation, not window-width scan).
 
-### 9.5 Step 5 — Systematic from y
+### 9.5 Step 5 - Systematic from y
 
 Repeat the full fit at y = 1.04, 1.12, 1.20. Report:
 ```
@@ -532,10 +532,10 @@ Random matrix theory classifies disordered quantum systems by their symmetries:
 |-------|--------------|---------------|---------|
 | AI (orthogonal) | Yes | Yes | Non-magnetic, spinless, no SO coupling |
 | AII (symplectic) | Yes | No | Strong spin-orbit coupling |
-| A (unitary) | No | — | Magnetic field present |
+| A (unitary) | No | - | Magnetic field present |
 
 Each class has its own Anderson transition (in 3D) with its own ν. Our system: no
-magnetic field, no spin — class AI. ν = 1.622 (Slevin & Ohtsuki 1999; Rodriguez 2011).
+magnetic field, no spin - class AI. ν = 1.622 (Slevin & Ohtsuki 1999; Rodriguez 2011).
 
 ### 10.2 Bipartite lattices and the chiral anomaly at E=0
 
@@ -557,7 +557,7 @@ E = 0.1 due to the anomalous DOS at E = 0 from sublattice imbalance zero modes.
 
 **Consequence**: run at E = 0.7 (11.7% of SC half-bandwidth 6t). The BDI→AI
 crossover length scale ξ_cross ~ E^{−1/Δ_E} ≪ M_min = 4 at E = 0.7, so BDI
-corrections are negligible. At E = 0.1, ξ_cross ≈ 10 ≈ M_max — correction
+corrections are negligible. At E = 0.1, ξ_cross ≈ 10 ≈ M_max - correction
 dominance: b = −0.153, χ²/dof = 1543, spurious crossings at p ≈ 0.35.
 
 ---
@@ -597,19 +597,19 @@ Method
 
 ## References
 
-1. **Anderson P W 1958** Phys. Rev. **109** 1492 — original localization paper
+1. **Anderson P W 1958** Phys. Rev. **109** 1492 - original localization paper
 
-2. **Fisher M E and Barber M N 1972** Phys. Rev. Lett. **28** 1516 — finite-size scaling
+2. **Fisher M E and Barber M N 1972** Phys. Rev. Lett. **28** 1516 - finite-size scaling
    introduced
 
-3. **MacKinnon A and Kramer B 1983** Z. Phys. B **53** 1 — transfer matrix method for
+3. **MacKinnon A and Kramer B 1983** Z. Phys. B **53** 1 - transfer matrix method for
    Anderson localization; original Λ_M observable
 
-4. **Slevin K and Ohtsuki T 1999** Phys. Rev. Lett. **82** 382 — corrections-to-scaling
+4. **Slevin K and Ohtsuki T 1999** Phys. Rev. Lett. **82** 382 - corrections-to-scaling
    in 3D Anderson TMM; y fitted freely, |y|≈2.8; ν=1.57–1.58; bootstrap CIs
 
 5. **Rodriguez A, Vasquez L J, Slevin K and Römer R A 2011** Phys. Rev. B **84** 134209
-   — multifractal FSS; polynomial-order stability test (Appendix A); ν=1.590
+   - multifractal FSS; polynomial-order stability test (Appendix A); ν=1.590
 
-6. **Ujfalusi L and Varga I 2014** Phys. Rev. B **90** 245136 — quantum percolation
+6. **Ujfalusi L and Varga I 2014** Phys. Rev. B **90** 245136 - quantum percolation
    on SC lattice; mobility edge p_c^Q(E); BDI anomaly at E=0; p_c^Q(E=0.7)≈0.384

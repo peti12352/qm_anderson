@@ -30,7 +30,7 @@ from tqdm import tqdm
 
 import sys; sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import src.config   # noqa: F401  — must import first to enable x64 + XLA flags
+import src.config   # noqa: F401  - must import first to enable x64 + XLA flags
 from src.tmm     import make_tmm_fns, lambda_M
 from src.fss     import fit_fss
 from src.io_utils import save_run
@@ -42,7 +42,7 @@ from src.monitor  import print_system_info, CompileMonitor
 M_LIST  = [4, 6, 8, 10]      # 4-point FSS sufficient; M=12 (dim=288) not worth it
 W_LIST  = list(np.linspace(13.0, 20.0, 40))
 # L=10_000 is >> ξ_M near W_c (ξ_M ~ M ~ 10); L=100_000 was 10× over-sampled.
-# N_REAL=500 gives err~0.003 vs err~0.000 at 2000 — negligible for FSS.
+# N_REAL=500 gives err~0.003 vs err~0.000 at 2000 - negligible for FSS.
 # MGS (M≤6) and cuSOLVER (M≥8) in tmm.py give ~10–40s/point across all M.
 L       = 10_000
 N_REAL  = 500
@@ -84,10 +84,10 @@ def main(fast: bool = False) -> None:
 
         _, tmm_batched = make_tmm_fns(M, "sc", E=E, t=T_HOP)
 
-        # Warm up JIT (first call compiles — can take several minutes on first ever run)
+        # Warm up JIT (first call compiles - can take several minutes on first ever run)
         # Warm-up MUST use the production batch size (n_real).
         # A different size (e.g. 4) produces a different XLA kernel and causes
-        # a silent recompile on the first real point — appearing as a 30-min hang.
+        # a silent recompile on the first real point - appearing as a 30-min hang.
         keys_warmup = jax.random.split(rng, n_real)
         print(f"\n  M={M} | N={N} | JIT compile+warmup (batch={n_real}, L={L})")
         print(f"  GPU idle = XLA compiling (CPU-bound); GPU busy = executing")
@@ -161,8 +161,8 @@ def main(fast: bool = False) -> None:
             err_flat.append(max(stderr, 1e-6))   # guard against zero stderr
 
     # FSS fit on a narrow window around W_c where the polynomial approximation is valid.
-    # Full W range [13,20] gives |u|_max ≈ 16 for M=10 — far outside scaling regime.
-    # Window [15.0, 18.5] gives |u|_max ≈ 1.5 × 4.6 ≈ 7 — much more controlled.
+    # Full W range [13,20] gives |u|_max ≈ 16 for M=10 - far outside scaling regime.
+    # Window [15.0, 18.5] gives |u|_max ≈ 1.5 × 4.6 ≈ 7 - much more controlled.
     #
     # Irrelevant exponent y is fixed at 1.12 (Slevin & Ohtsuki 1999, y=1.12±0.08).
     # Fitting y freely is not identifiable with M={4,6,8,10}: the correction b·M^{-y}
@@ -192,7 +192,7 @@ def main(fast: bool = False) -> None:
     if nu_ok and wc_ok and chi_ok:
         print("\n  PASS: W_c, ν, and χ²/dof all within tolerance. Proceed to sc_dilution.py.")
     else:
-        print("\n  FAIL — do NOT proceed to sc_dilution.py:")
+        print("\n  FAIL - do NOT proceed to sc_dilution.py:")
         if not nu_ok:
             print(f"    ✗ ν = {result.nu:.4f} deviates from 1.571 by >{abs(result.nu-1.571):.3f}")
         if not wc_ok:

@@ -10,7 +10,7 @@ BCC lattice specifics
   Coordination number:  z = 8 (vs z = 6 for SC)
   Classical threshold:  p_c(BCC) = 0.2457
   Bandwidth:            16t (vs 12t for SC)
-  Transfer matrix V:    NON-DIAGONAL — 4 off-diagonal shifts per row
+  Transfer matrix V:    NON-DIAGONAL - 4 off-diagonal shifts per row
   Twisted BC:           Automatically applied when M ∈ {4,8,12} to avoid
                         singular V (see src/lattice.py for derivation)
   Recommended M values: {6, 10} avoid twisted BC; {4,8,12} use it
@@ -23,7 +23,7 @@ lower occupation probability. We expect p_q(BCC) < p_q(SC) in absolute terms,
 and the ratio p_q/p_c to be similar (same universality class).
 
 BCC anomaly to watch for: The higher connectivity may delay onset of localization
-to smaller p/p_c ratio than SC — this would be a novel and physically interesting result.
+to smaller p/p_c ratio than SC - this would be a novel and physically interesting result.
 
 Energy choice: E=0.1 (not E=0). BCC NN lattice is bipartite (A=corners, B=body-centres;
 all 8 NN bonds connect A to B, no triangles → no odd cycles). At E=0, ΓHΓ=-H holds →
@@ -66,14 +66,14 @@ P_LIST   = sorted(set(P_COARSE + P_FINE))
 L       = 10_000
 N_REAL  = 500
 W       = 0.0
-E       = 0.1    # off band centre — BCC is bipartite (class BDI at E=0, same issue as SC)
+E       = 0.1    # off band centre - BCC is bipartite (class BDI at E=0, same issue as SC)
 T_HOP   = 1.0
 OUTFILE = Path("data/bcc_dilution_E0p1.h5")   # E=0 analogue would be bcc_dilution_E0.h5
 SEED    = 44
 
 
 def _find_crossings(lam_by_M: dict, M_list: list[int], p_list: list[float]) -> list[float]:
-    """Pairwise Λ_M crossing detector — more robust than minimum spread for small M."""
+    """Pairwise Λ_M crossing detector - more robust than minimum spread for small M."""
     crossings = []
     for i in range(len(M_list) - 1):
         M1, M2 = M_list[i], M_list[i + 1]
@@ -320,7 +320,7 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
 
 
 def _run_refit(args) -> None:
-    """Load existing HDF5 data and refit FSS — no TMM rerun needed."""
+    """Load existing HDF5 data and refit FSS - no TMM rerun needed."""
     src = Path(args.data_file) if args.data_file else OUTFILE
     if not src.exists():
         print(f"ERROR: {src} not found. Run bcc_dilution.py first (without --refit).")

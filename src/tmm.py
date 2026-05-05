@@ -28,7 +28,7 @@ comes entirely from running B independent disorder realizations concurrently
 via jax.vmap.
 
 Loop implementation: lax.fori_loop(0, L, body, init)
-  - L is a regular (non-static) argument — one compiled kernel for ALL L values
+  - L is a regular (non-static) argument - one compiled kernel for ALL L values
   - No (L,) index array allocated (unlike lax.scan over jnp.arange(L))
   - XLA compiles a plain while-loop; compilation takes seconds not minutes
   - lax.scan over arange(L) caused 15-30 min XLA compile hangs because it
@@ -38,7 +38,7 @@ Memory note
 -----------
 Disorder is generated on-the-fly at each fori_loop step via jax.random.fold_in,
 NOT pre-allocated as (L, N) arrays. Pre-allocation would require
-B × L × N × 8 bytes ≈ 100 GB for B=2000, L=100k, N=64 — far exceeding
+B × L × N × 8 bytes ≈ 100 GB for B=2000, L=100k, N=64 - far exceeding
 GPU VRAM. With fold_in, peak memory per realization is O((2N)²) ≈ 256 KB.
 
 Public API
@@ -93,7 +93,7 @@ def make_tmm_fns(
             A: (dim, dim) float64 or complex128
         Returns:
             Q: (dim, dim) orthonormal columns
-            diag_r: (dim,) positive float64 — diagonal of R
+            diag_r: (dim,) positive float64 - diagonal of R
         """
         def step(V, j):
             v    = V[:, j]
@@ -151,7 +151,7 @@ def make_tmm_fns(
         def body(n, carry):
             Q, log_norms = carry
 
-            # Per-slice keys derived via fold_in — no (L,N) pre-allocation.
+            # Per-slice keys derived via fold_in - no (L,N) pre-allocation.
             k_dis      = jax.random.fold_in(key_dis, n)
             k_dil      = jax.random.fold_in(key_dil, n)
             dis_slice  = jax.random.uniform(k_dis, (N,), minval=-W / 2.0, maxval=W / 2.0)
@@ -166,14 +166,14 @@ def make_tmm_fns(
             return (Q, log_norms)
 
         # fori_loop compiles as a plain while-loop; L is dynamic (not static),
-        # so one kernel covers all bar lengths — no recompilation when L changes.
+        # so one kernel covers all bar lengths - no recompilation when L changes.
         _, log_norms = jax.lax.fori_loop(0, L, body, (Q0, log_norms0))
 
         gamma = log_norms / L
         return jnp.sort(gamma)[::-1]
 
     # L is no longer static: fori_loop accepts a dynamic upper bound.
-    # One compiled kernel handles any L value — no recompilation between
+    # One compiled kernel handles any L value - no recompilation between
     # test runs (L=5k) and production runs (L=100k).
     tmm_single  = jax.jit(_tmm_core)
     tmm_batched = jax.jit(jax.vmap(_tmm_core, in_axes=(0, None, None, None)))
@@ -192,13 +192,13 @@ def lambda_M(gammas: jnp.ndarray, M: int) -> tuple[float, float]:
 
     Parameters
     ----------
-    gammas : (B, 2N) float64 — Lyapunov exponents from tmm_batched, descending
+    gammas : (B, 2N) float64 - Lyapunov exponents from tmm_batched, descending
     M      : cross-section width
 
     Returns
     -------
-    mean   : float — mean of Λ_M over B realizations
-    stderr : float — standard error = std / sqrt(B)
+    mean   : float - mean of Λ_M over B realizations
+    stderr : float - standard error = std / sqrt(B)
     """
     N = M * M
     # The smallest positive Lyapunov exponent is at index N-1 (0-indexed).

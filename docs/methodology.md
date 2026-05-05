@@ -81,7 +81,7 @@ The normalized localization length is:
 
 - **N_real = 500** independent disorder realizations (different random site occupations).
 - Statistical error of Λ_M: standard error of mean, σ(Λ_M) = std(Λ_M) / √N_real.
-- At the critical point and our parameters, σ(Λ_M) ≈ 10⁻⁴ (very small — see §5).
+- At the critical point and our parameters, σ(Λ_M) ≈ 10⁻⁴ (very small - see §5).
 
 ### 2.4 Convergence Criteria
 
@@ -164,7 +164,7 @@ For E=0.7 (SC, 11.7% of half-bandwidth 6t):
 - p_c^Q(E=0.7) ≈ 0.384 is the mobility-edge minimum (Ujfalusi 2014).
 - Corrections expected similar to Anderson benchmark: b ≈ 0.1, clean crossings.
 
-**BCC note**: BCC half-bandwidth is 16t. E=0.1 is only 1.25% of half-bandwidth —
+**BCC note**: BCC half-bandwidth is 16t. E=0.1 is only 1.25% of half-bandwidth -
 even closer to BDI crossover than SC. After SC E=0.7 result is obtained, BCC
 energy will be selected with the same ξ_cross argument.
 
@@ -208,10 +208,10 @@ The correction term b·M^{-y} where y > 0 is the irrelevant scaling exponent.
 |--------|------------|------------|-----|
 | Slevin & Ohtsuki 1999, PRL 82, 382 | Λ = λ/L (TMM) | 2.8–3.9 | Fitted freely (NOT fixed). Box disorder: 2.8, Gaussian: 3.9, Lloyd: 2.5. |
 | Rodriguez et al. 2011, PRB 84, 134209 | multifractal Δ_q, fixed-λ FSS | 1.7 | Fitted freely. Governs box-size correction, NOT system-size correction. |
-| This project (effective) | Λ_M = ξ_M/M | 1.12 | Empirical — chosen to reproduce benchmark. |
+| This project (effective) | Λ_M = ξ_M/M | 1.12 | Empirical - chosen to reproduce benchmark. |
 
 **S&O 1999 does NOT give y=1.12.** Their result is |y|≈2.8 for the Λ
-observable. At M={4..10}, M^{-2.8} ∈ [0.002, 0.025] — extremely small
+observable. At M={4..10}, M^{-2.8} ∈ [0.002, 0.025] - extremely small
 corrections. The residual χ²/dof=2.4 in the benchmark is NOT from a y=2.8
 term but from y≈1.12 subleading corrections that happen to dominate at our M
 range.
@@ -226,7 +226,7 @@ M={4..10}. The source of y=1.12 in other literature citations remains unclear;
 it may derive from a Slevin & Ohtsuki paper prior to 1999 or from ε-expansion.
 
 **Why y is fixed, not fitted**: with M ∈ {4..10}, b·M^{-y} and b_2·M^{-2y}
-are nearly proportional — the fit is degenerate. Setting y free allows the
+are nearly proportional - the fit is degenerate. Setting y free allows the
 optimizer to exploit the near-degeneracy (y → 0 gives b·M^0 = constant, which
 absorbs into a_0). Both failure modes confirmed empirically (see RUNBOOK §FSS).
 
@@ -292,7 +292,7 @@ For large dof, Q > 0.1 approximately requires χ²/dof < 1.3.
 **Why we cannot use Q > 0.1**: Our σ(Λ_M) ≈ 10⁻⁴ (from L=10,000, N_real=500).
 Even for a perfectly chosen model and window, the unmodelled subleading corrections
 b₂·M^{-2y} contribute ~2 to χ²/dof (since their magnitude ~10⁻⁴ equals σ). The
-Anderson benchmark gives χ²/dof = 2.4 at the correct W_c — this is the
+Anderson benchmark gives χ²/dof = 2.4 at the correct W_c - this is the
 physical floor. Thus Q ≈ 0 for ALL our fits, and the S&O criterion cannot be
 applied directly.
 
@@ -384,7 +384,7 @@ Combine in quadrature:
 
 If χ²/dof > 5.0 after the window scan selects the best window: **stop and
 diagnose before proceeding**. Do not manually override the window to force
-an acceptable χ² — that would undermine the non-ad-hoc methodology.
+an acceptable χ² - that would undermine the non-ad-hoc methodology.
 
 ---
 
@@ -429,17 +429,17 @@ Run before writing up:
 ## 11. References
 
 1. Slevin K and Ohtsuki T 1999 Phys. Rev. Lett. **82** 382
-   "Corrections to Scaling at the Anderson Transition" — introduced corrections-
+   "Corrections to Scaling at the Anderson Transition" - introduced corrections-
    to-scaling for 3D Anderson TMM; fitted y freely, obtaining |y|≈2.8–3.9 for
    the Λ observable; established ν=1.57–1.58. Bootstrap CIs; maximize Q criterion.
 
 2. Rodriguez A, Vasquez L J, Slevin K and Römer R A 2011 Phys. Rev. B **84** 134209
    "Multifractal finite-size-scaling and universality at the Anderson transition"
-   — MFSS method; polynomial order perturbation stability test; |y|≈1.7 for
+   - MFSS method; polynomial order perturbation stability test; |y|≈1.7 for
    fixed-λ FSS. System sizes L=20–120; ν=1.590(1.579,1.602).
 
 3. Ujfalusi L and Varga I 2014 Phys. Rev. B **90** 245136
    "Finite-size scaling and multifractality at the Anderson transition for the
-   three Wigner-Dyson symmetry classes in 3D" — quantum percolation threshold
+   three Wigner-Dyson symmetry classes in 3D" - quantum percolation threshold
    p_c^Q as function of E for SC lattice; mobility edge; MFSS approach; Table I
    gives p_c^Q(E=0.7)≈0.384; reports BDI anomaly at E=0.

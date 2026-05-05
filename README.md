@@ -4,8 +4,8 @@ TMM + FSS study of the metal-insulator transition in 3D SC and BCC tight-binding
 lattices with Anderson disorder and site dilution (quantum percolation).
 
 **Novel results:**
-- BCC quantum percolation threshold p_q — first-ever measurement
-- SC quantum percolation threshold p_q — precision update of the 1992 result
+- BCC quantum percolation threshold p_q - first-ever measurement
+- SC quantum percolation threshold p_q - precision update of the 1992 result
 
 ## Physics in one paragraph
 
@@ -20,7 +20,7 @@ finite-size scaling (Λ_M = ξ_M/M) across multiple M values.
 ## Requirements
 
 - Linux x86-64, CUDA 12+
-- [pixi](https://pixi.sh) ≥ 0.20 — handles all Python/CUDA dependencies
+- [pixi](https://pixi.sh) ≥ 0.20 - handles all Python/CUDA dependencies
 
 ```bash
 curl -fsSL https://pixi.sh/install.sh | bash
@@ -40,7 +40,7 @@ pixi run test         # all 9 tests must pass before running
 Run in this order. Each step saves to `data/` and is resumable.
 
 ```bash
-# 1. SC Anderson benchmark — validates code against known W_c = 16.53 t, ν = 1.571
+# 1. SC Anderson benchmark - validates code against known W_c = 16.53 t, ν = 1.571
 pixi run benchmark
 # Expected: ~2–3 h on RTX 5090 (FP64 limited)
 
@@ -70,21 +70,21 @@ python runs/sc_benchmark.py --fast
 
 ```
 src/
-  config.py      — JAX x64 + GPU init, ABSENT_ENERGY constant
-  lattice.py     — SC/BCC transfer matrix factory (JIT-compiled)
-  tmm.py         — QR-stabilized TMM, lambda_M extractor
-  fss.py         — FSS fitting (χ²-minimization + bootstrap CIs)
-  percolation.py — Union-find for classical p_c sanity checks
-  io_utils.py    — HDF5 save/load with raw gammas
+  config.py      - JAX x64 + GPU init, ABSENT_ENERGY constant
+  lattice.py     - SC/BCC transfer matrix factory (JIT-compiled)
+  tmm.py         - QR-stabilized TMM, lambda_M extractor
+  fss.py         - FSS fitting (χ²-minimization + bootstrap CIs)
+  percolation.py - Union-find for classical p_c sanity checks
+  io_utils.py    - HDF5 save/load with raw gammas
 runs/
-  sc_benchmark.py   — W scan, M∈{4,6,8,10,12}
-  sc_dilution.py    — p scan, SC lattice
-  bcc_dilution.py   — p scan, BCC lattice
+  sc_benchmark.py   - W scan, M∈{4,6,8,10,12}
+  sc_dilution.py    - p scan, SC lattice
+  bcc_dilution.py   - p scan, BCC lattice
 analysis/
-  figures.py        — 7 publication-quality PDF figures
-  fss_analysis.py   — offline FSS + universality comparison
+  figures.py        - 7 publication-quality PDF figures
+  fss_analysis.py   - offline FSS + universality comparison
 tests/
-  test_tmm.py       — 9 unit/integration tests
+  test_tmm.py       - 9 unit/integration tests
 ```
 
 ## Run time estimates (RTX 5090, FP64)
@@ -100,11 +100,11 @@ Estimated times assume B=2000 realizations per (M, x) point, L=100k.
 | **Total** | | | **~10–12 h** |
 
 Memory per (M, B) batch: `B × (2M²)² × 16 bytes` (Q matrices only, via fold_in).
-For M=12, B=500: 500 × 576 × 16 B ≈ 4.6 MB — fits comfortably.
+For M=12, B=500: 500 × 576 × 16 B ≈ 4.6 MB - fits comfortably.
 
 ## Reproduction checklist
 
-- [ ] `pixi run test` — all 9 tests pass
+- [ ] `pixi run test` - all 9 tests pass
 - [ ] SC benchmark: |W_c − 16.53| < 0.3, |ν − 1.571| < 0.05
 - [ ] SC dilution: p_q > p_c = 0.3115 (quantum > classical)
 - [ ] BCC dilution: p_q > p_c = 0.2457

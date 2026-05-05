@@ -29,7 +29,7 @@ where x is the control parameter (W for Anderson disorder, p for dilution).
 
 Instead of a hardcoded window half-width, we run a **window adequacy scan**: fit FSS at
 δ ∈ {0.03..0.15} in 15 steps, record χ²/dof(δ) and Q(δ), select the widest δ with
-χ²/dof < 3.0. This is standard FSS practice — NOT specifically from S&O99 or Rodriguez2011
+χ²/dof < 3.0. This is standard FSS practice - NOT specifically from S&O99 or Rodriguez2011
 (see docs/methodology.md §6 for verified attribution). Manual `--p-min`/`--p-max` available
 for diagnosis only. See `src/fss.py: scan_fss_windows`.
 
@@ -51,13 +51,13 @@ y=1.12 in the broader literature is unclear; do not attribute it to S&O 1999.
 With M = {4..12}, y cannot be identified
 from our TMM data. Two explicit failures confirmed this:
 
-**Attempt 1** — `fit_y_irrel=True, n_corrections=2, poly_order=4`:
+**Attempt 1** - `fit_y_irrel=True, n_corrections=2, poly_order=4`:
 y = 0.89, b_err/b = 7.0, χ²/dof = 232. Root cause: b·M^{-y} and b₂·M^{-2y} are
 nearly linearly dependent at 4 M-values; Nelder-Mead exploited the flat valley.
 
-**Attempt 2** — `fit_y_irrel=True, n_corrections=1, poly_order=4`:
+**Attempt 2** - `fit_y_irrel=True, n_corrections=1, poly_order=4`:
 y = 0.05 (collapsed to zero), b_err/b = 7.1, W_c and ν far outside tolerance.
-Root cause: b·M^{-y} → b (constant) as y→0 — algebraically degenerate with a_0.
+Root cause: b·M^{-y} → b (constant) as y→0 - algebraically degenerate with a_0.
 The optimizer found this valley; χ²/dof = 1.931 was achieved by an unphysical solution.
 
 **Conclusion**: Fitting y requires M spanning a decade (e.g. {4..20}). Fix y at the
@@ -76,7 +76,7 @@ b₂ requires M ≥ 5–6 sizes (e.g. {4,6,8,10,12,16}) with wide spacing.
 poly_order=3 left polynomial strain at window edges (|u|_max ≈ 7). Adding one term
 reduced χ²/dof from 2.615 to 2.421 without degrading identifiability.
 
-### Residual χ²/dof ≈ 2.4 — physical origin
+### Residual χ²/dof ≈ 2.4 - physical origin
 
 With M = {4..10}, M^{-y} at M=4 is 0.232 and at M=10 is 0.076. These are large
 corrections (7–23% of Λ_M). The single term b·M^{-y} captures the leading correction,
@@ -95,7 +95,7 @@ Combine as total = sqrt(stat² + syst²) for single-number reporting.
 
 ---
 
-## Step 1 — COMPLETE ✓
+## Step 1 - COMPLETE ✓
 
 Benchmark data collected (M={4,6,8,10}, W∈[13,20], L=10k, N_real=500).
 Raw TMM runtime: 540 min on RTX 5090.
@@ -120,14 +120,14 @@ pixi run python runs/sc_benchmark.py --refit --y-irrel 1.20
 
 ---
 
-## Step 2 — COMPLETE ✓
+## Step 2 - COMPLETE ✓
 
 MGS QR fix applied to tmm.py (removed cuSOLVER dispatch that caused 41× slowdown).
 Data regenerated for M=8 and M=10. Results unchanged (same statistics, correct physics).
 
 ---
 
-## Step 3 — SC quantum percolation at E=0.7
+## Step 3 - SC quantum percolation at E=0.7
 
 Validates the quantum percolation setup against Ujfalusi & Varga (2014) Table I: p_c^Q(E=0.7) ≈ 0.384.
 Uses same FSS model as benchmark (y=1.12 fixed, poly_order=4, n_corrections=1).
@@ -204,7 +204,7 @@ Expected runtime: ~9 hours (L=10k, N_real=500, M=[4,6,8,10]).
 
 ### Documented failure modes for Step 3
 
-**Failure A — p_q constant for all p (Λ_M flat, all same value)**
+**Failure A - p_q constant for all p (Λ_M flat, all same value)**
 
 _Symptom_: All p values give the same Λ_M ≈ Λ_warmup. Λ_M table shows identical values in every row.
 
@@ -221,7 +221,7 @@ _Verify_: Check M=10 range. Correct: λ_M ∈ [0.047, 0.435]. Broken: λ_M ∈ [
 
 ---
 
-**Failure B — p_q ≈ 0.59–0.65, χ²/dof >> 5, ν > 2**
+**Failure B - p_q ≈ 0.59–0.65, χ²/dof >> 5, ν > 2**
 
 _Symptom_: "Rough p_q estimate (minimum spread): 0.598" and FSS fit in window [0.52, 0.68] gives p_q=0.589, χ²/dof=27.
 
@@ -230,7 +230,7 @@ _Root cause_: The minimum spread algorithm (`np.argmin(std(Λ_M over M))`) finds
 - M6–M8 crossing: ~p_q + 0.06
 - M8–M10 crossing: ~p_q + 0.03
 
-The global std minimum lands at ~0.60 where corrections accidentally equalize all four Λ_M values — NOT at the actual quantum critical point. The FSS is then fit in the wrong window.
+The global std minimum lands at ~0.60 where corrections accidentally equalize all four Λ_M values - NOT at the actual quantum critical point. The FSS is then fit in the wrong window.
 
 _Fix_: `runs/sc_dilution.py` now uses `_find_crossings` (pairwise sign-change detector with linear interpolation) as the primary estimator. Minimum spread kept only as fallback. If running an old version of the script, use:
 ```bash
@@ -241,21 +241,21 @@ _Distinguish from Failure A_: In Failure B, the Λ_M TABLE shows variation (Λ_M
 
 ---
 
-**Failure C — Classical p_c check fails: measured 0.20 or 0.32+**
+**Failure C - Classical p_c check fails: measured 0.20 or 0.32+**
 
-- 0.20: periodic BC bug in `_wraps` — used periodic neighbor function, making z=0 adjacent to z=L-1; any occupied pair straddling that boundary gave a false spanning cluster. Fix: use `_neighbors_sc_nopbc` (checking bounds: `0 ≤ ni < L`).
+- 0.20: periodic BC bug in `_wraps` - used periodic neighbor function, making z=0 adjacent to z=L-1; any occupied pair straddling that boundary gave a false spanning cluster. Fix: use `_neighbors_sc_nopbc` (checking bounds: `0 ≤ ni < L`).
 - 0.32+: tolerance too tight. Finite-size shift p_c(L=20) ≈ p_c(∞) + 0.013. Tolerance must be ±0.025.
 
 Both are fixed in the current `src/percolation.py`.
 
 ---
 
-**Failure D — p_q ≈ 0.59, ν ≈ 2.0, χ²/dof ≈ 10, b ≈ 0 (chiral-symmetry fixed point)**
+**Failure D - p_q ≈ 0.59, ν ≈ 2.0, χ²/dof ≈ 10, b ≈ 0 (chiral-symmetry fixed point)**
 
 _Symptom_: Crossings tight at [0.589, 0.592, 0.594], p_q=0.591±0.001, ν=1.99±0.03, b_err/b≈7 (b
 consistent with zero), χ²/dof≈10.
 
-_Root cause_: This is NOT a code bug — it is correct physics at E=0. The SC lattice is bipartite
+_Root cause_: This is NOT a code bug - it is correct physics at E=0. The SC lattice is bipartite
 (sublattice symmetry: H → −H). At E=0, this places the system in symmetry class AIII/BDI (chiral
 orthogonal), not the standard 3D-AI class. Consequences:
 - p_c^Q(E=0) > p_c^Q(E=0.1) because band-centre states are anomalously localized in the chiral class
@@ -276,7 +276,7 @@ by the algorithm (it used the wrong method).
 
 ---
 
-**Failure E — Spurious crossings from correction dominance near the chiral fixed point**
+**Failure E - Spurious crossings from correction dominance near the chiral fixed point**
 
 _Symptom_: Crossings appear at p≈0.35, far below Ujfalusi's p_c^Q(E=0.1)=0.454. FSS gives
 p_q=0.372, ν=0.915 (wrong class), b=−0.153 (large negative), χ²/dof=1543.
@@ -285,7 +285,7 @@ _Root cause_: E=0.1 is only 1.7% of the SC half-bandwidth (6t) from E=0. The sys
 crossover between the BDI (chiral) fixed point at E=0 and the AI fixed point at E>>0. At M={4..10},
 finite-size corrections b·M^{-y} have magnitude |b|·4^{-1.12} = 0.032, which is 38% of Λ_M≈0.085 at
 the apparent crossing. The correction differential between M=4 and M=10 (0.022) inverts the insulating
-ordering wherever the physical insulating signal F(u_4)−F(u_10) < 0.022 — which occurs for all
+ordering wherever the physical insulating signal F(u_4)−F(u_10) < 0.022 - which occurs for all
 p ∈ [0.35, 0.45]. The true p_q≈0.45 is invisible: ALL data for p>0.35 appears metallic due to
 corrections, not physics. χ²/dof=1543 is driven by σ(Λ_M)≈10^{-4} (statistically precise data)
 combined with higher-order correction terms b₂·M^{-2y} not captured by the single-correction ansatz.
@@ -298,7 +298,7 @@ _Fix (applied)_: **E=0.7** is now the default energy in `sc_dilution.py`. At E=0
 similar to Anderson benchmark (b≈0.1). New output file: `data/sc_dilution_E0p7.h5`.
 
 _Alternative fix (not used)_: Add M=12, 16. At M=16, correction 0.153×16^{-1.12}=0.006 (4%
-of signal) — crossings shift toward true p_q. Adds ~20h compute. Only needed if E=0.7 also
+of signal) - crossings shift toward true p_q. Adds ~20h compute. Only needed if E=0.7 also
 fails (unlikely given ξ_cross argument).
 
 _Constrained refit on E=0.1 data (diagnosis only)_:
@@ -314,7 +314,7 @@ BCC energy will be selected after SC E=0.7 result is confirmed (same ξ_cross ar
 
 ---
 
-## Step 4 — BCC quantum percolation (the novel measurement)
+## Step 4 - BCC quantum percolation (the novel measurement)
 
 Only run after Step 3 passes. Same FSS model, same universality class (3D orthogonal).
 
@@ -361,7 +361,7 @@ Expected runtime: 8–20 hours (complex128 for BCC is ~2× slower per step than 
 
 ---
 
-## Step 5 — Full analysis and comparison table
+## Step 5 - Full analysis and comparison table
 
 ```bash
 pixi run analyse
@@ -388,7 +388,7 @@ pixi run python runs/sc_benchmark.py --refit --y-irrel 1.20
 # Reported automatically as syst error; spot-check that shifts match reported syst.
 
 # 4. Verify L convergence: γ_min × L >> 1 for all M at the critical point.
-# At p_q, ξ_M ~ M; γ_min ~ 1/M. L=100k >> M_max=12 — this is fine.
+# At p_q, ξ_M ~ M; γ_min ~ 1/M. L=100k >> M_max=12 - this is fine.
 ```
 
 ---

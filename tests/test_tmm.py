@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import src.config   # noqa — enable x64 before any jax import
+import src.config   # noqa - enable x64 before any jax import
 import jax
 import jax.numpy as jnp
 import numpy as np
@@ -218,7 +218,7 @@ class TestTMM:
         """
         from src.tmm import make_tmm_fns, lambda_M
         M_small, M_large = 4, 8
-        p = 0.25   # below p_c(SC)=0.311 — all states localized, strong signal
+        p = 0.25   # below p_c(SC)=0.311 - all states localized, strong signal
         L = 5_000
         n_real = 20
 
@@ -254,7 +254,7 @@ class TestFSS:
 
         # noise=0.003: small enough that ν uncertainty (∝ noise) is ~0.04,
         # comfortably within the 0.05 tolerance. noise=0.01 gave ν_err≈0.13,
-        # making the 0.05 tolerance tighter than 1σ — intermittently failing.
+        # making the 0.05 tolerance tighter than 1σ - intermittently failing.
         M_list, x_list, lam_list, err_list = [], [], [], []
         for M in [4, 6, 8, 10, 12]:
             for x in np.linspace(0.35, 0.55, 30):

@@ -6,12 +6,12 @@ Requires completed HDF5 data files in data/.
 
 Figure list
 -----------
-Fig 1: Λ_M(W) crossing curves — SC Anderson disorder benchmark
-Fig 2: FSS collapse — SC Anderson disorder
-Fig 3: Λ_M(p) crossing curves — SC site-diluted quantum percolation
-Fig 4: FSS collapse — SC quantum percolation
-Fig 5: Λ_M(p) crossing curves — BCC site-diluted quantum percolation
-Fig 6: FSS collapse — BCC quantum percolation
+Fig 1: Λ_M(W) crossing curves - SC Anderson disorder benchmark
+Fig 2: FSS collapse - SC Anderson disorder
+Fig 3: Λ_M(p) crossing curves - SC site-diluted quantum percolation
+Fig 4: FSS collapse - SC quantum percolation
+Fig 5: Λ_M(p) crossing curves - BCC site-diluted quantum percolation
+Fig 6: FSS collapse - BCC quantum percolation
 Fig 7: Summary comparison: p_c vs p_q for SC and BCC
 """
 from __future__ import annotations
@@ -80,7 +80,7 @@ def _collapse_plot(ax, M_list, x_values, lam_dict, result, x_label, title):
     # Draw fitted curve
     u_dense = np.linspace(ax.get_xlim()[0] if ax.get_xlim()[0] != 0 else -3, 3, 200)
     # Fit curve uses the best-fit polynomial coefficients embedded in fss_curve
-    # (coefficients not stored in FSSResult — refine by re-fitting or just draw data)
+    # (coefficients not stored in FSSResult - refine by re-fitting or just draw data)
     ax.axvline(0, color="black", linestyle="--", linewidth=0.8)
     ax.set_xlabel(r"$M^{1/\nu}(x - x_c)/x_c$")
     ax.set_ylabel(r"$\Lambda_M$")
@@ -132,7 +132,7 @@ def make_all_figures() -> None:
                        title=fr"FSS collapse: $\nu={result_bench.nu:.3f}\pm{result_bench.nu_err:.3f}$")
 
         fig.suptitle(
-            fr"3D SC Anderson Benchmark — $W_c={result_bench.x_c:.3f}\pm{result_bench.x_c_err:.3f}$, "
+            fr"3D SC Anderson Benchmark - $W_c={result_bench.x_c:.3f}\pm{result_bench.x_c_err:.3f}$, "
             fr"$\nu={result_bench.nu:.3f}\pm{result_bench.nu_err:.3f}$  [Slevin: 16.53, 1.571]"
         )
         fig.tight_layout()
@@ -174,7 +174,7 @@ def make_all_figures() -> None:
                        title=fr"FSS: $\nu={result_sc.nu:.3f}\pm{result_sc.nu_err:.3f}$")
 
         fig.suptitle(
-            fr"SC Quantum Percolation — $p_q={result_sc.x_c:.4f}\pm{result_sc.x_c_err:.4f}$, "
+            fr"SC Quantum Percolation - $p_q={result_sc.x_c:.4f}\pm{result_sc.x_c_err:.4f}$, "
             fr"$\nu={result_sc.nu:.3f}\pm{result_sc.nu_err:.3f}$"
         )
         fig.tight_layout()
@@ -216,7 +216,7 @@ def make_all_figures() -> None:
                        title=fr"FSS: $\nu={result_bcc.nu:.3f}\pm{result_bcc.nu_err:.3f}$")
 
         fig.suptitle(
-            fr"BCC Quantum Percolation — $p_q={result_bcc.x_c:.4f}\pm{result_bcc.x_c_err:.4f}$, "
+            fr"BCC Quantum Percolation - $p_q={result_bcc.x_c:.4f}\pm{result_bcc.x_c_err:.4f}$, "
             fr"$\nu={result_bcc.nu:.3f}\pm{result_bcc.nu_err:.3f}$  [FIRST MEASUREMENT]"
         )
         fig.tight_layout()

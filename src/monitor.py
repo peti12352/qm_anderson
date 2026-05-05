@@ -1,11 +1,11 @@
 """
 Runtime monitoring utilities for TMM runs.
 
-CompileMonitor  — background thread that prints GPU stats every N seconds
+CompileMonitor  - background thread that prints GPU stats every N seconds
                   while block_until_ready() is blocking. Distinguishes
                   XLA compilation (GPU idle) from GPU execution (GPU busy).
 
-print_system_info — prints JAX/CUDA/GPU details at startup.
+print_system_info - prints JAX/CUDA/GPU details at startup.
 """
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def _nvidia_smi(*fields: str) -> list[str] | None:
         )
         if r.returncode != 0 or not r.stdout.strip():
             return None
-        # Take first line (GPU 0), split on ", " — nvidia-smi CSV separator
+        # Take first line (GPU 0), split on ", " - nvidia-smi CSV separator
         line = r.stdout.strip().splitlines()[0]
         parts = [x.strip() for x in line.split(", ")]
         # Fallback: some builds use "," without space
@@ -67,7 +67,7 @@ def _gpu_line() -> str:
     if not vals or len(vals) < 5:
         return "(no GPU stats)"
     util, used, total, temp, pwr = vals
-    phase = "XLA compiling — GPU idle" if int(util) < 5 else f"GPU executing  {util}% util"
+    phase = "XLA compiling - GPU idle" if int(util) < 5 else f"GPU executing  {util}% util"
     return f"{phase} | VRAM {used}/{total} MiB | {temp}°C | {pwr}W"
 
 

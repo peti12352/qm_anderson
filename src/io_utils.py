@@ -9,8 +9,8 @@ File layout
 /metadata/
     lattice, M_list, L, W or p values, E, t, n_real
 /data/M_{M}/x_{idx}/
-    gammas       : (N_real, 2N) float64 — raw Lyapunov exponents
-    x_value      : scalar — control parameter (W or p)
+    gammas       : (N_real, 2N) float64 - raw Lyapunov exponents
+    x_value      : scalar - control parameter (W or p)
     lambda_mean  : scalar
     lambda_stderr: scalar
 """

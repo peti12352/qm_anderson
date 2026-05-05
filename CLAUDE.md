@@ -1,4 +1,4 @@
-# CLAUDE.md — qm_anderson
+# CLAUDE.md - qm_anderson
 
 Production-grade directives for this physics research codebase. These override
 default assistant behavior. The governing loop: **gather context → take action
@@ -11,7 +11,7 @@ default assistant behavior. The governing loop: **gather context → take action
 ### Never assert what has not been verified
 Before citing a paper for any claim:
 - Confirm the paper actually makes that claim (re-read or re-fetch if needed).
-- Example of past failure: y=1.12 was attributed to Slevin & Ohtsuki 1999 PRL 82,382 —
+- Example of past failure: y=1.12 was attributed to Slevin & Ohtsuki 1999 PRL 82,382 -
   but that paper fits y FREELY and obtains |y|≈2.8, not 1.12.
 
 ### Never state a physical result without a citation or direct measurement
@@ -39,7 +39,7 @@ to confirm the edit applied correctly.
 ### Separate plan from execution
 When the user asks to "think about this" or "propose changes": output only the
 analysis and proposal. No code until the user approves. If you spot a problem in
-an approved plan, flag it before implementing — do not improvise silently.
+an approved plan, flag it before implementing - do not improvise silently.
 
 ### Explicit phases for multi-file changes
 Never change more than 5 files per response. State which files will be changed and
@@ -59,7 +59,7 @@ Do NOT report a change as complete without running tests. If tests fail, fix bef
 reporting. If no test exists for the changed code, say so explicitly.
 
 ### No unverified citations in code or comments
-If a comment says "Slevin & Ohtsuki 1999" or "Rodriguez 2011" — that paper must
+If a comment says "Slevin & Ohtsuki 1999" or "Rodriguez 2011" - that paper must
 actually contain the cited claim. The two most common errors in this project:
 - Attributing y=1.12 to S&O99 (their value is |y|≈2.8; our 1.12 is empirical)
 - Attributing the δ window scan to Rodriguez2011 (their test is polynomial-order
@@ -123,7 +123,7 @@ Non-obvious = something that future-me would not derive from the code. Examples:
 ## 6. File System as State
 
 Write intermediate results to data files. Use checkpoint files. Do not hold
-large numerical arrays in context — read them from HDF5 when needed.
+large numerical arrays in context - read them from HDF5 when needed.
 
 For greengoblin runs:
 - Always confirm checkpoint names match OUTFILE names (E0p7 suffix if E=0.7)

@@ -31,7 +31,7 @@ def _union(parent: np.ndarray, rank: np.ndarray, a: int, b: int) -> None:
 
 
 def _neighbors_sc(i: int, j: int, k: int, L: int):
-    """6 nearest neighbors — periodic BC."""
+    """6 nearest neighbors - periodic BC."""
     yield (i - 1) % L, j, k
     yield (i + 1) % L, j, k
     yield i, (j - 1) % L, k
@@ -41,14 +41,14 @@ def _neighbors_sc(i: int, j: int, k: int, L: int):
 
 
 def _neighbors_sc_nopbc(i: int, j: int, k: int, L: int):
-    """6 nearest neighbors — no periodic BC (for spanning check)."""
+    """6 nearest neighbors - no periodic BC (for spanning check)."""
     for ni, nj, nk in ((i-1,j,k),(i+1,j,k),(i,j-1,k),(i,j+1,k),(i,j,k-1),(i,j,k+1)):
         if 0 <= ni < L and 0 <= nj < L and 0 <= nk < L:
             yield ni, nj, nk
 
 
 def _neighbors_bcc(i: int, j: int, k: int, L: int):
-    """8 nearest neighbors — periodic BC."""
+    """8 nearest neighbors - periodic BC."""
     for di in (-1, +1):
         for dj in (-1, +1):
             for dk in (-1, +1):
@@ -56,7 +56,7 @@ def _neighbors_bcc(i: int, j: int, k: int, L: int):
 
 
 def _neighbors_bcc_nopbc(i: int, j: int, k: int, L: int):
-    """8 nearest neighbors — no periodic BC (for spanning check)."""
+    """8 nearest neighbors - no periodic BC (for spanning check)."""
     for di in (-1, +1):
         for dj in (-1, +1):
             for dk in (-1, +1):

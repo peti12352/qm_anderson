@@ -169,7 +169,7 @@ def fit_fss(
         err_arr = err_arr[mask]
         if len(x_arr) < 6:
             raise ValueError(
-                f"x_range {x_range} leaves only {len(x_arr)} points — too few to fit."
+                f"x_range {x_range} leaves only {len(x_arr)} points - too few to fit."
             )
 
     n_poly   = poly_order + 1
@@ -296,7 +296,7 @@ def scan_fss_windows(
     x_min_bound:    float = 0.0,
     x_max_bound:    float = 1.0,
 ) -> tuple[tuple[float, float], list[dict]]:
-    """Scan FSS window half-width δ — select widest window where model is adequate.
+    """Scan FSS window half-width δ - select widest window where model is adequate.
 
     Procedure (standard FSS practice; see docs/methodology.md §6 for attribution):
       - For each δ ∈ delta_values, fit FSS in window (x_c_rough−δ, x_c_rough+δ).

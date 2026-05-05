@@ -63,7 +63,7 @@ P_LIST   = sorted(set(P_COARSE + P_FINE))
 L       = 10_000
 N_REAL  = 500
 W       = 0.0    # pure geometric disorder (site dilution only)
-E       = 0.7    # interior of band — far from BDI crossover (see docstring)
+E       = 0.7    # interior of band - far from BDI crossover (see docstring)
 T_HOP   = 1.0
 OUTFILE = Path("data/sc_dilution_E0p7.h5")
 SEED    = 43
@@ -97,7 +97,7 @@ def _find_crossings(lam_by_M: dict, M_list: list[int], p_list: list[float]) -> l
 
 def _print_lam_table(lam_by_M: dict, M_list: list[int], p_list: list[float],
                      stride: int = 4) -> None:
-    """Print Λ_M(p) for every `stride`-th p value — diagnostic for curve ordering."""
+    """Print Λ_M(p) for every `stride`-th p value - diagnostic for curve ordering."""
     print(f"\n  Λ_M(p) table (every {stride}th p):")
     print(f"  {'p':>8}", end="")
     for M in M_list:
@@ -121,7 +121,7 @@ def _check_classical_threshold() -> None:
 
     Tolerance ±0.025: at L=20, finite-size shift is p_c(L)-p_c(∞) ∝ L^{-1/ν}
     ≈ 20^{-1.14} × 0.4 ≈ +0.013, so p_c(L=20) ≈ 0.325. A truly broken
-    implementation (e.g. periodic BC bug) gives 0.207 — easily caught.
+    implementation (e.g. periodic BC bug) gives 0.207 - easily caught.
     """
     from src.percolation import find_pc
     pc_measured = find_pc(L=20, lattice="sc", n_samples=500)
@@ -257,7 +257,7 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
     """Shared FSS fitting logic used by both the main run and --refit mode."""
     p_arr = np.array(p_list)
 
-    # Pairwise crossing detector — more robust than minimum spread for small M.
+    # Pairwise crossing detector - more robust than minimum spread for small M.
     # Minimum spread can land in the metallic phase where corrections-to-scaling
     # accidentally equalise Λ_M values far above p_q (see RUNBOOK §FSS).
     crossings = _find_crossings(lam_by_M, M_list, p_list)
@@ -279,7 +279,7 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
         p_fit_range = (args.p_min, args.p_max)
         print(f"  FSS fit window: [{p_fit_range[0]:.3f}, {p_fit_range[1]:.3f}]  (manual)")
     else:
-        # Window stability scan — selects widest δ with χ²/dof < 3.0.
+        # Window stability scan - selects widest δ with χ²/dof < 3.0.
         # No bootstrap here (fast scan); full bootstrap runs on the selected window.
         delta_vals = np.linspace(0.03, 0.15, 15)
         p_fit_range, scan_table = scan_fss_windows(
@@ -324,7 +324,7 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
 
 
 def _run_refit(args) -> None:
-    """Load existing HDF5 data and refit FSS — no TMM rerun needed."""
+    """Load existing HDF5 data and refit FSS - no TMM rerun needed."""
     src = Path(args.data_file) if args.data_file else OUTFILE
     if not src.exists():
         print(f"ERROR: {src} not found. Run sc_dilution.py first (without --refit).")

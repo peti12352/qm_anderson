@@ -5,7 +5,7 @@ each compilation/run phase is taking.
 
 Marks
 -----
-@pytest.mark.slow  — integration tests that JIT-compile and run real TMM bars.
+@pytest.mark.slow  - integration tests that JIT-compile and run real TMM bars.
     Skipped by default (pixi run test).
     Run with: pixi run test-all
 """
@@ -29,7 +29,7 @@ def pytest_configure(config):
 
 def pytest_sessionstart(session):
     import jax
-    import src.config  # noqa — enables x64 + GPU before any jax call
+    import src.config  # noqa - enables x64 + GPU before any jax call
 
     print("\n" + "=" * 60)
     print("JAX devices:", jax.devices())

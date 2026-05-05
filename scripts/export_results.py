@@ -12,7 +12,7 @@ Writes one CSV per dataset to results/:
 
 CSV columns: M, x_value, lambda_mean, lambda_stderr
 
-These CSVs are committed to git. The raw HDF5 files (data/*.h5) are NOT —
+These CSVs are committed to git. The raw HDF5 files (data/*.h5) are NOT -
 they can be 100–400 MB each (raw Lyapunov exponent samples for bootstrap
 reanalysis). Keep them on the compute machine or transfer separately.
 """
