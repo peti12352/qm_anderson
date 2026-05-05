@@ -170,7 +170,7 @@ for disordered systems: $\nu$ must be at least $2/3$ in any dimension.)
 
 ## 4. Renormalization Group (RG)
 
-### 4.1 The RG operation
+### 4.1 RG operation
 
 **What problem does RG solve?** Near a phase transition, fluctuations occur on all
 length scales from the lattice spacing $a$ up to $\xi$. Direct calculation is
@@ -462,7 +462,7 @@ $$
 
 - $C_k$: $M^2 \times M^2$ intra-slice matrix for slice $k$ — off-diagonal entries $-t$ for nearest-neighbour pairs within the slice; diagonal entries zero ($W = 0$, see below).
 - $V_k$: $M^2 \times M^2$ forward inter-slice hopping from slice $k$ to $k+1$. **Diagonal**: $(V_k)_{ii} = -t$ if site $i$ is occupied on both slices $k$ and $k+1$, else $0$.
-- $V_k^\dagger$: backward hopping from slice $k+1$ to $k$. This is $V_\text{back}$ in the recursion.
+- $V_k^\dagger = V_\text{back}$ : backward hopping from slice $k+1$ to $k$. This is $V_\text{back}$ in the recursion.
 
 $V_k$ and $V_{k-1}^\dagger$ are both diagonal but drawn from different slice-pair occupation patterns, so $V^{-1}V_\text{back} \neq I$ in general.
 
@@ -481,7 +481,7 @@ $$
 
 $V_k$ is diagonal with $-t$ on connected entries and $0$ on disconnected ones; the computation is
 restricted to the subspace where both slices are occupied, giving $V_k^{-1} = (-1/t)\cdot I_\text{active}$
-there. The $V^{-1}V_\text{back}$ term is not merely a correction — it is required to preserve the
+there. The $V^{-1}V_\text{back}$ term is not merely a correction. It is required to preserve the
 symplectic structure of the product, which forces Lyapunov exponents to come in $\pm$ pairs.
 
 Written as a $2M^2 \times 2M^2$ matrix acting on $(\psi_k,\, \psi_{k-1})$:
@@ -522,6 +522,65 @@ $$
 This converges to a definite self-averaging value as $L \to \infty$ - the law of large numbers
 for random matrix products. In practice $L = 10{,}000$ is "infinity": the Lyapunov
 exponents are converged to ~0.1%.
+
+### 6.3b Oseledec as the matrix analog of the Law of Large Numbers
+
+**Scalar case (LLN).** Let $a_1, a_2, \ldots$ be i.i.d. positive scalars with $\mathbb{E}[|\log a|] < \infty$.
+The product $P_n = a_1 a_2 \cdots a_n$ satisfies:
+
+$$
+\frac{1}{n}\log P_n = \frac{1}{n}\sum_{i=1}^n \log a_i \;\xrightarrow{\;\text{a.s.}\;}\; \mathbb{E}[\log a] \equiv \gamma
+$$
+
+by the ordinary LLN applied to $\log a_i$. So $P_n \sim e^{n\gamma}$ almost surely: one
+Lyapunov exponent, given directly by averaging the log.
+
+**The matrix obstacle.** For matrices $A_i \in GL(d)$, the same step fails:
+
+$$
+\log(A_n \cdots A_1) \neq \sum_{i=1}^n \log A_i \quad \text{when } [A_i, A_j] \neq 0
+$$
+
+Non-commutativity breaks additivity. LLN cannot be applied directly to the matrix logarithm.
+
+**The bridge: Kingman's subadditive ergodic theorem.** Define $f_n = \log\|A_n \cdots A_1\|$.
+Submultiplicativity of the matrix norm gives:
+
+$$
+\|A_{m+n} \cdots A_1\| \leq \|A_{m+n} \cdots A_{m+1}\|\cdot\|A_m \cdots A_1\|
+\;\implies\; f_{m+n} \leq f_m + f_n \circ \theta^m
+$$
+
+where $\theta$ is the shift. This is **subadditivity** — the matrix analog of additivity,
+weakened by non-commutativity. Kingman (1968): if $(f_n)$ is subadditive and $\mathbb{E}[f_1^+] < \infty$,
+then $f_n/n \to \gamma_1$ almost surely. For $d=1$, subadditivity is equality and Kingman
+reduces to the ordinary LLN exactly.
+
+**Full Lyapunov spectrum.** Apply the same argument to the $k$-th exterior power
+$\bigwedge^k(A_n \cdots A_1)$, whose norm is $\sigma_1 \cdots \sigma_k$ (product of top $k$
+singular values). Kingman gives:
+
+$$
+\frac{1}{n}\log \sigma_k(A_n \cdots A_1) \;\xrightarrow{\;\text{a.s.}\;}\; \gamma_k,
+\qquad k = 1, \ldots, d
+$$
+
+This is Oseledec's theorem. The full Lyapunov spectrum $\gamma_1 \geq \cdots \geq \gamma_d$
+replaces the single mean $\mathbb{E}[\log a]$ of the scalar case.
+
+| | Scalar (LLN) | Matrix (Oseledec) |
+|---|---|---|
+| Objects | $a_i \in \mathbb{R}^+$ | $A_i \in GL(d)$ |
+| Operation | addition (via $\log$) | matrix product |
+| Obstacle | none | non-commutativity |
+| Bridge | LLN directly | Kingman subadditivity |
+| Limit | one value $\mathbb{E}[\log a]$ | $d$ values $\gamma_1 \geq \cdots \geq \gamma_d$ |
+
+**In our context.** Each transfer matrix $T_k$ is random (different slice occupation).
+Non-commutativity is physical: the order in which wavefunction amplitudes propagate
+through slices matters. Oseledec guarantees that despite this, all $2M^2$ growth rates
+converge to definite values $\gamma_i$ for almost every disorder realization — this is
+why $\xi_M = 1/\gamma_\text{min}$ is well-defined and self-averaging.
 
 ### 6.4 Normalized localization length $\Lambda_M$
 
