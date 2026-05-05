@@ -16,29 +16,30 @@ or **extended** (spread across the whole system, like a Bloch wave)?
 
 The Hamiltonian we study is the tight-binding model on a site-diluted lattice:
 
-```
-H = −t Σ_{<i,j> both occupied} |i⟩⟨j|
-```
+$$
+H = -t \sum_{\langle i,j \rangle} |i\rangle\langle j|
+$$
 
-Each site i is independently occupied with probability p; empty otherwise. No on-site
-disorder (W = 0). The only randomness is geometric: which sites exist.
+where the sum runs over nearest-neighbour pairs $\langle i,j \rangle$ with both sites occupied.
+Each site is independently occupied with probability $p$; empty otherwise. No on-site
+disorder ($W = 0$). The only randomness is geometric: which sites exist.
 
 ### 1.2 Classical vs quantum percolation
 
 **Classical percolation** asks: is there a connected path of occupied sites spanning
-the system? Below p_c (the classical threshold), all clusters are finite - no spanning
-path exists. Above p_c, a giant cluster appears. For SC: p_c = 0.3115.
+the system? Below $p_c$ (the classical threshold), all clusters are finite - no spanning
+path exists. Above $p_c$, a giant cluster appears. For SC: $p_c = 0.3115$.
 
 **Quantum percolation** asks the harder question: even given a connected spanning
 cluster, do the quantum eigenstates on that cluster extend across the system, or do
 they localize? The answer is not automatic - quantum interference can localize states
-even on a connected graph. The quantum threshold p_q > p_c. The gap p_q − p_c is the
+even on a connected graph. The quantum threshold $p_q > p_c$. The gap $p_q - p_c$ is the
 quantum localization cost.
 
-Below p_q: all eigenstates are exponentially localized. No quantum transport.
-Above p_q: extended states exist. Quantum transport survives.
+Below $p_q$: all eigenstates are exponentially localized. No quantum transport.
+Above $p_q$: extended states exist. Quantum transport survives.
 
-This is a **quantum phase transition** driven by a geometric parameter p.
+This is a **quantum phase transition** driven by a geometric parameter $p$.
 
 ---
 
@@ -46,21 +47,22 @@ This is a **quantum phase transition** driven by a geometric parameter p.
 
 ### 2.1 What localization means
 
-An eigenstate |ψ_E⟩ is **localized** if its real-space amplitude decays exponentially
-from some center r_0:
+An eigenstate $|\psi_E\rangle$ is **localized** if its real-space amplitude decays exponentially
+from some center $\mathbf{r}_0$:
 
-```
-|⟨r|ψ_E⟩|² ~ A · exp(−|r − r_0| / ξ_loc)   as |r − r_0| → ∞
-```
+$$
+|\langle \mathbf{r}|\psi_E\rangle|^2 \sim A\, e^{-|\mathbf{r} - \mathbf{r}_0|/\xi_\text{loc}},
+\qquad |\mathbf{r} - \mathbf{r}_0| \to \infty
+$$
 
-The **localization length** ξ_loc is the decay length. It is specific to the eigenstate
-and depends on energy E and the disorder realization.
+The **localization length** $\xi_\text{loc}$ is the decay length. It is specific to the eigenstate
+and depends on energy $E$ and the disorder realization.
 
-An eigenstate is **extended** if |⟨r|ψ_E⟩|² does not decay exponentially - it spreads
-across the whole system, with amplitude ~ 1/V (V = system volume).
+An eigenstate is **extended** if $|\langle\mathbf{r}|\psi_E\rangle|^2$ does not decay exponentially - it spreads
+across the whole system, with amplitude $\sim 1/V$ ($V$ = system volume).
 
 The distinction is sharp in the thermodynamic limit. At finite system size, all
-eigenstates look somewhat spread out; the difference only becomes clear as L → ∞.
+eigenstates look somewhat spread out; the difference only becomes clear as $L \to \infty$.
 
 ### 2.2 Destructive interference
 
@@ -74,87 +76,95 @@ becomes so strong that the wavefunction cannot spread at all: **Anderson localiz
 The mechanism is purely quantum (interference) and has nothing to do with energy
 gaps or magnetic fields.
 
-### 2.3 Localization length <-> correlation length
+### 2.3 Localization length vs correlation length
 
 This distinction is crucial and often confused.
 
-**Localization length ξ_loc**: a property of individual eigenstates. It measures how
+**Localization length $\xi_\text{loc}$**: a property of individual eigenstates. It measures how
 far the wavefunction of a specific state extends before decaying. States deep in the
-localized phase have small ξ_loc. States near the mobility edge have large ξ_loc.
+localized phase have small $\xi_\text{loc}$. States near the mobility edge have large $\xi_\text{loc}$.
 
-**Correlation length ξ_corr**: a property of the phase transition itself. It measures
-the spatial scale over which critical fluctuations are correlated. ξ_corr diverges at the critical
+**Correlation length $\xi_\text{corr}$**: a property of the phase transition itself. It measures
+the spatial scale over which critical fluctuations are correlated. $\xi_\text{corr}$ diverges at the critical
 point regardless of which side you approach from.
 
 **How they relate at the Anderson or percolation transition:**
 
-On the localized side (p < p_q): the typical localization length of states near the
+On the localized side ($p < p_q$): the typical localization length of states near the
 mobility edge IS the correlation length:
 
-```
-ξ_corr = ξ_loc ~ |p − p_q|^{−ν}   (localized side)
-```
+$$
+\xi_\text{corr} = \xi_\text{loc} \sim |p - p_q|^{-\nu} \qquad \text{(localized side)}
+$$
 
-On the metallic side (p > p_q): ξ_corr is the scale above which transport becomes
-diffusive. Below ξ_corr the system still has critical (fractal) fluctuations. Above
+On the metallic side ($p > p_q$): $\xi_\text{corr}$ is the scale above which transport becomes
+diffusive. Below $\xi_\text{corr}$ the system still has critical (fractal) fluctuations. Above
 it the system looks like a normal metal.
 
-```
-ξ_corr ~ |p − p_q|^{−ν}   (metallic side, same exponent ν)
-```
+$$
+\xi_\text{corr} \sim |p - p_q|^{-\nu} \qquad \text{(metallic side, same exponent } \nu\text{)}
+$$
 
-**key point**: ξ_corr diverges on BOTH sides with the SAME exponent ν. ξ_loc only
+**Key point**: $\xi_\text{corr}$ diverges on BOTH sides with the SAME exponent $\nu$. $\xi_\text{loc}$ only
 makes sense on the localized side. They coincide on the localized side and diverge
-with the same ν. They are different conceptual quantities but the same number near the transition.
+with the same $\nu$. They are different conceptual quantities but the same number near the transition.
 
-At p_q itself: ξ_corr → ∞. The system is scale-invariant. Wavefunctions are fractal
+At $p_q$ itself: $\xi_\text{corr} \to \infty$. The system is scale-invariant. Wavefunctions are fractal
 (neither localized nor extended in the usual sense - multifractal).
 
 ---
 
-## 3. Phase Transition and What ν Means Physically
+## 3. Phase Transition and What $\nu$ Means Physically
 
 ### 3.1 This is a continuous (second-order) phase transition
 
-The transition at p_q is continuous: there is no discontinuous jump in any observable.
+The transition at $p_q$ is continuous: there is no discontinuous jump in any observable.
 Instead, everything changes smoothly and the localization length diverges as a power
 law. This is the hallmark of a second-order transition.
 
 Compare to a first-order transition (e.g. ice melting) where there IS a jump. Here,
-as p → p_q from below, ξ_loc grows without bound: the insulation decreases until at exactly p_q it is not insulating at all.
+as $p \to p_q$ from below, $\xi_\text{loc}$ grows without bound: the insulation decreases until at
+exactly $p_q$ it is not insulating at all.
 
-### 3.2 Correlation length exponent ν
+### 3.2 Correlation length exponent $\nu$
 
-ξ_corr ~ |p − p_q|^{−ν}   defines ν.
+$$
+\xi_\text{corr} \sim |p - p_q|^{-\nu}
+$$
 
-Physically ν tells you how fast the correlation length grows as you approach
+defines $\nu$. Physically $\nu$ tells you how fast the correlation length grows as you approach
 the transition.
 
-- ν = 1: ξ doubles every time you halve |p − p_q|. Linear approach.
-- ν = 1.622 (our case): ξ grows faster - ξ ~ |p − p_q|^{−1.62}. Halving the
-  distance to p_q multiplies ξ by 2^{1.62} ≈ 3.1.
+- $\nu = 1$: $\xi$ doubles every time you halve $|p - p_q|$. Linear approach.
+- $\nu = 1.622$ (our case): $\xi$ grows faster. Halving the distance to $p_q$ multiplies $\xi$ by $2^{1.62} \approx 3.1$.
 
-Concretely: 1% away from p_q (|p − p_q|/p_q = 0.01), the correlation length is
-ξ ~ (0.01)^{−1.62} × a ≈ 1800 lattice spacings (a = lattice constant). This is why
-finite-size effects are large near the transition. The system of size M = 10 is
-very small compared to ξ_corr = 1800.
+Concretely: 1% away from $p_q$ ($|p - p_q|/p_q = 0.01$), the correlation length is
+
+$$
+\xi \sim (0.01)^{-1.62} \times a \approx 1800 \text{ lattice spacings}
+$$
+
+This is why finite-size effects are large near the transition. The system of size $M = 10$ is
+very small compared to $\xi_\text{corr} = 1800$.
 
 ### 3.3 Harris criterion
 
 A fundamental question: if I add weak disorder to a clean critical point, does the
 transition survive or get washed out? Harris (1974) showed:
 
-```
-If dν > 2  (d = spatial dimension): the transition is stable against weak disorder.
-If dν < 2: disorder is relevant; the clean critical point is destroyed.
-```
+$$
+\begin{cases}
+d\nu > 2 & \text{transition stable against weak disorder} \\
+d\nu < 2 & \text{disorder relevant; clean critical point destroyed}
+\end{cases}
+$$
 
-For us: d = 3, ν = 1.622 → dν = 4.87 > 2. The quantum percolation transition is
-stable. The exponent ν = 1.622 is self-consistent: disorder at this level of strength
+For us: $d = 3$, $\nu = 1.622$ $\Rightarrow$ $d\nu = 4.87 > 2$. The quantum percolation transition is
+stable. The exponent $\nu = 1.622$ is self-consistent: disorder at this level of strength
 does not destabilize the transition.
 
-(Equivalently: ν > 2/d = 2/3. This is sometimes stated as the "Chayes et al. bound"
-for disordered systems: ν must be at least 2/3 in any dimension.)
+(Equivalently: $\nu > 2/d = 2/3$. This is sometimes stated as the "Chayes et al. bound"
+for disordered systems: $\nu$ must be at least $2/3$ in any dimension.)
 
 ---
 
@@ -163,7 +173,7 @@ for disordered systems: ν must be at least 2/3 in any dimension.)
 ### 4.1 Zoom out
 
 RG is a systematic way of asking: what does the system look like at long length
-scales? The operation is: group every b^d sites (b is the rescaling factor, d the
+scales? The operation is: group every $b^d$ sites ($b$ is the rescaling factor, $d$ the
 dimension) into a single effective site. The original Hamiltonian has parameters
 defined at each site - on-site energies and hopping amplitudes to neighbours.
 After grouping, you integrate out the degrees of freedom inside each block to
@@ -171,7 +181,7 @@ produce an effective Hamiltonian acting on the effective sites. The parameters o
 this effective Hamiltonian - effective on-site energies and effective hoppings
 between adjacent blocks - are the coarse-grained variables. They are derived from
 the original parameters by eliminating the short-distance detail. The lattice
-constant has grown by b; the site count has shrunk by b^d; the form of the
+constant has grown by $b$; the site count has shrunk by $b^d$; the form of the
 Hamiltonian is the same.
 
 At the critical point, the system is **scale-invariant**: the coarse-grained
@@ -182,50 +192,50 @@ Away from the critical point, the coarse-graining reveals that some parameters g
 (relevant operators) and others shrink (irrelevant operators) under successive
 applications.
 
-### 4.2 Why ξ ~ |x − x_c|^{−ν} emerges from RG
+### 4.2 Why $\xi \sim |x - x_c|^{-\nu}$ emerges from RG
 
-Near the critical point x_c, the deviation u = x − x_c is a **relevant operator**.
-Under coarse-graining by factor b, it transforms as:
+Near the critical point $x_c$, the deviation $u = x - x_c$ is a **relevant operator**.
+Under coarse-graining by factor $b$, it transforms as:
 
-```
-u → b^{1/ν} · u
-```
+$$
+u \;\to\; b^{1/\nu} \cdot u
+$$
 
-This is just the statement that u is relevant with RG eigenvalue 1/ν > 0. After n
-steps of coarse-graining (each by factor b), the effective deviation is:
+This is just the statement that $u$ is relevant with RG eigenvalue $1/\nu > 0$. After $n$
+steps of coarse-graining (each by factor $b$), the effective deviation is:
 
-```
-u_eff = b^{n/ν} · u
-```
+$$
+u_\text{eff} = b^{n/\nu} \cdot u
+$$
 
-The RG flow stops when u_eff ~ 1 (the system has left the critical region). This
+The RG flow stops when $u_\text{eff} \sim 1$ (the system has left the critical region). This
 happens at:
 
-```
-b^{n/ν} · u ~ 1  →  b^n ~ u^{−ν} ~ |x − x_c|^{−ν}
-```
+$$
+b^{n/\nu} \cdot u \sim 1 \;\implies\; b^n \sim u^{-\nu} \sim |x - x_c|^{-\nu}
+$$
 
-But b^n is the physical length scale reached after n coarse-graining steps. So the
+But $b^n$ is the physical length scale reached after $n$ coarse-graining steps. So the
 correlation length - the scale at which the system stops looking critical - is:
 
-```
-ξ ~ b^n ~ |x − x_c|^{−ν}
-```
+$$
+\xi \sim b^n \sim |x - x_c|^{-\nu}
+$$
 
-This is the derivation. ν is an RG eigenvalue; ξ ~ |x − x_c|^{−ν} is the consequence.
+This is the derivation. $\nu$ is an RG eigenvalue; $\xi \sim |x - x_c|^{-\nu}$ is the consequence.
 
 ### 4.3 Relevant vs irrelevant operators
 
-**Relevant operators** (eigenvalue > 0): grow under coarse-graining. x − x_c is
-relevant -> it drives the system away from the critical point. We must tune x to x_c
+**Relevant operators** (eigenvalue $> 0$): grow under coarse-graining. $x - x_c$ is
+relevant - it drives the system away from the critical point. We must tune $x$ to $x_c$
 to stay at the fixed point.
 
-**Irrelevant operators** (eigenvalue < 0): shrink under coarse-graining. At infinite
+**Irrelevant operators** (eigenvalue $< 0$): shrink under coarse-graining. At infinite
 system size they vanish. At finite system size they contribute corrections. The leading
-irrelevant operator has eigenvalue −y (y > 0), contributing corrections ~ L^{−y} to
-any observable. This is the origin of the b·M^{−y} correction in our FSS ansatz.
+irrelevant operator has eigenvalue $-y$ ($y > 0$), contributing corrections $\sim L^{-y}$ to
+any observable. This is the origin of the $b \cdot M^{-y}$ correction in our FSS ansatz.
 
-**Marginal operators** (eigenvalue = 0): don't change under RG. Rare; lead to
+**Marginal operators** (eigenvalue $= 0$): don't change under RG. Rare; lead to
 logarithmic corrections.
 
 ---
@@ -234,69 +244,69 @@ logarithmic corrections.
 
 ### 5.1 Problem
 
-In an infinite system, all observables are non-analytic (singular) at x_c: Λ_M
-jumps, ξ diverges, etc. The transition is a sharp point.
+In an infinite system, all observables are non-analytic (singular) at $x_c$: $\Lambda_M$
+jumps, $\xi$ diverges, etc. The transition is a sharp point.
 
-In a finite system of linear size L, all observables are smooth analytic functions
-of x everywhere - a finite system has no phase transitions in the strict sense.
-The divergence of ξ is cut off: once ξ reaches L, the system cannot develop
+In a finite system of linear size $L$, all observables are smooth analytic functions
+of $x$ everywhere - a finite system has no phase transitions in the strict sense.
+The divergence of $\xi$ is cut off: once $\xi$ reaches $L$, the system cannot develop
 further correlations. Equivalently, the system cannot resolve the difference between
-being exactly at x_c and being at a distance |x − x_c| ~ L^{-1/ν} away (the
-distance at which ξ(x) ~ L). The sharp singularity of the infinite-system
-transition is therefore replaced by a smooth crossover of width δx ~ L^{-1/ν}.
+being exactly at $x_c$ and being at a distance $|x - x_c| \sim L^{-1/\nu}$ away (the
+distance at which $\xi(x) \sim L$). The sharp singularity of the infinite-system
+transition is therefore replaced by a smooth crossover of width $\delta x \sim L^{-1/\nu}$.
 
 FSS turns this from a problem into a tool: the width of the crossover, and the
-shape of how observables vary across it, both depend on L through L^{-1/ν}, which
-is how ν is extracted.
+shape of how observables vary across it, both depend on $L$ through $L^{-1/\nu}$, which
+is how $\nu$ is extracted.
 
 ### 5.2 FSS hypothesis
 
-Near x_c, ξ is the only relevant length scale. Any dimensionless observable O(L, x)
-can only depend on L and x through the dimensionless ratio L/ξ:
+Near $x_c$, $\xi$ is the only relevant length scale. Any dimensionless observable $O(L, x)$
+can only depend on $L$ and $x$ through the dimensionless ratio $L/\xi$:
 
-```
-O(L, x) = f(L/ξ)  =  f( L · |x − x_c|^ν )
-```
+$$
+O(L, x) = f(L/\xi) = f\!\left(L \cdot |x - x_c|^{\nu}\right)
+$$
 
-We can reparametrize the argument to make it linear in x − x_c (convenient for
+We can reparametrize the argument to make it linear in $x - x_c$ (convenient for
 polynomial approximation):
 
-```
-u = L^{1/ν} · (x − x_c)/x_c        so that    u^ν ∝ L/ξ
-```
+$$
+u = L^{1/\nu} \cdot \frac{x - x_c}{x_c} \qquad \text{so that } u^\nu \propto L/\xi
+$$
 
 giving the standard FSS form:
 
-```
-O(L, x) = f(u)  =  f( L^{1/ν} · (x − x_c)/x_c )
-```
+$$
+O(L, x) = f(u) = f\!\left(L^{1/\nu} \cdot \frac{x - x_c}{x_c}\right)
+$$
 
-If O has a non-trivial scaling dimension η at the fixed point (e.g. it is not
+If $O$ has a non-trivial scaling dimension $\eta$ at the fixed point (e.g. it is not
 dimensionless), there is an additional prefactor:
 
-```
-O(L, x) = L^{η} · f( L^{1/ν} · (x − x_c)/x_c )
-```
+$$
+O(L, x) = L^{\eta} \cdot f\!\left(L^{1/\nu} \cdot \frac{x - x_c}{x_c}\right)
+$$
 
 ### 5.3 Why this is powerful
 
-Plot O vs u instead of vs x: all curves for all L collapse onto **one universal
-curve** f(u). The collapse works because f is universal - it encodes only the
+Plot $O$ vs $u$ instead of vs $x$: all curves for all $L$ collapse onto **one universal
+curve** $f(u)$. The collapse works because $f$ is universal - it encodes only the
 fixed-point structure, not the specific microscopic details. SC and BCC percolation
-(different lattices) share the same f because they are in the same universality class
+(different lattices) share the same $f$ because they are in the same universality class
 (3D orthogonal). The data collapse is both a test of the theory and a precision
-measurement of ν (vary ν until the collapse is best).
+measurement of $\nu$ (vary $\nu$ until the collapse is best).
 
 ### 5.4 Corrections to scaling
 
-At finite L, irrelevant operators contribute:
+At finite $L$, irrelevant operators contribute:
 
-```
-O(L, x) = f(u) + b·L^{−y} + b_2·L^{−2y} + ...
-```
+$$
+O(L, x) = f(u) + b \cdot L^{-y} + b_2 \cdot L^{-2y} + \cdots
+$$
 
-The correction b·L^{−y} shifts the observable away from the asymptotic f(u). For
-small L (our M = 4..10 range), corrections can be 10–40% of the signal. Including
+The correction $b \cdot L^{-y}$ shifts the observable away from the asymptotic $f(u)$. For
+small $L$ (our $M = 4\ldots10$ range), corrections can be 10-40% of the signal. Including
 the leading correction is essential for unbiased results; including two corrections
 requires many more system sizes.
 
@@ -306,11 +316,11 @@ requires many more system sizes.
 
 ### 6.1 Quasi-1D geometry
 
-Direct diagonalization of a 3D Hamiltonian on an L^3 lattice is exponentially
-large (eigenvalues many eigenstates). The TMM maps the 3D problem onto a much more efficient quasi-1D problem.
+Direct diagonalization of a 3D Hamiltonian on an $L^3$ lattice is exponentially
+large. The TMM maps the 3D problem onto a much more efficient quasi-1D problem.
 
-Take a strip (tube) of cross-section M × M sites, propagated in the z-direction for
-L slices:
+Take a strip (tube) of cross-section $M \times M$ sites, propagated in the $z$-direction for
+$L$ slices:
 
 ```
          M sites
@@ -321,217 +331,226 @@ L slices:
     ══════════════════════════════ →  L slices
 ```
 
-The M² sites on each slice form a state vector of dimension N = M².
+The $M^2$ sites on each slice form a state vector of dimension $M^2$.
 
 ### 6.2 What the transfer matrix does
 
-The Schrödinger equation H|ψ⟩ = E|ψ⟩ on the strip can be rewritten as a recursion
-relating the wavefunction amplitudes on slice k+1 to those on slices k and k−1:
+The Schrödinger equation $H|\psi\rangle = E|\psi\rangle$ on the strip can be rewritten as a recursion
+relating the wavefunction amplitudes on slice $k+1$ to those on slices $k$ and $k-1$:
 
-```
-ψ_{k+1} = T_k · ψ_k − V^{−1} · V_back · ψ_{k−1}
-```
+$$
+\psi_{k+1} = T_k \cdot \psi_k - V^{-1} V_\text{back} \cdot \psi_{k-1}
+$$
 
-where T_k encodes the on-slice Hamiltonian and the coupling to the next slice. This
-can be written as a 2M² × 2M² transfer matrix acting on (ψ_k, ψ_{k−1})
-(each ψ_k has M² components, one per site in the M×M cross-section):
+where $T_k$ encodes the on-slice Hamiltonian and the coupling to the next slice. This
+can be written as a $2M^2 \times 2M^2$ transfer matrix acting on $(\psi_k, \psi_{k-1})$
+(each $\psi_k$ has $M^2$ components, one per site in the $M \times M$ cross-section):
 
-```
-(ψ_{k+1})   (   T_k    −V^{−1}·V_back ) (ψ_k    )
-(ψ_k    ) = (    I              0      ) (ψ_{k−1})
-```
+$$
+\begin{pmatrix} \psi_{k+1} \\ \psi_k \end{pmatrix}
+=
+\begin{pmatrix} T_k & -V^{-1}V_\text{back} \\ I & 0 \end{pmatrix}
+\begin{pmatrix} \psi_k \\ \psi_{k-1} \end{pmatrix}
+$$
 
-After L steps, we have a product of L random matrices (random because each slice has
+After $L$ steps, we have a product of $L$ random matrices (random because each slice has
 a different random occupation pattern).
 
 ### 6.3 Lyapunov exponents
 
 By Oseledec's theorem (1968), for almost every disorder realization, the product
-T_L T_{L−1} ··· T_1 has well-defined growth rates: the **Lyapunov exponents** γ_i
-(i = 1, ..., 2M²), ordered γ_1 ≥ γ_2 ≥ ··· ≥ γ_{M²} > 0 > −γ_{M²} > ··· ≥ −γ_1.
+$T_L T_{L-1} \cdots T_1$ has well-defined growth rates: the **Lyapunov exponents** $\gamma_i$
+($i = 1, \ldots, 2M^2$), ordered
 
-The positive Lyapunov exponents describe the growth of the matrix product in L. The
-**smallest positive Lyapunov exponent γ_min** controls the longest length scale in
-the problem -> localization length of the quasi-1D strip:
+$$
+\gamma_1 \geq \gamma_2 \geq \cdots \geq \gamma_{M^2} > 0 > -\gamma_{M^2} \geq \cdots \geq -\gamma_1
+$$
 
-```
-ξ_M = 1/γ_min
-```
+The positive Lyapunov exponents describe the growth of the matrix product in $L$. The
+**smallest positive Lyapunov exponent $\gamma_\text{min}$** controls the longest length scale in
+the problem - the localization length of the quasi-1D strip:
 
-This converges to a definite self-averaging value as L → ∞ - the law of large numbers
-for random matrix products. In practice L = 10,000 is "infinity": the Lyapunov
+$$
+\xi_M = 1/\gamma_\text{min}
+$$
+
+This converges to a definite self-averaging value as $L \to \infty$ - the law of large numbers
+for random matrix products. In practice $L = 10{,}000$ is "infinity": the Lyapunov
 exponents are converged to ~0.1%.
 
-### 6.4 Normalized localization length Λ_M
+### 6.4 Normalized localization length $\Lambda_M$
 
 We define:
 
-```
-Λ_M = ξ_M / M = 1 / (M · γ_min)
-```
+$$
+\Lambda_M = \frac{\xi_M}{M} = \frac{1}{M \cdot \gamma_\text{min}}
+$$
 
-Dividing by M makes this dimensionless. This is the key observable for FSS.
+Dividing by $M$ makes this dimensionless. This is the key observable for FSS.
 
-**Why γ_min and not some other Lyapunov exponent?** γ_min controls the slowest
+**Why $\gamma_\text{min}$ and not some other Lyapunov exponent?** $\gamma_\text{min}$ controls the slowest
 decay / fastest growth in the system - the most extended mode. In the metallic phase
 this mode extends across the cross-section; in the localized phase it decays. It is
 the mode closest to the mobility edge.
 
-### 6.5 What M and L are (critical distinction)
+### 6.5 What $M$ and $L$ are (critical distinction)
 
-|                   | M (cross-section)                       | L (strip length)              |
-| ----------------- | --------------------------------------- | ----------------------------- |
-| Role              | **Finite-size variable** (the L in FSS) | Statistical averaging device  |
-| Physical meaning  | The system size that competes with ξ_3D | Must be >> ξ_M to converge    |
-| Varies in FSS?    | Yes - {4, 6, 8, 10}                     | No - fixed at 10,000          |
-| Limit of interest | M → ∞ recovers 3D physics               | L → ∞ taken first (converges) |
+|                   | $M$ (cross-section)                          | $L$ (strip length)                        |
+| ----------------- | -------------------------------------------- | ----------------------------------------- |
+| Role              | **Finite-size variable** (the $L$ in FSS)    | Statistical averaging device              |
+| Physical meaning  | The system size that competes with $\xi_{3D}$ | Must be $\gg \xi_M$ to converge          |
+| Varies in FSS?    | Yes - $\{4, 6, 8, 10\}$                     | No - fixed at 10,000                      |
+| Limit of interest | $M \to \infty$ recovers 3D physics           | $L \to \infty$ taken first (converges)    |
 
-**Why M plays the role of L in FSS**: the TMM has already taken L → ∞ (Oseledec's
-theorem). What remains is a well-defined number ξ_M for each M. Now M is the only
-finite length in the problem, and it competes with the 3D correlation length ξ_3D.
-The ratio M/ξ_3D controls whether the strip looks localized or metallic.
+**Why $M$ plays the role of $L$ in FSS**: the TMM has already taken $L \to \infty$ (Oseledec's
+theorem). What remains is a well-defined number $\xi_M$ for each $M$. Now $M$ is the only
+finite length in the problem, and it competes with the 3D correlation length $\xi_{3D}$.
+The ratio $M/\xi_{3D}$ controls whether the strip looks localized or metallic.
 
 ---
 
-## 7. How Λ_M Encodes the Phase Transition
+## 7. How $\Lambda_M$ Encodes the Phase Transition
 
 ### 7.1 The three regimes
 
-**p << p_q (deep localized phase):**
-ξ_3D is small (few lattice spacings). The strip width M >> ξ_3D. The strip "contains"
-many localization volumes. Λ_M = ξ_M/M is small and decreases as M grows - larger
+**$p \ll p_q$ (deep localized phase):**
+$\xi_{3D}$ is small (few lattice spacings). The strip width $M \gg \xi_{3D}$. The strip "contains"
+many localization volumes. $\Lambda_M = \xi_M/M$ is small and decreases as $M$ grows - larger
 strips show more localization, not less.
 
-**p >> p_q (metallic phase):**
-ξ_3D is the scale above which transport is diffusive. M < ξ_3D (strip is narrower than
-the correlation length). The strip looks like a quantum wire. ξ_M scales with M
-(the localization in a quasi-1D metal scales with its cross-section). Λ_M = ξ_M/M is
-approximately constant or grows slightly with M.
+**$p \gg p_q$ (metallic phase):**
+$\xi_{3D}$ is the scale above which transport is diffusive. $M < \xi_{3D}$ (strip is narrower than
+the correlation length). The strip looks like a quantum wire. $\xi_M$ scales with $M$
+(the localization in a quasi-1D metal scales with its cross-section). $\Lambda_M = \xi_M/M$ is
+approximately constant or grows slightly with $M$.
 
-**p = p_q exactly:**
-ξ_3D → ∞. The strip is always narrower than ξ_3D for any finite M. ξ_M ~ M exactly
-(a known result for the critical point of the 3D orthogonal class). Therefore Λ_M =
-ξ_M/M = const, independent of M. **All Λ_M(p_q) curves agree.** This is the crossing.
+**$p = p_q$ exactly:**
+$\xi_{3D} \to \infty$. The strip is always narrower than $\xi_{3D}$ for any finite $M$. $\xi_M \sim M$ exactly
+(a known result for the critical point of the 3D orthogonal class). Therefore
+$\Lambda_M = \xi_M/M = \text{const}$, independent of $M$. **All $\Lambda_M(p_q)$ curves agree.** This is the crossing.
 
-### 7.2 Crossing and why it's at p_q
+### 7.2 Crossing and why it's at $p_q$
 
-The ordering of Λ_M curves reverses at p_q:
-- For p < p_q: Λ_4 > Λ_6 > Λ_8 > Λ_10 (smaller M → larger Λ, because smaller
+The ordering of $\Lambda_M$ curves reverses at $p_q$:
+- For $p < p_q$: $\Lambda_4 > \Lambda_6 > \Lambda_8 > \Lambda_{10}$ (smaller $M$ $\to$ larger $\Lambda$, because smaller
   strip = less localization relative to strip width)
-- For p > p_q: Λ_4 < Λ_6 < Λ_8 < Λ_10 (larger M → larger Λ, metallic scaling)
+- For $p > p_q$: $\Lambda_4 < \Lambda_6 < \Lambda_8 < \Lambda_{10}$ (larger $M$ $\to$ larger $\Lambda$, metallic scaling)
 
-The reversal happens at p_q. The crossing point of any pair (M1, M2) gives a rough
-estimate of p_q. With corrections-to-scaling (b·M^{−y}), different pairs cross at
-slightly different p; the FSS fit extracts the true p_q from all data simultaneously.
+The reversal happens at $p_q$. The crossing point of any pair $(M_1, M_2)$ gives a rough
+estimate of $p_q$. With corrections-to-scaling ($b \cdot M^{-y}$), different pairs cross at
+slightly different $p$; the FSS fit extracts the true $p_q$ from all data simultaneously.
 
 ---
 
-## 8. FSS Ansatz for Λ_M
+## 8. FSS Ansatz for $\Lambda_M$
 
-### 8.1 Applying FSS to Λ_M
+### 8.1 Applying FSS to $\Lambda_M$
 
-Λ_M is dimensionless (η = 0), so there is no L^η prefactor. The FSS form is:
+$\Lambda_M$ is dimensionless ($\eta = 0$), so there is no $L^\eta$ prefactor. The FSS form is:
 
-```
-Λ_M(p) = F( M^{1/ν} · (p − p_q) / p_q )  +  b·M^{−y}
-```
+$$
+\Lambda_M(p) = F\!\left(M^{1/\nu} \cdot \frac{p - p_q}{p_q}\right) + b \cdot M^{-y}
+$$
 
-F is the universal scaling function; b·M^{−y} is the leading correction.
+$F$ is the universal scaling function; $b \cdot M^{-y}$ is the leading correction.
 
-We approximate F by a polynomial in the scaling variable u = M^{1/ν}(p−p_q)/p_q:
+We approximate $F$ by a polynomial in the scaling variable $u = M^{1/\nu}(p - p_q)/p_q$:
 
-```
-F(u) ≈ a_0 + a_1·u + a_2·u² + a_3·u³ + a_4·u⁴
-```
+$$
+F(u) \approx a_0 + a_1 u + a_2 u^2 + a_3 u^3 + a_4 u^4
+$$
 
-**Notation: a_0 = Λ_M(p_q) is the value at the critical point (same for
-all M by definition). a_1 controls the slope - positive for the metallic side,
-negative for the localized side. Higher terms account for the curvature of F away
-from u=0.
+$a_0 = \Lambda_M(p_q)$ is the value at the critical point (same for all $M$ by definition).
+$a_1$ controls the slope - positive for the metallic side, negative for the localized side.
+Higher terms account for the curvature of $F$ away from $u = 0$.
 
-The polynomial is valid for small |u| - i.e., close to p_q. This is why we need a
+The polynomial is valid for small $|u|$ - i.e., close to $p_q$. This is why we need a
 fitting window.
 
-### 8.2 Free params and what the fit extracts
+### 8.2 Free parameters and what the fit extracts
 
 | Parameter | Meaning | Constrained by |
 |-----------|---------|----------------|
-| p_q | Critical point location | Position of the crossing |
-| ν | Correlation length exponent | How fast curves separate away from crossing |
-| a_0 | Λ_M at the critical point | Height of the crossing |
-| a_1..a_4 | Shape of F(u) | Curvature away from crossing |
-| b | Amplitude of corrections | Mismatch between M-dependent curves at fixed p |
+| $p_q$ | Critical point location | Position of the crossing |
+| $\nu$ | Correlation length exponent | How fast curves separate away from crossing |
+| $a_0$ | $\Lambda_M$ at the critical point | Height of the crossing |
+| $a_1 \ldots a_4$ | Shape of $F(u)$ | Curvature away from crossing |
+| $b$ | Amplitude of corrections | Mismatch between $M$-dependent curves at fixed $p$ |
 
-The fit uses all (M, p) data simultaneously, weighted by the statistical error σ_{M,p}
-on each Λ_M measurement. This is χ² minimization:
+The fit uses all $(M, p)$ data simultaneously, weighted by the statistical error $\sigma_{M,p}$
+on each $\Lambda_M$ measurement. This is $\chi^2$ minimization:
 
-```
-χ² = Σ_{M,p} [ (Λ_M^{meas} − F(u) − b·M^{−y}) / σ_{M,p} ]²
-```
+$$
+\chi^2 = \sum_{M,p} \left[\frac{\Lambda_M^\text{meas} - F(u) - b \cdot M^{-y}}{\sigma_{M,p}}\right]^2
+$$
 
-### 8.3 Irrelevant exponent y
+### 8.3 Irrelevant exponent $y$
 
-y is the scaling dimension of the leading irrelevant operator. It controls how fast
-corrections decay with M. In the 3D orthogonal class, the literature reports
-|y| ≈ 1.7–2.8 depending on the observable and method.
+$y$ is the scaling dimension of the leading irrelevant operator. It controls how fast
+corrections decay with $M$. In the 3D orthogonal class, the literature reports
+$|y| \approx 1.7\text{--}2.8$ depending on the observable and method.
 
-**In our implementation**: y = 1.12 is an empirical effective value that reproduces
-the Anderson benchmark (W_c, ν within 5% of literature; χ²/dof = 2.4). It captures
-subleading corrections dominant at M = {4..10}. It is NOT the leading RG irrelevant
-exponent as computed by Slevin & Ohtsuki 1999 (who fit y freely and get |y| ≈ 2.8).
-The origin of y = 1.12 in the broader literature is unclear. It is treated as a fixed
-empirical parameter with ±0.08 uncertainty propagated as a systematic error.
+**In our implementation**: $y = 1.12$ is an empirical effective value that reproduces
+the Anderson benchmark ($W_c$, $\nu$ within 5% of literature; $\chi^2/\text{dof} = 2.4$). It captures
+subleading corrections dominant at $M = \{4\ldots10\}$. It is NOT the leading RG irrelevant
+exponent as computed by Slevin & Ohtsuki 1999 (who fit $y$ freely and get $|y| \approx 2.8$).
+The origin of $y = 1.12$ in the broader literature is unclear. It is treated as a fixed
+empirical parameter with $\pm 0.08$ uncertainty propagated as a systematic error.
 
 ---
 
 ## 9. From Fit to Results: the Full Procedure
 
-### 9.1 Step 1: Rough p_q from pairwise crossings
+### 9.1 Step 1: Rough $p_q$ from pairwise crossings
 
-For each adjacent pair (M_i, M_{i+1}), find where Λ_{M_i}(p) − Λ_{M_{i+1}}(p)
-changes sign. Linear interpolation gives the crossing p. Take the median of all
-crossings as p_q_rough.
+For each adjacent pair $(M_i, M_{i+1})$, find where $\Lambda_{M_i}(p) - \Lambda_{M_{i+1}}(p)$
+changes sign. Linear interpolation gives the crossing $p$. Take the median of all
+crossings as $p_{q,\text{rough}}$.
 
 This is robust against the minimum-spread estimator, which fails when corrections
-are large (the global minimum of std(Λ_M over M) at each p is not at p_q when
-b·M^{−y} differentials between M values are comparable to the physical signal).
+are large (the global minimum of $\mathrm{std}(\Lambda_M)$ over $M$ at each $p$ is not at $p_q$ when
+$b \cdot M^{-y}$ differentials between $M$ values are comparable to the physical signal).
 
-### 9.2 Step 2: Window adequacy scan (select δ)
+### 9.2 Step 2: Window adequacy scan (select $\delta$)
 
-The polynomial F(u) is valid only for small |u|. To find the right window:
+The polynomial $F(u)$ is valid only for small $|u|$. To find the right window:
 
-1. Scan δ ∈ {0.03, ..., 0.15} (15 values).
-2. For each δ: fit FSS in [p_rough − δ, p_rough + δ] (no bootstrap; fast scan).
-3. Record χ²/dof(δ) and Q(δ) = P(χ² ≥ χ²_obs | model is true).
-4. Select the **widest δ with χ²/dof < 3.0**.
+1. Scan $\delta \in \{0.03, \ldots, 0.15\}$ (15 values).
+2. For each $\delta$: fit FSS in $[p_\text{rough} - \delta,\; p_\text{rough} + \delta]$ (no bootstrap; fast scan).
+3. Record $\chi^2/\text{dof}(\delta)$ and $Q(\delta) = P(\chi^2 \geq \chi^2_\text{obs} \mid \text{model true})$.
+4. Select the **widest $\delta$ with $\chi^2/\text{dof} < 3.0$**.
 
 Logic: wider is better (more data, tighter constraints), but when the window is
-too wide, polynomial truncation error enters and χ²/dof rises. The threshold 3.0 is
-calibrated against our benchmark floor (χ²/dof = 2.4 from unmodelled b_2·M^{−2y}
-corrections). S&O 1999 use Q > 0.1; with our σ(Λ_M) ~ 10^{−4}, Q ≈ 0 for all
-windows due to unmodelled subleading corrections, so the Q criterion cannot be
+too wide, polynomial truncation error enters and $\chi^2/\text{dof}$ rises. The threshold $3.0$ is
+calibrated against our benchmark floor ($\chi^2/\text{dof} = 2.4$ from unmodelled $b_2 \cdot M^{-2y}$
+corrections). S&O 1999 use $Q > 0.1$; with our $\sigma(\Lambda_M) \sim 10^{-4}$, $Q \approx 0$ for all
+windows due to unmodelled subleading corrections, so the $Q$ criterion cannot be
 applied directly.
 
 ### 9.3 Step 3: Full FSS fit with bootstrap
 
-On the selected window: full Nelder-Mead + L-BFGS-B minimization of χ².
-Bootstrap CIs: perturb each Λ_M by N(0, σ_{M,p}) independently, refit 500 times,
+On the selected window: full Nelder-Mead + L-BFGS-B minimization of $\chi^2$.
+Bootstrap CIs: perturb each $\Lambda_M$ by $\mathcal{N}(0, \sigma_{M,p})$ independently, refit 500 times,
 take std of the 500 estimates as the statistical uncertainty.
 
 ### 9.4 Step 4: Rodriguez polynomial stability test
 
-Fit FSS at poly_order ∈ {3, 4, 5}. Check that p_q and ν from each order lie within
-the 95% CI (±2σ) of the reference order-4 result. If they do: the polynomial is
+Fit FSS at poly_order $\in \{3, 4, 5\}$. Check that $p_q$ and $\nu$ from each order lie within
+the 95% CI ($\pm 2\sigma$) of the reference order-4 result. If they do: the polynomial is
 adequate and the results are stable. This is the actual Rodriguez et al. 2011
 Appendix A stability criterion (polynomial ORDER perturbation, not window-width scan).
 
-### 9.5 Step 5 - Systematic from y
+### 9.5 Step 5: Systematic from $y$
 
-Repeat the full fit at y = 1.04, 1.12, 1.20. Report:
-```
-σ_syst = max(|result(1.04) − result(1.12)|, |result(1.20) − result(1.12)|)
-σ_total = sqrt(σ_stat² + σ_syst²)
-```
+Repeat the full fit at $y = 1.04, 1.12, 1.20$. Report:
+
+$$
+\sigma_\text{syst} = \max\!\left(|\text{result}(1.04) - \text{result}(1.12)|,\; |\text{result}(1.20) - \text{result}(1.12)|\right)
+$$
+
+$$
+\sigma_\text{total} = \sqrt{\sigma_\text{stat}^2 + \sigma_\text{syst}^2}
+$$
 
 ---
 
@@ -547,31 +566,31 @@ Random matrix theory classifies disordered quantum systems by their symmetries:
 | AII (symplectic) | Yes | No | Strong spin-orbit coupling |
 | A (unitary) | No | - | Magnetic field present |
 
-Each class has its own Anderson transition (in 3D) with its own ν. Our system: no
-magnetic field, no spin - class AI. ν = 1.622 (Slevin & Ohtsuki 1999; Rodriguez 2011).
+Each class has its own Anderson transition (in 3D) with its own $\nu$. Our system: no
+magnetic field, no spin - class AI. $\nu = 1.622$ (Slevin & Ohtsuki 1999; Rodriguez 2011).
 
-### 10.2 Bipartite lattices and the chiral anomaly at E=0
+### 10.2 Bipartite lattices and the chiral anomaly at $E = 0$
 
 SC and BCC are **bipartite**: sites can be 2-colored A/B with all bonds connecting
-A to B. The bipartite structure implies a chiral operator Γ (flip A↔B, change sign
-of A-sublattice amplitudes) that anticommutes with H:
+A to B. The bipartite structure implies a chiral operator $\Gamma$ (flip A$\leftrightarrow$B, change sign
+of A-sublattice amplitudes) that anticommutes with $H$:
 
-```
-ΓHΓ = −H
-```
+$$
+\Gamma H \Gamma = -H
+$$
 
-At E = 0 exactly, this is an exact symmetry: if |ψ, E⟩ is an eigenstate, so is
-Γ|ψ, −E⟩. The transfer matrix at E = 0 has chiral symmetry. This places the system
+At $E = 0$ exactly, this is an exact symmetry: if $|\psi, E\rangle$ is an eigenstate, so is
+$\Gamma|\psi, -E\rangle$. The transfer matrix at $E = 0$ has chiral symmetry. This places the system
 in **class BDI** (chiral orthogonal), not class AI.
 
-Class BDI has a different fixed point, different ν, different corrections. Ujfalusi &
-Varga 2014 show p_c^Q(E→0) → 1 for SC, and MFSS "severely fails to converge" below
-E = 0.1 due to the anomalous DOS at E = 0 from sublattice imbalance zero modes.
+Class BDI has a different fixed point, different $\nu$, different corrections. Ujfalusi &
+Varga 2014 show $p_c^Q(E \to 0) \to 1$ for SC, and MFSS "severely fails to converge" below
+$E = 0.1$ due to the anomalous DOS at $E = 0$ from sublattice imbalance zero modes.
 
-**Consequence**: run at E = 0.7 (11.7% of SC half-bandwidth 6t). The BDI→AI
-crossover length scale ξ_cross ~ E^{−1/Δ_E} ≪ M_min = 4 at E = 0.7, so BDI
-corrections are negligible. At E = 0.1, ξ_cross ≈ 10 ≈ M_max - correction
-dominance: b = −0.153, χ²/dof = 1543, spurious crossings at p ≈ 0.35.
+**Consequence**: run at $E = 0.7$ (11.7% of SC half-bandwidth $6t$). The BDI$\to$AI
+crossover length scale $\xi_\text{cross} \sim E^{-1/\Delta_E} \ll M_\text{min} = 4$ at $E = 0.7$, so BDI
+corrections are negligible. At $E = 0.1$, $\xi_\text{cross} \approx 10 \approx M_\text{max}$ - correction
+dominance: $b = -0.153$, $\chi^2/\text{dof} = 1543$, spurious crossings at $p \approx 0.35$.
 
 ---
 
@@ -585,8 +604,8 @@ Physical system
 │   ├── p_c < p < p_q: connected cluster but all states localized (quantum percolation)
 │   └── p > p_q: extended states exist → quantum transport
 │
-├── Key quantity: correlation length ξ ~ |p − p_q|^{−ν}
-│   ├── = localization length ξ_loc on the localized side
+├── Key quantity: ξ ~ |p − p_q|^{−ν}
+│   ├── = ξ_loc on the localized side
 │   └── = transport coherence length on the metallic side
 │
 └── Critical exponent ν = 1.622 (3D-AI class; same for SC and BCC)
@@ -616,13 +635,13 @@ Method
    introduced
 
 3. **MacKinnon A and Kramer B 1983** Z. Phys. B **53** 1 - transfer matrix method for
-   Anderson localization; original Λ_M observable
+   Anderson localization; original $\Lambda_M$ observable
 
 4. **Slevin K and Ohtsuki T 1999** Phys. Rev. Lett. **82** 382 - corrections-to-scaling
-   in 3D Anderson TMM; y fitted freely, |y|≈2.8; ν=1.57–1.58; bootstrap CIs
+   in 3D Anderson TMM; $y$ fitted freely, $|y| \approx 2.8$; $\nu = 1.57\text{--}1.58$; bootstrap CIs
 
 5. **Rodriguez A, Vasquez L J, Slevin K and Römer R A 2011** Phys. Rev. B **84** 134209
-   - multifractal FSS; polynomial-order stability test (Appendix A); ν=1.590
+   - multifractal FSS; polynomial-order stability test (Appendix A); $\nu = 1.590$
 
 6. **Ujfalusi L and Varga I 2014** Phys. Rev. B **90** 245136 - quantum percolation
-   on SC lattice; mobility edge p_c^Q(E); BDI anomaly at E=0; p_c^Q(E=0.7)≈0.384
+   on SC lattice; mobility edge $p_c^Q(E)$; BDI anomaly at $E = 0$; $p_c^Q(E = 0.7) \approx 0.384$
