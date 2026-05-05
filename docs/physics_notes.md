@@ -302,12 +302,12 @@ requires many more system sizes.
 
 ---
 
-## 6. The Transfer Matrix Method (TMM)
+## 6. Transfer Matrix Method (TMM)
 
-### 6.1 The quasi-1D geometry
+### 6.1 Quasi-1D geometry
 
 Direct diagonalization of a 3D Hamiltonian on an L^3 lattice is exponentially
-expensive. The TMM maps the 3D problem onto a much more efficient quasi-1D problem.
+large (eigenvalues many eigenstates). The TMM maps the 3D problem onto a much more efficient quasi-1D problem.
 
 Take a strip (tube) of cross-section M × M sites, propagated in the z-direction for
 L slices:
@@ -333,7 +333,8 @@ relating the wavefunction amplitudes on slice k+1 to those on slices k and k−1
 ```
 
 where T_k encodes the on-slice Hamiltonian and the coupling to the next slice. This
-can be written as a 2N × 2N transfer matrix acting on (ψ_k, ψ_{k−1}):
+can be written as a 2M² × 2M² transfer matrix acting on (ψ_k, ψ_{k−1})
+(each ψ_k has M² components, one per site in the M×M cross-section):
 
 ```
 (ψ_{k+1})   (   T_k    −V^{−1}·V_back ) (ψ_k    )
@@ -347,11 +348,11 @@ a different random occupation pattern).
 
 By Oseledec's theorem (1968), for almost every disorder realization, the product
 T_L T_{L−1} ··· T_1 has well-defined growth rates: the **Lyapunov exponents** γ_i
-(i = 1, ..., 2N), ordered γ_1 ≥ γ_2 ≥ ··· ≥ γ_N > 0 > −γ_N > ··· ≥ −γ_1.
+(i = 1, ..., 2M²), ordered γ_1 ≥ γ_2 ≥ ··· ≥ γ_{M²} > 0 > −γ_{M²} > ··· ≥ −γ_1.
 
 The positive Lyapunov exponents describe the growth of the matrix product in L. The
 **smallest positive Lyapunov exponent γ_min** controls the longest length scale in
-the problem: the localization length of the quasi-1D strip:
+the problem -> localization length of the quasi-1D strip:
 
 ```
 ξ_M = 1/γ_min
@@ -361,7 +362,7 @@ This converges to a definite self-averaging value as L → ∞ - the law of larg
 for random matrix products. In practice L = 10,000 is "infinity": the Lyapunov
 exponents are converged to ~0.1%.
 
-### 6.4 The normalized localization length Λ_M
+### 6.4 Normalized localization length Λ_M
 
 We define:
 
@@ -376,14 +377,14 @@ decay / fastest growth in the system - the most extended mode. In the metallic p
 this mode extends across the cross-section; in the localized phase it decays. It is
 the mode closest to the mobility edge.
 
-### 6.5 What M and L are - the critical distinction
+### 6.5 What M and L are (critical distinction)
 
-| | M (cross-section) | L (strip length) |
-|---|---|---|
-| Role | **Finite-size variable** (the "L" in FSS) | Statistical averaging device |
-| Physical meaning | The system size that competes with ξ_3D | Must be >> ξ_M to converge |
-| Varies in FSS? | Yes - {4, 6, 8, 10} | No - fixed at 10,000 |
-| Limit of interest | M → ∞ recovers 3D physics | L → ∞ taken first (converges) |
+|                   | M (cross-section)                       | L (strip length)              |
+| ----------------- | --------------------------------------- | ----------------------------- |
+| Role              | **Finite-size variable** (the L in FSS) | Statistical averaging device  |
+| Physical meaning  | The system size that competes with ξ_3D | Must be >> ξ_M to converge    |
+| Varies in FSS?    | Yes - {4, 6, 8, 10}                     | No - fixed at 10,000          |
+| Limit of interest | M → ∞ recovers 3D physics               | L → ∞ taken first (converges) |
 
 **Why M plays the role of L in FSS**: the TMM has already taken L → ∞ (Oseledec's
 theorem). What remains is a well-defined number ξ_M for each M. Now M is the only
@@ -412,7 +413,7 @@ approximately constant or grows slightly with M.
 (a known result for the critical point of the 3D orthogonal class). Therefore Λ_M =
 ξ_M/M = const, independent of M. **All Λ_M(p_q) curves agree.** This is the crossing.
 
-### 7.2 The crossing and why it's at p_q
+### 7.2 Crossing and why it's at p_q
 
 The ordering of Λ_M curves reverses at p_q:
 - For p < p_q: Λ_4 > Λ_6 > Λ_8 > Λ_10 (smaller M → larger Λ, because smaller
