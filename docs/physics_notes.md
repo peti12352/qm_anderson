@@ -179,12 +179,6 @@ degrees of freedom, producing an effective theory for the long-distance physics.
 
 **The blocking step.** Group every $b^d$ sites into a block (here $d = 3$; typically $b = 2$):
 
-```
-original (spacing a):        blocked (spacing ba):
-□ □ │ □ □ │ □ □             ■  │  ■  │  ■
-□ □ │ □ □ │ □ □   →         ───┼─────┼───
-□ □ │ □ □ │ □ □             ■  │  ■  │  ■
-```
 
 Within each block there are $b^d$ sites with their internal Hamiltonian $H_\text{block}$.
 Identify the lowest-energy eigenstate of each block - this becomes the **effective
@@ -218,10 +212,16 @@ For our system there are three fixed points:
 - **Metallic** ($p \to 1$): extended systems flow here.
 - **Critical** ($p = p_q$): the transition. Unstable - any $\delta p \neq 0$ flows away.
 
-```
-p = 0            p_q           p = 1
-  ●  ←←←←←←←←←  ★  →→→→→→→→→  ●
-insulating      critical      metallic
+```mermaid
+flowchart LR
+    A(["p = 0<br/>insulating"])
+    B(["p = p_q<br/>critical"])
+    C(["p = 1<br/>metallic"])
+    B -->|"δp < 0"| A
+    B -->|"δp > 0"| C
+    style A fill:#dbeafe,stroke:#3b82f6,color:#1e3a8a
+    style B fill:#fef3c7,stroke:#d97706,color:#92400e
+    style C fill:#d1fae5,stroke:#059669,color:#065f46
 ```
 
 **Linearization.** Near $p_q$, write $\delta p = p - p_q$ and linearize $R_b$:
@@ -363,14 +363,6 @@ large. The TMM maps the 3D problem onto a much more efficient quasi-1D problem.
 Take a strip (tube) of cross-section $M \times M$ sites, propagated in the $z$-direction for
 $L$ slices:
 
-```
-         M sites
-    ←────────────→
-    □ □ □ □ □ □ □     ↑
-    □ □ □ □ □ □ □     M sites
-    □ □ □ □ □ □ □     ↓
-    ══════════════════════════════ →  L slices
-```
 
 The $M^2$ sites on each slice form a state vector of dimension $M^2$.
 
