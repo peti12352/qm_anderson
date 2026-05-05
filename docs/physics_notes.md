@@ -179,6 +179,70 @@ degrees of freedom, producing an effective theory for the long-distance physics.
 
 **The blocking step.** Group every $b^d$ sites into a block (here $d = 3$; typically $b = 2$):
 
+<svg xmlns="http://www.w3.org/2000/svg" width="272" height="138"
+     viewBox="0 0 272 138" style="display:block;margin:1em auto;">
+  <style>text{font-family:"Times New Roman",Times,serif;}</style>
+  <defs>
+    <marker id="la" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="black"/>
+    </marker>
+  </defs>
+
+  <!-- original bonds -->
+  <g stroke="black" stroke-width="0.8">
+    <!-- horizontal -->
+    <line x1="22" y1="24" x2="46" y2="24"/><line x1="46" y1="24" x2="70" y2="24"/><line x1="70" y1="24" x2="94" y2="24"/>
+    <line x1="22" y1="48" x2="46" y2="48"/><line x1="46" y1="48" x2="70" y2="48"/><line x1="70" y1="48" x2="94" y2="48"/>
+    <line x1="22" y1="72" x2="46" y2="72"/><line x1="46" y1="72" x2="70" y2="72"/><line x1="70" y1="72" x2="94" y2="72"/>
+    <line x1="22" y1="96" x2="46" y2="96"/><line x1="46" y1="96" x2="70" y2="96"/><line x1="70" y1="96" x2="94" y2="96"/>
+    <!-- vertical -->
+    <line x1="22" y1="24" x2="22" y2="48"/><line x1="22" y1="48" x2="22" y2="72"/><line x1="22" y1="72" x2="22" y2="96"/>
+    <line x1="46" y1="24" x2="46" y2="48"/><line x1="46" y1="48" x2="46" y2="72"/><line x1="46" y1="72" x2="46" y2="96"/>
+    <line x1="70" y1="24" x2="70" y2="48"/><line x1="70" y1="48" x2="70" y2="72"/><line x1="70" y1="72" x2="70" y2="96"/>
+    <line x1="94" y1="24" x2="94" y2="48"/><line x1="94" y1="48" x2="94" y2="72"/><line x1="94" y1="72" x2="94" y2="96"/>
+  </g>
+
+  <!-- block boundaries -->
+  <g fill="none" stroke="black" stroke-width="1" stroke-dasharray="4,3">
+    <rect x="10" y="12" width="48" height="48"/>
+    <rect x="58" y="12" width="48" height="48"/>
+    <rect x="10" y="60" width="48" height="48"/>
+    <rect x="58" y="60" width="48" height="48"/>
+  </g>
+
+  <!-- original sites -->
+  <g fill="black">
+    <circle cx="22" cy="24" r="3"/><circle cx="46" cy="24" r="3"/><circle cx="70" cy="24" r="3"/><circle cx="96" cy="24" r="3"/>
+    <circle cx="22" cy="48" r="3"/><circle cx="46" cy="48" r="3"/><circle cx="70" cy="48" r="3"/><circle cx="96" cy="48" r="3"/>
+    <circle cx="22" cy="72" r="3"/><circle cx="46" cy="72" r="3"/><circle cx="70" cy="72" r="3"/><circle cx="96" cy="72" r="3"/>
+    <circle cx="22" cy="96" r="3"/><circle cx="46" cy="96" r="3"/><circle cx="70" cy="96" r="3"/><circle cx="96" cy="96" r="3"/>
+  </g>
+
+  <!-- label -->
+  <text x="58" y="124" text-anchor="middle" font-size="12" font-style="italic">spacing a</text>
+
+  <!-- arrow -->
+  <line x1="112" y1="60" x2="148" y2="60" stroke="black" stroke-width="1.2" marker-end="url(#la)"/>
+
+  <!-- blocked bonds -->
+  <g stroke="black" stroke-width="1">
+    <line x1="178" y1="36" x2="226" y2="36"/>
+    <line x1="178" y1="84" x2="226" y2="84"/>
+    <line x1="178" y1="36" x2="178" y2="84"/>
+    <line x1="226" y1="36" x2="226" y2="84"/>
+  </g>
+
+  <!-- blocked sites (larger) -->
+  <g fill="black">
+    <circle cx="178" cy="36" r="5.5"/>
+    <circle cx="226" cy="36" r="5.5"/>
+    <circle cx="178" cy="84" r="5.5"/>
+    <circle cx="226" cy="84" r="5.5"/>
+  </g>
+
+  <!-- label -->
+  <text x="202" y="124" text-anchor="middle" font-size="12" font-style="italic">spacing ba</text>
+</svg>
 
 Within each block there are $b^d$ sites with their internal Hamiltonian $H_\text{block}$.
 Identify the lowest-energy eigenstate of each block - this becomes the **effective
@@ -212,17 +276,39 @@ For our system there are three fixed points:
 - **Metallic** ($p \to 1$): extended systems flow here.
 - **Critical** ($p = p_q$): the transition. Unstable - any $\delta p \neq 0$ flows away.
 
-```mermaid
-flowchart LR
-    A(["p = 0<br/>insulating"])
-    B(["p = p_q<br/>critical"])
-    C(["p = 1<br/>metallic"])
-    B -->|"δp < 0"| A
-    B -->|"δp > 0"| C
-    style A fill:#dbeafe,stroke:#3b82f6,color:#1e3a8a
-    style B fill:#fef3c7,stroke:#d97706,color:#92400e
-    style C fill:#d1fae5,stroke:#059669,color:#065f46
-```
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="112"
+     viewBox="0 0 480 112" style="display:block;margin:1em auto;">
+  <style>text{font-family:"Times New Roman",Times,serif;}</style>
+  <defs>
+    <marker id="ra" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="black"/>
+    </marker>
+  </defs>
+
+  <!-- insulating node -->
+  <circle cx="72" cy="56" r="42" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="72" y="51" text-anchor="middle" font-size="13">p = 0</text>
+  <text x="72" y="68" text-anchor="middle" font-size="12" font-style="italic">insulating</text>
+
+  <!-- critical node (double ring) -->
+  <circle cx="240" cy="56" r="42" fill="white" stroke="black" stroke-width="1.5"/>
+  <circle cx="240" cy="56" r="35" fill="white" stroke="black" stroke-width="0.7"/>
+  <text x="240" y="51" text-anchor="middle" font-size="13">p = p<tspan baseline-shift="sub" font-size="10">q</tspan></text>
+  <text x="240" y="68" text-anchor="middle" font-size="12" font-style="italic">critical</text>
+
+  <!-- metallic node -->
+  <circle cx="408" cy="56" r="42" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="408" y="51" text-anchor="middle" font-size="13">p = 1</text>
+  <text x="408" y="68" text-anchor="middle" font-size="12" font-style="italic">metallic</text>
+
+  <!-- arrow: critical → insulating -->
+  <line x1="196" y1="43" x2="117" y2="43" stroke="black" stroke-width="1.2" marker-end="url(#ra)"/>
+  <text x="156" y="36" text-anchor="middle" font-size="12" font-style="italic">&#948;p &lt; 0</text>
+
+  <!-- arrow: critical → metallic -->
+  <line x1="284" y1="43" x2="363" y2="43" stroke="black" stroke-width="1.2" marker-end="url(#ra)"/>
+  <text x="323" y="36" text-anchor="middle" font-size="12" font-style="italic">&#948;p &gt; 0</text>
+</svg>
 
 **Linearization.** Near $p_q$, write $\delta p = p - p_q$ and linearize $R_b$:
 
