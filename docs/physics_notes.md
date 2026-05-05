@@ -33,7 +33,7 @@ path exists. Above p_c, a giant cluster appears. For SC: p_c = 0.3115.
 cluster, do the quantum eigenstates on that cluster extend across the system, or do
 they localize? The answer is not automatic - quantum interference can localize states
 even on a connected graph. The quantum threshold p_q > p_c. The gap p_q − p_c is the
-"quantum localization cost."
+quantum localization cost.
 
 Below p_q: all eigenstates are exponentially localized. No quantum transport.
 Above p_q: extended states exist. Quantum transport survives.
@@ -44,7 +44,7 @@ This is a **quantum phase transition** driven by a geometric parameter p.
 
 ## 2. Localized States and the Localization Length
 
-### 2.1 What localization means, rigorously
+### 2.1 What localization means
 
 An eigenstate |ψ_E⟩ is **localized** if its real-space amplitude decays exponentially
 from some center r_0:
@@ -62,7 +62,7 @@ across the whole system, with amplitude ~ 1/V (V = system volume).
 The distinction is sharp in the thermodynamic limit. At finite system size, all
 eigenstates look somewhat spread out; the difference only becomes clear as L → ∞.
 
-### 2.2 Why localization happens: destructive interference
+### 2.2 Destructive interference
 
 A classical particle scatters off impurities and diffuses. A quantum particle also
 scatters, but its wavefunction accumulates **phase** along each scattering path.
@@ -74,7 +74,7 @@ becomes so strong that the wavefunction cannot spread at all: **Anderson localiz
 The mechanism is purely quantum (interference) and has nothing to do with energy
 gaps or magnetic fields.
 
-### 2.3 Localization length vs correlation length - they are NOT the same thing
+### 2.3 Localization length <-> correlation length
 
 This distinction is crucial and often confused.
 
@@ -84,10 +84,10 @@ localized phase have small ξ_loc. States near the mobility edge have large ξ_l
 
 **Correlation length ξ_corr**: a property of the phase transition itself. It measures
 the spatial scale over which the critical fluctuations of the system are correlated -
-the scale below which the system "looks critical." ξ_corr diverges at the critical
+the length scale up to which critical fluctuations are correlated. ξ_corr diverges at the critical
 point regardless of which side you approach from.
 
-**How they relate at the Anderson/percolation transition:**
+**How they relate at the Anderson or percolation transition:**
 
 On the localized side (p < p_q): the typical localization length of states near the
 mobility edge IS the correlation length:
@@ -104,33 +104,31 @@ it the system looks like a normal metal.
 ξ_corr ~ |p − p_q|^{−ν}   (metallic side, same exponent ν)
 ```
 
-**The key point**: ξ_corr diverges on BOTH sides with the SAME exponent ν. ξ_loc only
+**key point**: ξ_corr diverges on BOTH sides with the SAME exponent ν. ξ_loc only
 makes sense on the localized side. They coincide on the localized side and diverge
-with the same ν - which is why people often conflate them. They are different
-conceptual objects but the same number near the transition.
+with the same ν. They are different conceptual quantities but the same number near the transition.
 
 At p_q itself: ξ_corr → ∞. The system is scale-invariant. Wavefunctions are fractal
-(neither localized nor extended in the usual sense) - they are multifractal.
+(neither localized nor extended in the usual sense - multifractal).
 
 ---
 
-## 3. The Phase Transition and What ν Means Physically
+## 3. Phase Transition and What ν Means Physically
 
 ### 3.1 This is a continuous (second-order) phase transition
 
 The transition at p_q is continuous: there is no discontinuous jump in any observable.
-Instead, everything changes smoothly, and the localization length diverges as a power
+Instead, everything changes smoothly and the localization length diverges as a power
 law. This is the hallmark of a second-order transition.
 
 Compare to a first-order transition (e.g. ice melting) where there IS a jump. Here,
-as p → p_q from below, ξ_loc grows without bound: the "insulator" becomes less and
-less insulating until at exactly p_q it is not insulating at all.
+as p → p_q from below, ξ_loc grows without bound: the insulation decreases until at exactly p_q it is not insulating at all.
 
-### 3.2 The correlation length exponent ν
+### 3.2 Correlation length exponent ν
 
 ξ_corr ~ |p − p_q|^{−ν}   defines ν.
 
-**Physically**: ν tells you how fast the correlation length grows as you approach
+Physically ν tells you how fast the correlation length grows as you approach
 the transition.
 
 - ν = 1: ξ doubles every time you halve |p − p_q|. Linear approach.
@@ -139,10 +137,10 @@ the transition.
 
 Concretely: 1% away from p_q (|p − p_q|/p_q = 0.01), the correlation length is
 ξ ~ (0.01)^{−1.62} × a ≈ 1800 lattice spacings (a = lattice constant). This is why
-finite-size effects are large near the transition - your system of size M = 10 is
-tiny compared to ξ_corr = 1800.
+finite-size effects are large near the transition. The system of size M = 10 is
+very small compared to ξ_corr = 1800.
 
-### 3.3 The Harris criterion
+### 3.3 Harris criterion
 
 A fundamental question: if I add weak disorder to a clean critical point, does the
 transition survive or get washed out? Harris (1974) showed:
@@ -522,7 +520,7 @@ Repeat the full fit at y = 1.04, 1.12, 1.20. Report:
 
 ---
 
-## 10. The Symmetry Classes and Why Energy Matters
+## 10. Symmetry Classes and Why Energy Matters
 
 ### 10.1 The three Wigner-Dyson classes
 
