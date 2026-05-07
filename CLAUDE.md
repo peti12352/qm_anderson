@@ -126,7 +126,7 @@ Write intermediate results to data files. Use checkpoint files. Do not hold
 large numerical arrays in context - read them from HDF5 when needed.
 
 For greengoblin runs:
-- Always confirm checkpoint names match OUTFILE names (E0p7 suffix if E=0.7)
+- Always confirm checkpoint names match OUTFILE names (E3p1 suffix if E=3.1)
 - Never delete a checkpoint without confirming no partial run is using it
 
 ---
@@ -139,7 +139,7 @@ of RUNBOOK and docs/methodology.md from scratch. Explain where the mental model
 was wrong. Propose something structurally different.
 
 ### Failure mode taxonomy is in RUNBOOK §Step 3
-When an FSS result is unexpected, check against documented failure modes A–E
+When an FSS result is unexpected, check against documented failure modes A–F
 before proposing a new fix. Document any new failure mode in RUNBOOK immediately.
 
 ---
@@ -154,12 +154,15 @@ These are verified from papers or our own data. Cite these, not memory:
 | ν(3D-AI) | 1.57–1.58 (S&O99); 1.590 (Rodriguez11) | Both verified |
 | |y| for Λ observable | 2.8–3.9 | S&O99 Table II (fitted freely) |
 | |y| for fixed-λ FSS | 1.7 | Rodriguez11 Table V |
-| p_c^Q(SC, E=0.7) | ≈0.384 | Ujfalusi 2014 PRB 90,245136 |
-| p_c^Q(SC, E=0.1) | 0.45384 | Ujfalusi 2014 Table II |
-| p_c^Q(SC, E=0) | → 1 | Ujfalusi 2014 |
-| p_c(SC) classical | 0.3115 | Standard percolation |
-| p_c(BCC) classical | 0.2457 | Standard percolation |
+| p_c^Q(SC, E=3.1) | 0.50628 (0.50606..0.50647) | Ujfalusi 2014 PRB 90,174203 Table II |
+| p_c^Q(SC, E=0.7) | 0.38402 (0.38387..0.38418) | Ujfalusi 2014 PRB 90,174203 Table II |
+| p_c^Q(SC, E=0.1) | 0.45384 (0.45365..0.45402) | Ujfalusi 2014 PRB 90,174203 Table II |
+| p_c^Q(SC, E=0) | → 1 | Ujfalusi 2014 (MFSS convergence failure near E=0) |
+| p_c(SC) classical | 0.3116 | Standard site percolation MC |
+| p_c(BCC) classical | 0.2457 | Standard site percolation MC |
 | Our SC benchmark W_c | 16.6174 ± 0.016 | data/sc_benchmark.h5 |
 | Our SC benchmark ν | 1.6205 ± 0.009 | data/sc_benchmark.h5 |
 | Our SC E=0 result | p_q=0.591, ν=2.0, b≈0 | data/sc_dilution_E0.h5 |
 | Our SC E=0.1 result | p_q=0.372 (spurious), b=−0.153, χ²=1543 | data/sc_dilution_E0p1.h5 |
+| Our SC E=0.7 result | crossings at 0.316/0.318/0.319 (Failure F: ξ_perc≈20>>M) | data/sc_dilution_E0p7.h5 |
+| **Citation error fixed** | PRB 90,**174203** (not 245136) | Ujfalusi & Varga 2014 |

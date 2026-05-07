@@ -127,20 +127,26 @@ Data regenerated for M=8 and M=10. Results unchanged (same statistics, correct p
 
 ---
 
-## Step 3 - SC quantum percolation at E=0.7
+## Step 3 - SC quantum percolation at E=3.1
 
-Validates the quantum percolation setup against Ujfalusi & Varga (2014) Table I: p_c^Q(E=0.7) ≈ 0.384.
+Validates the quantum percolation setup against Ujfalusi & Varga (2014) PRB 90,174203 Table II:
+p_c^Q(SC, E=3.1) = 0.50628 (0.50606..0.50647).
 Uses same FSS model as benchmark (y=1.12 fixed, poly_order=4, n_corrections=1).
 Window selected automatically by the stability scan (§FSS Model above).
 
-**Why E=0.7:**
-- E=0 → class BDI (chiral anomaly): p_q=0.591, ν=2.0, wrong class. Data in `sc_dilution_E0.h5`.
+**Energy history (failures before E=3.1):**
+- E=0 → class BDI (chiral anomaly): p_q=0.591, ν=2.0, wrong class. `sc_dilution_E0.h5`.
 - E=0.1 → BDI-AI crossover: ξ_cross ≈ 10 ≈ M_max. Corrections dominate (b=−0.153, χ²=1543).
-  Spurious crossings at p≈0.35. Data in `sc_dilution_E0p1.h5`. See Failure E below.
-- E=0.7 → 11.7% of half-bandwidth: ξ_cross ≪ M_min=4. Corrections expected b≈0.1 (like benchmark).
-  p_c^Q(E=0.7)≈0.384 is the mobility-edge minimum (Ujfalusi 2014, Figure 2).
+  Spurious crossings at p≈0.35. `sc_dilution_E0p1.h5`. See Failure E.
+- E=0.7 → p_q=0.384 (Ujfalusi 2014), but ξ_perc(p_q) = (0.073)^{−0.876} ≈ 20 >> M_max=10.
+  TMM crossings land at 0.318 (finite-size artifact; all three pairs give 0.316–0.319).
+  ξ_cross ≪ M_min: no BDI issue. The failure is ξ_perc >> M, not chiral corrections.
+  χ²/dof=40: FSS fails because M << ξ_perc. `sc_dilution_E0p7.h5`. See Failure F.
+- E=3.1 → 51.7% of half-bandwidth (6t). ξ_cross ≪ 1. p_q=0.506, so p_q−p_c=0.195 →
+  ξ_perc(p_q) ≈ (0.195)^{−0.876} ≈ 7 < M=8,10. TMM in asymptotic regime for M ≥ 8.
+  Ujfalusi uses E=3.1 for TMM comparison (ref [22] in their paper agrees with MFSS beyond E=3).
 
-Output files: `data/sc_dilution_E0p7.h5`, checkpoints `sc_dilution_E0p7_M{M}.npz`.
+Output files: `data/sc_dilution_E3p1.h5`, checkpoints `sc_dilution_E3p1_M{M}.npz`.
 
 ```bash
 pixi run sc-dilution
@@ -152,32 +158,33 @@ Kill-safe: per-M and per-p checkpoints written throughout. Resume with same comm
 ```
   Λ_M(p) table (every 4th p):
          p    Λ(M=4)    Λ(M=6)    Λ(M=8)   Λ(M=10)
-    0.3200   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx
+    0.4200   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx
     ...
-    0.3840   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx   ← crossings here
+    0.5060   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx   ← crossings here
     ...
+    0.6200   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx
 
-  Rough p_q (pairwise crossings): 0.38x  [individual: ['0.37x', '0.38x', '0.39x']]
+  Rough p_q (pairwise crossings): 0.50x  [individual: ['0.50x', '0.50x', '0.51x']]
 
   Window stability scan  [χ²/dof < 3.0 = ✓]
-    δ        window     p_q        ν        b     χ²/dof   N
-  0.030  [0.354, 0.414]  0.38xxx  1.6xxx  0.0xxx    x.xxx ✓  xx
+    δ        window       x_c        ν        b     χ²/dof   N
+  0.030  [0.476, 0.536]  0.506xx  1.6xxx  0.0xxx    x.xxx ✓  xx
   ...
-  0.1xx  [0.2xx, 0.5xx]  0.38xxx  1.6xxx  0.0xxx    x.xxx ✓  xx
 
-  p_q = 0.384xx ± 0.000xx (stat) ± 0.000xx (syst)
+  p_q = 0.506xx ± 0.000xx (stat) ± 0.000xx (syst)
   ν   = 1.6xxx  ± 0.0xxx (stat) ± 0.0xxx (syst)
   χ²/dof = x.xxx
 ```
 
 **Success criterion:**
-- |p_q − 0.384| < 0.01
+- |p_q − 0.50628| < 0.01  (Ujfalusi 2014 PRB 90,174203 Table II)
 - |ν − 1.622| < 0.10  (3D-AI class)
 - χ²/dof < 3.0  (window scan threshold)
 - b_err/b < 0.5  (correction amplitude well-constrained)
-- Window scan shows a plateau: multiple δ values give consistent p_q within errors
+- Crossing spread < 0.015 across three pairs (indicates ξ_perc < M for M≥8)
 
-If χ²/dof > 5.0 after window scan: **stop, do not run BCC**. Diagnose (wrong energy? wrong M?).
+If χ²/dof > 5.0 after window scan: **stop, do not run BCC**. Check crossing spread.
+If spread still large (> 0.03): ξ_perc >> M — need larger M or different energy.
 
 **Refit without re-running TMM:**
 ```bash
@@ -299,7 +306,7 @@ similar to Anderson benchmark (b≈0.1). New output file: `data/sc_dilution_E0p7
 
 _Alternative fix (not used)_: Add M=12, 16. At M=16, correction 0.153×16^{-1.12}=0.006 (4%
 of signal) - crossings shift toward true p_q. Adds ~20h compute. Only needed if E=0.7 also
-fails (unlikely given ξ_cross argument).
+fails (unlikely given ξ_cross argument). **E=0.7 did fail** — see Failure F.
 
 _Constrained refit on E=0.1 data (diagnosis only)_:
 ```bash
@@ -308,22 +315,43 @@ pixi run python runs/sc_dilution.py --refit --data-file data/sc_dilution_E0p1.h5
 Forces the fit window near Ujfalusi's p_q=0.454. Still gives poor χ² (b=−1.298 unphysical)
 because correction dominance persists throughout this window. Confirms M range is insufficient.
 
-_BCC warning_: BCC has bandwidth 16t → E=0.1 is 1.25% of half-bandwidth, even closer to BDI
-crossover than SC. Same correction-dominance failure expected for BCC at E=0.1 with M={4..10}.
-BCC energy will be selected after SC E=0.7 result is confirmed (same ξ_cross argument applies).
+_BCC note_: BCC runs at E=3.1 as well (same energy as SC), after SC E=3.1 passes.
 
 ---
 
-## Step 4 - BCC quantum percolation (the novel measurement)
+**Failure F - TMM crossings far below true p_q (ξ_perc >> M)**
+
+_Symptom_: Crossings land at p≈0.318 with tight spread (0.003 across three pairs). FSS fails
+for ALL windows (χ²/dof=40, best window [0.280,0.340]). ν extraction gives nonsense (0.37 or 0.69
+depending on bootstrap). Literature value (Ujfalusi 2014): p_q(SC, E=0.7)=0.384. Discrepancy=0.066.
+
+_Root cause_: At p_q=0.384, the classical percolation correlation length is ξ_perc =
+(0.384−0.311)^{−0.876} ≈ 20 >> M_max=10. The quasi-1D TMM strip (width M=10) is smaller than
+the percolation grain size: it samples sub-cluster geometry rather than the 3D bulk. The TMM
+crossing at p≈0.318 marks where a strip of width M first has a percolating path — a width-dependent
+finite-size artifact. The crossings move up with M (0.316→0.318→0.319), but convergence to the
+true p_q≈0.384 requires M >> ξ_perc ≈ 20, meaning M ≥ 30–40 (impractical: 64× slower per step).
+
+_Distinguish from Failure E_: In Failure E, |b|=0.153 (large corrections drive fake crossings).
+In Failure F, |b|=0.027 (small — corrections NOT responsible). The crossings are real, but at the
+wrong p. Check: is p_q − p_c > (M_max)^{−1/ν_perc} = 10^{−1.14} ≈ 0.072? If not → Failure F.
+
+_Fix_: Increase E so p_q − p_c > 0.07–0.10. E=3.1 gives p_q=0.506, p_q−p_c=0.195,
+ξ_perc≈7 < M=8,10. Crossings should converge within 0.01 of true p_q for M=8,10.
+
+_Confirmed 2026-05-07._ Data in `data/sc_dilution_E0p7.h5`. TMM crossings: 0.316/0.318/0.319.
+
+---
+
+## Step 4 - BCC quantum percolation at E=3.1 (the novel measurement)
 
 Only run after Step 3 passes. Same FSS model, same universality class (3D orthogonal).
 
-**Energy: E=0.1 (not E=0).** BCC NN lattice is bipartite (no odd cycles in NN graph), so at E=0
-it has the same chiral symmetry ΓHΓ=−H and the same class-BDI anomaly as SC: p_c^Q(E→0)→1,
-ν≠1.622. At E=0.1, chiral symmetry is broken → class AI, ν=1.622, direct comparison to SC
-and to Ujfalusi's SC mobility edge.
+**Energy: E=3.1** for same ξ_perc argument as SC. BCC NN lattice is bipartite, so E=0
+has class-BDI anomaly; E=3.1 is deep in class AI (38.75% of BCC half-bandwidth 8t).
+p_q(BCC, E=3.1) is unknown — this is the novel measurement (no prior TMM result).
 
-Output: `data/bcc_dilution_E0p1.h5`, checkpoints `bcc_dilution_E0p1_M{M}.npz`.
+Output: `data/bcc_dilution_E3p1.h5`, checkpoints `bcc_dilution_E3p1_M{M}.npz`.
 
 ```bash
 pixi run bcc-dilution

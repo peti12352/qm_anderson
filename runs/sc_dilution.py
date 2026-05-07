@@ -5,28 +5,34 @@ Prerequisite: sc_benchmark.py must PASS (W_c and ν within 5% of expected).
 
 What this measures
 ------------------
-At fixed W=0 (no Anderson disorder) and E=0.7 (interior of band, away from
-chiral anomaly), we scan the site occupation probability p and compute Λ_M
-for M ∈ {4,6,8,10}. The crossing of Λ_M(p) curves gives p_q at this energy.
+At fixed W=0 (no Anderson disorder) and E=3.1 (deep in band interior), we
+scan the site occupation probability p and compute Λ_M for M ∈ {4,6,8,10}.
+The crossing of Λ_M(p) curves gives p_q at this energy.
 
 Physical interpretation: p_q is the minimum fraction of occupied sites for
 quantum transport to survive at this energy. Below p_q, all eigenstates are
 localized despite there being a classical connected path (for p > p_c). The
 gap p_q − p_c quantifies the "quantum localization cost".
 
-Energy choice: E=0.7 (not E=0 or E=0.1).
-  - E=0: SC is bipartite → ΓHΓ=−H → class BDI, not AI. p_c^Q(E→0)→1 (Ujfalusi
-    2014). Data stored in sc_dilution_E0.h5.
+Energy choice: E=3.1 (not E=0, E=0.1, or E=0.7).
+  - E=0: SC is bipartite → ΓHΓ=−H → class BDI, not AI. p_c^Q(E→0)→1.
+    Data stored in sc_dilution_E0.h5.
   - E=0.1: Only 1.7% of half-bandwidth from E=0. BDI-AI crossover length
-    ξ_cross ~ (1/E)^{1/Δ_E} ≈ 10 lattice spacings ~ M_max. Corrections
-    b·M^{-y} dominate: b=−0.153 at E=0.1, causing spurious crossings at
-    p≈0.35 and χ²/dof=1543. Data in sc_dilution_E0p1.h5.
-  - E=0.7: 11.7% of half-bandwidth (6t). ξ_cross << M_min=4. Corrections
-    expected similar to Anderson benchmark (b≈0.1). p_c^Q(E=0.7)≈0.384 is
-    the mobility-edge minimum (Ujfalusi 2014, Table I/Figure 2).
+    ξ_cross ≈ 10 ~ M_max. Corrections dominate: b=−0.153, χ²/dof=1543.
+    Data in sc_dilution_E0p1.h5.
+  - E=0.7: 11.7% of half-bandwidth. ξ_cross << M_min. BUT: p_q(E=0.7)=0.384
+    (Ujfalusi 2014 PRB 90,174203 Table II), so p_q − p_c = 0.073, giving
+    ξ_perc(p_q) ≈ (0.073)^{−0.876} ≈ 20 >> M_max=10. TMM crossings at M=4..10
+    are finite-size artifacts landing at p≈0.318. True p_q requires M >> 20
+    (impractical: 64× slower per step). Data in sc_dilution_E0p7.h5.
+  - E=3.1: 51.7% of half-bandwidth (6t). ξ_cross ≪ 1 lattice spacing (no
+    BDI issue). p_q(E=3.1) = 0.50628 (Ujfalusi 2014 Table II), so
+    p_q − p_c = 0.195 → ξ_perc(p_q) ≈ (0.195)^{−0.876} ≈ 7 < M=8,10.
+    TMM is in the asymptotic regime for M ≥ 8. Energy avoids molecular-state
+    values (0, ±1, ±√2, ±√3, ±2); E=3.1 used by Ujfalusi for the same reason.
 
-Expected: p_q(SC, E=0.7) ≈ 0.384 (Ujfalusi & Varga 2014, Table I)
-Our target precision: ±0.005
+Expected: p_q(SC, E=3.1) = 0.50628 ± 0.00021 (Ujfalusi & Varga 2014, PRB 90,174203 Table II)
+Our target precision: ±0.003 (stat) ± 0.002 (syst)
 """
 from __future__ import annotations
 
@@ -54,19 +60,20 @@ CKPT_DIR = Path("data/checkpoints")
 # Configuration
 # ---------------------------------------------------------------------------
 M_LIST = [4, 6, 8, 10]   # M=12 deferred: adds ~22h, 4 sizes proven sufficient for FSS
-# Dense coverage around the expected p_q ≈ 0.384 (E=0.7 mobility-edge minimum).
-P_COARSE = list(np.linspace(0.28, 0.55, 18))
-P_FINE   = list(np.linspace(0.33, 0.44, 15))
+# Dense coverage around p_q ≈ 0.506 (Ujfalusi 2014 Table II, E=3.1).
+# ξ_perc(p_q) ≈ 7 < M=8,10 → crossings converge for M ≥ 8.
+P_COARSE = list(np.linspace(0.40, 0.62, 18))
+P_FINE   = list(np.linspace(0.47, 0.54, 15))
 P_LIST   = sorted(set(P_COARSE + P_FINE))
 
-# L=10k: at p≈0.38, γ_min≈0.3 for M=8 → L×γ_min=3000 >> 1. Proven convergent at
+# L=10k: at p≈0.50, γ_min≈0.3 for M=8 → L×γ_min=3000 >> 1. Proven convergent at
 # benchmark. L=100k was 10× overkill; N_real=500 sufficient (same as benchmark).
 L       = 10_000
 N_REAL  = 500
 W       = 0.0    # pure geometric disorder (site dilution only)
-E       = 0.7    # interior of band - far from BDI crossover (see docstring)
+E       = 3.1    # 51.7% of half-bandwidth; ξ_perc << M=8,10 (see docstring)
 T_HOP   = 1.0
-OUTFILE = Path("data/sc_dilution_E0p7.h5")
+OUTFILE = Path("data/sc_dilution_E3p1.h5")
 SEED    = 43
 
 # ---------------------------------------------------------------------------
@@ -173,7 +180,7 @@ def main() -> None:
         all_gammas[M] = {}
         N = M * M
 
-        ckpt = CKPT_DIR / f"sc_dilution_E0p7_M{M}.npz"
+        ckpt = CKPT_DIR / f"sc_dilution_E3p1_M{M}.npz"
         if ckpt.exists():
             data = np.load(ckpt)
             all_gammas[M] = {P_LIST[i]: data[f"p_{i}"] for i in range(len(P_LIST))}
@@ -186,7 +193,7 @@ def main() -> None:
         with CompileMonitor(label=f"M={M} warmup", interval=10):
             _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
-        ckpt_w_dir = CKPT_DIR / f"sc_dilution_E0p7_M{M}_partial"
+        ckpt_w_dir = CKPT_DIR / f"sc_dilution_E3p1_M{M}_partial"
         ckpt_w_dir.mkdir(exist_ok=True)
         done_p = set()
         for i, p in enumerate(P_LIST):
@@ -225,7 +232,7 @@ def main() -> None:
               f"λ_M ∈ [{min(lam_vals):.3f}, {max(lam_vals):.3f}]")
 
         np.savez(ckpt, **{f"p_{i}": all_gammas[M][P_LIST[i]] for i in range(len(P_LIST))})
-        print(f"  ✓ checkpoint saved → {ckpt}")  # E0p1 checkpoint
+        print(f"  ✓ checkpoint saved → {ckpt}")
         for f in ckpt_w_dir.iterdir(): f.unlink()
         ckpt_w_dir.rmdir()
         del tmm_batched
@@ -314,7 +321,7 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
     print("\n" + "="*55)
     print("FSS RESULT (SC site-diluted quantum percolation)")
     print(f"  y   = {Y_IRREL} fixed (S&O99: 1.12±0.08)")
-    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat)  (Ujfalusi 2014 E=0.7: ~0.384)")
+    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat)  (Ujfalusi 2014 PRB 90,174203 E=3.1: 0.50628)")
     print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat)  "
           "(3D-AI class: 1.622)")
     print(f"  b   = {result.b:.4f}  ± {result.b_err:.4f} (stat)")

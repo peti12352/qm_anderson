@@ -25,10 +25,17 @@ and the ratio p_q/p_c to be similar (same universality class).
 BCC anomaly to watch for: The higher connectivity may delay onset of localization
 to smaller p/p_c ratio than SC - this would be a novel and physically interesting result.
 
-Energy choice: E=0.1 (not E=0). BCC NN lattice is bipartite (A=corners, B=body-centres;
-all 8 NN bonds connect A to B, no triangles → no odd cycles). At E=0, ΓHΓ=-H holds →
-class BDI, same chiral anomaly as SC: p_c^Q(E→0)→1, wrong universality class (ν≠1.62).
-E=0.1 breaks chiral symmetry → class AI, ν=1.622, direct comparison to SC result.
+Energy choice: E=3.1 (not E=0 or E=0.1).
+  - E=0: BCC bipartite (A=corners, B=body-centres; all 8 NN bonds A↔B, no odd cycles)
+    → ΓHΓ=−H → class BDI, same chiral anomaly as SC.
+  - E=0.1: Only 1.25% of BCC half-bandwidth (8t) from E=0. Same correction-dominance
+    failure expected as SC at E=0.1. Not run.
+  - E=3.1: 38.75% of half-bandwidth (8t). ξ_cross ≪ 1 lattice spacing. No BDI issue.
+    p_q(BCC, E=3.1) unknown (this is the novel measurement). Rough estimate:
+    p_q − p_c(BCC=0.2457) ≈ 0.10–0.25, giving ξ_perc ≈ 5–14. For M=8,10, the upper
+    end of this range is borderline, but the SC E=3.1 validation run will confirm
+    whether this M range is sufficient before BCC is interpreted.
+    Avoids molecular-state energies (0, ±1, ±√2); E=3.1 chosen as in Ujfalusi 2014.
 """
 from __future__ import annotations
 
@@ -59,17 +66,19 @@ CKPT_DIR = Path("data/checkpoints")
 # ---------------------------------------------------------------------------
 M_LIST = [4, 6, 8, 10]   # will use twisted BC for M=4 and M=8 automatically
 
-P_COARSE = list(np.linspace(0.25, 0.60, 18))
-P_FINE   = list(np.linspace(0.30, 0.46, 20))
+P_COARSE = list(np.linspace(0.26, 0.62, 18))
+# p_q(BCC, E=3.1) unknown. BCC has higher coordination than SC and lower p_c (0.2457 vs
+# 0.311), so we expect p_q(BCC) < p_q(SC, E=3.1)=0.506 in absolute terms. Cover generously.
+P_FINE   = list(np.linspace(0.30, 0.50, 15))
 P_LIST   = sorted(set(P_COARSE + P_FINE))
 
 # L=10k: at p≈p_q, γ_min≈0.3 for M=8 → L×γ_min=3000 >> 1. Same reasoning as SC.
 L       = 10_000
 N_REAL  = 500
 W       = 0.0
-E       = 0.1    # off band centre - BCC is bipartite (class BDI at E=0, same issue as SC)
+E       = 3.1    # 38.75% of BCC half-bandwidth (8t); ξ_cross ≪ 1; no BDI issue
 T_HOP   = 1.0
-OUTFILE = Path("data/bcc_dilution_E0p1.h5")   # E=0 analogue would be bcc_dilution_E0.h5
+OUTFILE = Path("data/bcc_dilution_E3p1.h5")
 SEED    = 44
 
 
@@ -171,7 +180,7 @@ def main() -> None:
         all_gammas[M] = {}
         N = M * M
 
-        ckpt = CKPT_DIR / f"bcc_dilution_E0p1_M{M}.npz"
+        ckpt = CKPT_DIR / f"bcc_dilution_E3p1_M{M}.npz"
         if ckpt.exists():
             data = np.load(ckpt)
             all_gammas[M] = {P_LIST[i]: data[f"p_{i}"] for i in range(len(P_LIST))}
@@ -184,7 +193,7 @@ def main() -> None:
         with CompileMonitor(label=f"M={M} BCC warmup", interval=10):
             _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
-        ckpt_w_dir = CKPT_DIR / f"bcc_dilution_E0p1_M{M}_partial"
+        ckpt_w_dir = CKPT_DIR / f"bcc_dilution_E3p1_M{M}_partial"
         ckpt_w_dir.mkdir(exist_ok=True)
         done_p = set()
         for i, p in enumerate(P_LIST):
