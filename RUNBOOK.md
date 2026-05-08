@@ -142,11 +142,15 @@ Window selected automatically by the stability scan (§FSS Model above).
   TMM crossings land at 0.318 (finite-size artifact; all three pairs give 0.316–0.319).
   ξ_cross ≪ M_min: no BDI issue. The failure is ξ_perc >> M, not chiral corrections.
   χ²/dof=40: FSS fails because M << ξ_perc. `sc_dilution_E0p7.h5`. See Failure F.
-- E=3.1 → 51.7% of half-bandwidth (6t). ξ_cross ≪ 1. p_q=0.506, so p_q−p_c=0.195 →
-  ξ_perc(p_q) ≈ (0.195)^{−0.876} ≈ 7 < M=8,10. TMM in asymptotic regime for M ≥ 8.
-  Ujfalusi uses E=3.1 for TMM comparison (ref [22] in their paper agrees with MFSS beyond E=3).
+- E=3.1 → 51.7% of half-bandwidth (6t). ξ_cross ≪ 1. p_q=0.506, p_q−p_c=0.195 →
+  ξ_perc(p_q) = (0.195)^{-0.876} ≈ 4.2 < all M. But ξ_perc grows BELOW p_q.
+  M=4,6 have p*(M) near/above p_q → percolation-crossover contamination → Failure G.
+  M=12 added to M_LIST to give three clean crossings using M=8,10,12.
 
-Output files: `data/sc_dilution_E3p1.h5`, checkpoints `sc_dilution_E3p1_M{M}.npz`.
+**E=3.1, M=[4,6,8,10] result (Failure G, 2026-05-08):** Single crossing at 0.482 (M=8,M=10
+only). FSS fails (best χ²/dof=213, b=−2.208). Data: `data/mc_dilution_E3p1.h5`.
+
+Output files: `data/sc_dilution_E3p1.h5`, checkpoints `mc_dilution_E3p1_M{M}.npz`.
 
 ```bash
 pixi run sc-dilution
@@ -154,19 +158,18 @@ pixi run sc-dilution
 
 Kill-safe: per-M and per-p checkpoints written throughout. Resume with same command.
 
-**Expected output:**
+**Expected output (M=[4,6,8,10,12], FSS uses M=8,10,12):**
 ```
   Λ_M(p) table (every 4th p):
-         p    Λ(M=4)    Λ(M=6)    Λ(M=8)   Λ(M=10)
-    0.4200   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx
+         p    Λ(M=4)    Λ(M=6)    Λ(M=8)   Λ(M=10)   Λ(M=12)
     ...
-    0.5060   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx   ← crossings here
+    0.5060   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx   ← crossings here
     ...
-    0.6200   x.xxxxx   x.xxxxx   x.xxxxx   x.xxxxx
 
-  Rough p_q (pairwise crossings): 0.50x  [individual: ['0.50x', '0.50x', '0.51x']]
+  Rough p_q (pairwise crossings): 0.49x  [individual: ['0.482', '0.49x', '0.50x']]
+  Key: (M=8,10) at 0.482 (known), (M=10,12) at ~0.490, (M=8,12) at ~0.486
 
-  Window stability scan  [χ²/dof < 3.0 = ✓]
+  Window stability scan  [χ²/dof < 3.0 = ✓, M=8,10,12 only]
     δ        window       x_c        ν        b     χ²/dof   N
   0.030  [0.476, 0.536]  0.506xx  1.6xxx  0.0xxx    x.xxx ✓  xx
   ...
@@ -337,9 +340,52 @@ In Failure F, |b|=0.027 (small — corrections NOT responsible). The crossings a
 wrong p. Check: is p_q − p_c > (M_max)^{−1/ν_perc} = 10^{−1.14} ≈ 0.072? If not → Failure F.
 
 _Fix_: Increase E so p_q − p_c > 0.07–0.10. E=3.1 gives p_q=0.506, p_q−p_c=0.195,
-ξ_perc≈7 < M=8,10. Crossings should converge within 0.01 of true p_q for M=8,10.
+ξ_perc(p_q)≈4.2 < M=8,10. Crossings should converge within 0.01 of true p_q for M=8,10.
+(Note: RUNBOOK previously said ξ_perc≈7; corrected to 4.2 = (0.195)^{-0.876}.)
 
 _Confirmed 2026-05-07._ Data in `data/sc_dilution_E0p7.h5`. TMM crossings: 0.316/0.318/0.319.
+
+---
+
+**Failure G — Single crossing, FSS fails: M=4,6 percolation-crossover contamination**
+
+_Symptom_: Only 1 pairwise crossing found, at p≈0.482 (M=8,M=10 pair). Pairs (M=4,M=6) and
+(M=6,M=8) never cross in [0.40, 0.62]. FSS fails all windows (best χ²/dof=213, window
+[0.435, 0.529], b=−2.208). FSS result p_q=0.018, ν=15 (unphysical). Literature: 0.50628.
+
+_Root cause_: The RUNBOOK's ξ_perc criterion (Failure F fix) checked ξ_perc only at p_q.
+It failed to account for the FSS window extending below p_q, where ξ_perc(p) grows.
+
+Define p*(M) = p_c + M^{-1/ν_perc} as the p-value where M = ξ_perc(p) = (p−p_c)^{-ν_perc}:
+- M=4:  p*(4)  = 0.312 + 4^{-1.142}  = **0.517 > p_q = 0.506** → M=4 NEVER in scaling regime below p_q
+- M=6:  p*(6)  = 0.312 + 6^{-1.142}  = 0.441  → enters only 0.065 below p_q; M/ξ_perc ≈ 1.1–1.4
+- M=8:  p*(8)  = 0.312 + 8^{-1.142}  = 0.405  → M/ξ_perc ≈ 1.6–1.9 (OK)
+- M=10: p*(10) = 0.312 + 10^{-1.142} = 0.384  → M/ξ_perc ≈ 2.0–2.4 (good)
+- M=12: p*(12) = 0.312 + 12^{-1.142} = 0.371  → M/ξ_perc ≈ 2.4–2.9 (good)
+
+(Using 1/ν_perc = 1/0.876 = 1.142 for 3D site percolation.)
+
+Below p*(M), the quasi-1D strip is dominated by percolation geometry (ξ_perc > M), not quantum
+localization. The corrections to Λ_M are O(ξ_perc/M) ≈ O(1) — not of the form b·M^{-y}. The
+single-correction FSS ansatz is structurally wrong for M=4,6 throughout the localized side of
+the FSS window. The b=−2.2 result is the optimizer absorbing these O(1) non-universal corrections.
+
+_Distinguish from Failure F_: In Failure F, ξ_perc >> M at p_q itself → three crossings all land
+far below p_q. In Failure G, ξ_perc < M at p_q, so M=8,10 cross near the right p, but M=4,6
+are contaminated BELOW p_q → only one crossing visible, FSS completely broken.
+
+_Distinguish from Failure E_: Failure E has |b|=0.153 from BDI-AI crossover corrections.
+Failure G has much larger |b|=2.2 from percolation O(1) corrections and only 1 crossing.
+
+_Fix_: Add M=12 to M_LIST. With M=8,10,12 all in the scaling regime throughout the FSS window
+(M/ξ_perc > 1.9 for p > 0.41), three coherent crossings will appear and FSS will recover.
+Drop M=4 from FSS analysis (percolation-dominated throughout). Treat M=6 as diagnostic only.
+
+_Confirmed 2026-05-08._ Data in `data/mc_dilution_E3p1.h5` (greengoblin, `mc_` naming from old
+local version — same physics as `sc_dilution_E3p1.h5`). Runtime: 500.5 min.
+M=10: 677.90 s/p, VRAM 1496/32607 MiB (BFC fix confirmed working).
+
+_Status_: M=12 run in progress after code update to M_LIST=[4,6,8,10,12].
 
 ---
 

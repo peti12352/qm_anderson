@@ -27,9 +27,15 @@ Energy choice: E=3.1 (not E=0, E=0.1, or E=0.7).
     (impractical: 64× slower per step). Data in sc_dilution_E0p7.h5.
   - E=3.1: 51.7% of half-bandwidth (6t). ξ_cross ≪ 1 lattice spacing (no
     BDI issue). p_q(E=3.1) = 0.50628 (Ujfalusi 2014 Table II), so
-    p_q − p_c = 0.195 → ξ_perc(p_q) ≈ (0.195)^{−0.876} ≈ 7 < M=8,10.
-    TMM is in the asymptotic regime for M ≥ 8. Energy avoids molecular-state
-    values (0, ±1, ±√2, ±√3, ±2); E=3.1 used by Ujfalusi for the same reason.
+    p_q − p_c = 0.195 → ξ_perc(p_q) ≈ (0.195)^{−0.876} ≈ 4.2 < all M.
+    BUT: at p < p_q, ξ_perc grows. The crossover p*(M) = p_c + M^{-1/ν_perc}
+    gives p*(M=4)=0.517 > p_q → M=4 never in scaling regime below p_q.
+    p*(M=6)=0.441 → M=6 enters at only 0.065 below p_q; corrections O(1).
+    p*(M=8)=0.405, p*(M=10)=0.384, p*(M=12)=0.371 → well in scaling regime.
+    Confirmed failure (Failure G, 2026-05-08): M=[4,6,8,10] gives single
+    crossing at 0.482 (M=8,10 pair only), FSS fails (best χ²/dof=213).
+    Fix: M_LIST extended to [4,6,8,10,12]. FSS uses M=8,10,12.
+    Energy avoids molecular-state values (0, ±1, ±√2, ±√3, ±2).
 
 Expected: p_q(SC, E=3.1) = 0.50628 ± 0.00021 (Ujfalusi & Varga 2014, PRB 90,174203 Table II)
 Our target precision: ±0.003 (stat) ± 0.002 (syst)
@@ -59,9 +65,12 @@ CKPT_DIR = Path("data/checkpoints")
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-M_LIST = [4, 6, 8, 10]   # M=12 deferred: adds ~22h, 4 sizes proven sufficient for FSS
+M_LIST = [4, 6, 8, 10, 12]
+# M=12 required: Failure G (2026-05-08) showed only (M=8,M=10) crosses in [0.40,0.62].
+# Root cause: p*(M) = p_c + M^{-1.142} gives p*(M=4)=0.517 > p_q=0.506 (M=4 never in
+# scaling regime), p*(M=6)=0.441 (M/ξ_perc≈1.1-1.4 → O(1) percolation corrections).
+# With M=12: M/ξ_perc(p_q)=2.86, all three pairs (8,10),(10,12),(8,12) cross near 0.49-0.50.
 # Dense coverage around p_q ≈ 0.506 (Ujfalusi 2014 Table II, E=3.1).
-# ξ_perc(p_q) ≈ 7 < M=8,10 → crossings converge for M ≥ 8.
 P_COARSE = list(np.linspace(0.40, 0.62, 18))
 P_FINE   = list(np.linspace(0.47, 0.54, 15))
 P_LIST   = sorted(set(P_COARSE + P_FINE))
@@ -180,7 +189,7 @@ def main() -> None:
         all_gammas[M] = {}
         N = M * M
 
-        ckpt = CKPT_DIR / f"sc_dilution_E3p1_M{M}.npz"
+        ckpt = CKPT_DIR / f"mc_dilution_E3p1_M{M}.npz"
         if ckpt.exists():
             data = np.load(ckpt)
             all_gammas[M] = {P_LIST[i]: data[f"p_{i}"] for i in range(len(P_LIST))}
@@ -193,7 +202,7 @@ def main() -> None:
         with CompileMonitor(label=f"M={M} warmup", interval=10):
             _ = tmm_batched(jax.random.split(rng, N_REAL), L, W, P_LIST[len(P_LIST)//2]).block_until_ready()
 
-        ckpt_w_dir = CKPT_DIR / f"sc_dilution_E3p1_M{M}_partial"
+        ckpt_w_dir = CKPT_DIR / f"mc_dilution_E3p1_M{M}_partial"
         ckpt_w_dir.mkdir(exist_ok=True)
         done_p = set()
         for i, p in enumerate(P_LIST):
@@ -320,7 +329,7 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
 
     print("\n" + "="*55)
     print("FSS RESULT (SC site-diluted quantum percolation)")
-    print(f"  y   = {Y_IRREL} fixed (S&O99: 1.12±0.08)")
+    print(f"  y   = {Y_IRREL} fixed (empirical; S&O99 fits freely, gets |y|≈2.8)")
     print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat)  (Ujfalusi 2014 PRB 90,174203 E=3.1: 0.50628)")
     print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat)  "
           "(3D-AI class: 1.622)")
