@@ -168,6 +168,9 @@ def main() -> None:
                         help="Override FSS fit window upper bound")
     parser.add_argument("--y-irrel", type=float, default=1.12,
                         help="Irrelevant exponent (default 1.12)")
+    parser.add_argument("--m-list", type=str, default=None,
+                        help="Comma-separated M values to include in FSS (--refit only). "
+                             "Example: --m-list 8,10,12  Default: all M in HDF5.")
     args = parser.parse_args()
 
     if args.refit:
@@ -354,6 +357,15 @@ def _run_refit(args) -> None:
     data = load_lambda(src)
     M_list_h5  = [int(m) for m in data["M_list"]]
     p_list_h5  = list(data["x_values"])
+
+    if args.m_list is not None:
+        keep = {int(m) for m in args.m_list.split(",")}
+        M_list_h5 = [m for m in M_list_h5 if m in keep]
+        if not M_list_h5:
+            print(f"ERROR: --m-list '{args.m_list}' filtered out all M values. "
+                  f"Available: {[int(m) for m in data['M_list']]}")
+            return
+        print(f"  --m-list filter applied: using M={M_list_h5}")
 
     lam_by_M: dict[int, list[float]] = {}
     M_flat, p_flat, lam_flat, err_flat = [], [], [], []

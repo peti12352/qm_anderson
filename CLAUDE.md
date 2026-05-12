@@ -166,6 +166,10 @@ These are verified from papers or our own data. Cite these, not memory:
 | Our SC E=0.1 result | p_q=0.372 (spurious), b=−0.153, χ²=1543 | data/sc_dilution_E0p1.h5 |
 | Our SC E=0.7 result | crossings at 0.316/0.318/0.319 (Failure F: ξ_perc≈20>>M) | data/sc_dilution_E0p7.h5 |
 | Our SC E=3.1, M=[4,6,8,10] | single crossing 0.482, χ²/dof=213, b=−2.208 (Failure G) | data/mc_dilution_E3p1.h5 |
+| Our SC E=3.1, M=[4,6,8,10,12] | 2 crossings (0.482, 0.502), χ²/dof=42.1, b=−2.459, p_q=0.535, ν=1.088 (Failure G persists) | data/sc_dilution_E3p1.h5 |
 | ξ_perc(p_q, SC, E=3.1) | 4.2 (= (0.195)^{−0.876}); NOT 7 as previously stated | measured/derived |
+| ξ_perc at p_min=0.462, SC E=3.1 | 5.6 (= (0.150)^{−0.876}) — governs M/ξ_perc at FSS window edge | derived |
 | p*(M=4) SC E=3.1 | 0.517 > p_q → M=4 useless for FSS | derived: p_c + 4^{−1.142} |
+| p*(M=6) SC E=3.1 | 0.441 → M/ξ_perc=1.07 at p_min → (M=6,M=8) never cross → M=6 non-scaling | derived: p_c + 6^{−1.142} |
+| M/ξ_perc at p_min=0.462 | M=6:1.07, M=8:1.43, M=10:1.79, M=12:2.14 — determines FSS quality | derived |
 | **Citation error fixed** | PRB 90,**174203** (not 245136) | Ujfalusi & Varga 2014 |
