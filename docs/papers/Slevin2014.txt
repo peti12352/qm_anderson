@@ -1,0 +1,1311 @@
+arXiv:1307.4483v4 [cond-mat.mes-hall] 20 Nov 2019
+
+Critical exponent for the Anderson transition in the
+three dimensional orthogonal universality class
+Keith Slevin1 and Tomi Ohtsuki2
+1
+
+Department of Physics, Graduate School of Science, Osaka University, 1-1
+Machikaneyama, Toyonaka, Osaka 560-0043, Japan
+2
+Department of Physics, Sophia University, Kioi-cho 7-1, Chiyoda-ku, Tokyo
+102-8554, Japan
+E-mail: slevin@phys.sci.osaka-u.ac.jp
+Abstract. We report a careful finite size scaling study of the metal insulator
+transition in Anderson’s model of localisation. We focus on the estimation of the
+critical exponent ν that describes the divergence of the localisation length. We
+verify the universality of this critical exponent for three different distributions of the
+random potential: box, normal and Cauchy. Our results for the critical exponent
+are consistent with the measured values obtained in experiments on the dynamical
+localisation transition in the quantum kicked rotor realised in a cold atomic gas.
+
+PACS numbers: 71.23.An,72.15.Rn,71.30.+h,73.43.-f,11.10.Hi
+
+Critical exponent for the Anderson transition...
+
+2
+
+1. Introduction
+The zero temperature dc conductivity σ of a solid can be expressed using the Einstein
+relation
+σ = e2 ρ (EF ) D .
+
+(1)
+
+Here ρ (EF ) is the density of states per unit volume at the Fermi level and D is the
+diffusion constant. The electrical conductivity of weakly disordered materials can be
+understood using a semiclassical picture. The motion of electrons on the scale of the
+lattice constant is quantum mechanical, while the motion on the scale of the (much
+longer) mean free path is classical. For classical diffusion, the diffusion constant is equal
+to
+1
+(2)
+D = vF ℓ ,
+d
+where d is the dimensionality, vF the Fermi velocity, and ℓ is the mean free path.
+Provided the diffusion constant is not zero, we expect the material to be a metal unless
+the Fermi level lies in a band gap. Then, dependent on the size of the gap, we expect
+the material to be either an insulator or a semiconductor. The occurrence of a band gap
+may be explainable within a single particle picture, or it may be the result of correlation
+effects [1].
+Is it possible that the diffusion constant becomes zero? For classical diffusion, the
+answer is no. For strong disorder the mean free path can be short but it is always
+finite and so is the diffusion constant. Anderson [2] was the first to realise that for
+quantum diffusion the situation is different. In this case, quantum interference may
+result in the complete suppression of diffusion even though the mean free path remains
+finite. This effect is now called Anderson localisation [3]. The suppression of diffusion
+is a reflection of a change in the nature of the electronic eigenfunctions. The effect
+is particularly pronounced in lower dimensions. For one and two-dimensional systems
+the eigenfunctions are, apart from some special cases, always exponentially localised
+in space. In three dimensions, eigenfunctions are localised only for sufficiently strong
+disorder. There is thus a metal insulator transition as the strength of the disorder is
+increased. This transition is called the Anderson transition and it is an example of a
+zero temperature continuous quantum phase transition.
+In common with continuous thermal phase transitions, the concept of universality
+class plays a central role. In the vicinity of the critical point various critical phenomena
+described by power laws occur. The exponents appearing in these power laws are
+expected to be universal, i.e. to depend only on the universality class. The universality
+classes are determined by the dimensionality of the system and the symmetries of the
+Hamiltonian. Since we are considering disordered systems, the Hamiltonian does not
+have any translational symmetry. Rather, the important symmetries for the Anderson
+localisation problem are time reversal symmetry and spin rotation symmetry. In
+addition, certain discrete symmetries may also play a role [4, 5]. If these discrete
+symmetries are ignored, we arrive at the three Wigner-Dyson symmetry classes:
+
+Critical exponent for the Anderson transition...
+
+3
+
+orthogonal, unitary and symplectic. If discrete symmetries are included, ten symmetry
+classes need to be considered [6, 7]. In this paper, we report a finite size scaling study
+of Anderson’s model of localisation. This is defined on a three dimensional lattice and
+the Hamiltonian has both time reversal and spin-rotation symmetries. Thus, our focus
+is on the three dimensional orthogonal universality class.
+The critical phenomena of the Anderson transition are described by two
+independent critical exponents. The first of these is the critical exponent ν that describes
+the divergence of the correlation length at the transition
+1
+.
+(3)
+ξ∼
+|x − xc |ν
+
+Here, x is the parameter that is varied to drive the transition, and xc is its critical value.
+The second is the dynamic exponent z that describes how frequency is re-normalised
+near the critical point. For models where electron-electron interactions are neglected,
+the only relevant energy scale at the transition is the level spacing. From this it follows
+that the dynamic exponent is equal to the dimensionality z = d. While concerted efforts
+have been made to calculate the critical exponent ν using an ǫ expansion about the lower
+critical dimension (d = 2) [8, 9, 10], reliable values have not been obtained in this way.
+This gap has been filled by extensive numerical simulations.
+In addition to the critical phenomena mentioned above, scaling of the wavefunction
+intensity distribution with system size at the transition is described by a multifractal spectrum [11]. This multi-fractal spectrum, which is again expected to display
+universality, has also been the object of careful numerical study [12, 13, 14].
+This article is concerned with the Anderson localisation of electrons. However,
+Anderson localisation is a wave phenomenon and is also observable for classical waves
+[15]. The periodically driven quantum kicked rotor exhibits an analogue of localisation
+in momentum space called dynamic localisation [16]. Moreover, if the amplitude of the
+kick is modulated quasi-periodically in an appropriate way [17], it is possible to observe
+a dynamical localisation transition which is believed to be in the same universality class
+as the Anderson transition in the model we study here [18, 19].
+2. Model and Method
+2.1. Anderson’s model of localisation
+The Hamiltonian for Anderson’s model of localisation is [2]
+H=
+
+X
+i
+
+Wi c†i ci − V
+
+X †
+
+ci cj .
+
+(4)
+
+hiji
+
+Here, the sum in the first term is over the sites of a three dimensional simple cubic
+lattice with lattice constant a. The sum in the second term is over nearest neighbour
+lattice sites. The creation operator c†i creates an electron in an orbital |ii that is localised
+
+Critical exponent for the Anderson transition...
+
+4
+
+on-site i. Orbitals on different sites are assumed to be orthogonal. The state vector of
+the system is then
+|ψi =
+
+X
+i
+
+ψi |ii .
+
+(5)
+
+If the boundary conditions are specified, the eigenstates and eigenenergies may be found
+by solving the time-independent Schrödinger equation
+H |ψi = E |ψi .
+
+(6)
+
+The constant V sets the energy scale. We take a as the unit of length, so that
+a=1,
+
+(7)
+
+and V as the unit of energy, so that
+V =1.
+
+(8)
+
+The on-site potentials Wi are independently and identically distributed random variables
+with distribution
+P (Wi ) = p (Wi ) dWi .
+
+(9)
+
+We consider three distributions. The first is the box distribution
+p (Wi ) =
+
+(
+
+1/W |Wi | ≤ W/2
+.
+0
+otherwise
+
+(10)
+
+The parameter W characterises the strength of the disorder. In what follows, we usually
+refer to W simply as the disorder. The second is the normal distribution
+W2
+1
+(11)
+exp − i2 .
+p (Wi ) = √
+2σ
+2πσ 2
+To make it easier to compare with the box distribution, we set the variance of the normal
+distribution equal to that of the box distribution
+!
+
+W2
+.
+12
+The third is the Cauchy distribution
+W
+.
+p (Wi ) =
+2
+π (Wi + W 2 )
+σ2 =
+
+(12)
+
+(13)
+
+The parameter W again specifies the strength of the disorder. However, since the Cauchy
+distribution does not have a second moment, its value is not directly comparable with
+that of the box and normal distributions.
+
+Critical exponent for the Anderson transition...
+
+5
+
+2.2. The transfer matrix method
+Rather than studying the eigenstates of the Anderson model directly, we consider the
+transmission of electrons with a given energy E through long disordered wires with a
+uniform square cross-section
+Ly = Lz = L .
+
+(14)
+
+As a consequence of Anderson localisation, for wires that are sufficiently long, the
+amplitude of the transmission decays exponentially with an associated decay length
+called the quasi-one-dimensional localisation length ξQ1D . For a given distribution, ξQ1D
+is a function of the energy, disorder and the transverse dimension L
+ξQ1D ≡ ξQ1D (E, W, L) .
+
+(15)
+
+We expect the exponential decay of the transmission to be observable when
+Lx ≫ ξQ1D .
+
+(16)
+
+We use the transfer matrix method to estimate ξQ1D [20, 21, 22].
+We divide the system into slices labelled by their position x in the x-direction.
+Since the off-diagonal elements of the Hamiltonian are nonzero only between nearest
+neighbour sites, the time-independent Schrödinger equation reduces to a set of linear
+equations relating the wave function amplitudes on adjacent slices. These equations can
+be rewritten in the form of a transfer matrix multiplication
+"
+
+ψx+1
+−ψx
+
+#
+
+= Mx
+
+"
+
+ψx
+−ψx−1
+
+#
+
+.
+
+(17)
+
+Here, ψx groups together all the wavefunction amplitudes ψi on the cross section through
+the wire at position x
+
+.. 
+ . 
+
+
+(18)
+ψx =  ψi  ,
+
+.. 
+.
+and Mx is the transfer matrix defined by
+Mx =
+Since there are
+
+"
+
+hx| H |xi − E 1
+−1
+0
+
+Ly × Lz = L2 ≡ N
+
+#
+
+.
+
+(19)
+
+(20)
+
+wavefunction aplitudes on each slice, the size of the transfer matrix is 2N × 2N. The
+transfer matrix for a given layer x is a function of the energy E and the on-site potentials
+Wi of lattice sites on the slice. The boundary conditions in the y and z directions also
+need to be specified. Throughout this work, we impose periodic boundary conditions in
+these directions.
+
+Critical exponent for the Anderson transition...
+
+6
+
+To estimate the quasi-one-dimensional localisation length we consider the Lyapunov
+exponents of the following random matrix product
+M=
+
+Lx
+Y
+
+Mx .
+
+(21)
+
+x=1
+
+From this product we define a real symmetric matrix
+Ω = ln MM T .
+
+(22)
+
+As a consequence of current conservation the eigenvalues of this matrix occur in pairs of
+opposite sign. In what follows, we shall suppose that the eigenvalues νi (i = 1, · · · , 2N)
+are numbered in decreasing order, i.e. so that νi > νj when i < j. For this ordering,
+current conservation means that
+νN +i = −νN −i+1
+
+(23)
+
+with i = 1, · · · , N. The Lyapunov exponents associated with the random matrix product
+are defined by taking the following limit
+νi
+.
+(24)
+γi = lim
+Lx →∞ 2Lx
+In numerical simulations, for practical reasons (see below), the Lyapunov exponents are
+not calculated by diagonalising the matrix Ω. Instead, to estimate the first m largest
+Lyapunov exponents we start with a 2N × m matrix U with orthogonal columns and
+consider the QR decomposition of the matrix
+MU = QR .
+
+(25)
+
+Here, Q is a 2N × m matrix with orthogonal columns and R is a m × m upper triangular
+matrix with positive elements on the diagonal. The Lyapunov exponents are related to
+the diagonal elements of R by
+1
+ln Ri,i .
+(26)
+γi = lim
+Lx →∞ Lx
+In practice, we estimate the Lyapunov exponents by truncating the transfer matrix
+multiplication at a large but finite length Lx
+1
+ln Ri,i .
+(27)
+γ̃i =
+Lx
+Here, the tilde denotes that this is an estimate. Note that these estimates do not
+necessarily obey the exact symmetry of equation (23). In general, this is recovered only
+in the limit Lx → ∞. Nevertheless, if we estimate all the Lyapunov exponents by setting
+m = 2N, we find that the sum of the exponents is exactly zero for any Lx
+2N
+X
+
+γ̃i = 0 .
+
+(28)
+
+i=1
+
+This is proven by taking the determinant of equation (25). It is also helpful to randomise
+the starting vectors U by performing several transfer matrix multiplications and QR
+factorisations, and then replacing U with the final Q matrix. For a more complete
+discussion of these technicalities see [23].
+
+Critical exponent for the Anderson transition...
+
+7
+
+To relate the Lyapunov exponents with the quasi-one dimensional localisation
+length, we consider the following scattering problem. Suppose that the wire is connected
+to perfect leads at both left and right. If we consider an outgoing state at, say, the left of
+the sample, we can use the transfer matrix multiplication to calculate the wavefunction
+amplitudes in the right lead. This observation is the basis for a practical method for
+the calculation of the transmission and reflection matrices for this problem [24]. It also
+makes clear that the decay of the transmission amplitude will be related to the slowest
+decay rate in the problem, i.e., the smallest positive Lyapunov exponent. It is thus usual
+to identify the reciprocal of the smallest positive Lyapunov exponent with the quasi-one
+dimensional localisation length
+1
+.
+(29)
+ξQ1D =
+γN
+Let us just note in passing that, while when performing a finite size scaling analysis (as
+will be described below) it is customary to consider only the smallest positive Lyapunov
+exponent, similar analyses of the second, third, etc. smallest positive exponent lead to
+the same results [25].
+2.3. Dealing with round-off error
+Unfortunately the transfer matrix multiplication is unstable and, as a result, is very
+sensitive to round-off error. This means that direct calculation of the Lyapunov
+exponents by diagonalising the matrix Ω, or QR factorisation of the transfer matrix
+product M, is not possible. The standard way to overcome this difficulty is to perform
+repeated QR factorisations at intervals throughout the transfer matrix multiplication.
+If the the number of transfer matrix multiplications between each QR factorisation is
+sufficiently small, the loss of precision due to round-off error can be avoided. We start
+the transfer matrix multiplication with
+Q(0) = U
+
+(30)
+
+and perform QR factorisations after every q iterations
+Q(j) R(j) = Mjq · · · M(j−1)q+1 Q(j−1) (j = 1, · · · , l) .
+
+(31)
+
+For simplicity we assume here that Lx is an integer multiple l of q, i.e. that
+Lx = lq .
+
+(32)
+
+The estimates of the Lyapunov exponents are then
+γ̃i =
+
+l
+1 X
+(j)
+ln Ri,i .
+Lx j=1
+
+(33)
+
+Provided q is small enough to control round-off error, the estimates of the Lyapunov
+exponents are independent of q.
+In an attempt to determine a reasonable value for q systematically, we checked how
+large we can make q while still maintaining the sum of the Lyapunov exponents close to
+
+Critical exponent for the Anderson transition...
+
+8
+
+zero. This is illustrated in Tables 1 and 2 for the box and Cauchy distributions. For the
+Cauchy distribution, in particular, the effect of round-off error is clearly visible in the
+sum unless q is very small. We also show the estimates of the smallest positive Lyapunov
+exponent. It is noticeable that the estimates of the smallest positive exponent are much
+less sensitive to round-off error than the sum of all the exponents. Nevertheless, we
+preferred to be cautious and so chose q to ensure that the sum of exponents is zero to
+about single precision accuracy.
+q
+3
+6
+9
+
+Σγ̃i
+10−13
+10−9
+10−4
+
+γ̃N
+0.10380011865
+0.10380011866
+0.10380011848
+
+Table 1. An example of the determination of the interval q at which to perform
+the QR factorisation in order to control round-off error. The data are for the box
+distribution with Lx = 9000, Ly = Lz = 24, W = 18 and E = 1. The starting vectors
+U were randomized with 100 transfer matrix multiplications.
+
+q
+1
+2
+4
+
+Σγ̃i
+10−13
+10−7
+10−3
+
+γ̃N
+0.0953267557872
+0.0953267557874
+0.0953267558688
+
+Table 2. An example showing that it is more difficult to control round-off error for
+the Cauchy distribution. Here, Lx = 1000, Ly = Lz = 24, W = 4.5 and E = 0. The
+starting vectors U were randomized with 100 transfer matrix multiplications.
+
+2.4. Determination of the precision of the Lyapunov exponents
+To perform the finite size scaling analysis, estimates of the Lyapunov exponents alone
+are insufficient. In addition, accurate estimates of the precision of the estimates of the
+Lyapunov exponents are required. In most previous work these estimates were obtained
+by supposing that the terms appearing in the sum (33) are statistically independent.
+This assumption is not unreasonable if the interval q between QR factorisations is
+sufficiently large. However, this is not always the case. Particularly for the Cauchy
+distribution it is necessary to set q to a small value in order to avoid round-off error.
+In this case, the assumption of statistical independence leads to erroneously small error
+estimates. This is serious because it means that reliable estimation of the quality of the
+finite size scaling fit using the goodness of fit probability is not possible. To circumvent
+this difficulty we define
+(k)
+
+Di
+
+=
+
+kr
+X
+
+1
+(j)
+ln Ri,i (k = 1, · · · , s)
+p
+j=(k−1)r+1
+
+(34)
+
+9
+
+Critical exponent for the Anderson transition...
+
+where r is an integer, p = qr, and we have supposed for simplicity that Lx = ps with s
+an integer. The estimates of the Lyapunov exponents are then given by the mean values
+of the Di ,
+γ̃i =
+
+s
+1X
+(k)
+D ≡D.
+s k=1 i
+
+(35)
+(k)
+
+If p is sufficiently large, the assumption that the Di are statistically independent for
+different k is a reasonable approximation. The precision of the estimates of the Lyapunov
+exponents are then given by the usual formulae for the standard error σi of the mean
+
+1  2
+2
+(36)
+D −D
+σi2 =
+s−1
+where
+s 
+
+1X
+(k) 2
+2
+Di
+.
+(37)
+D ≡
+s k=1
+
+When performing the simulation, we decide in advance the required precision and stop
+the simulation when the standard error given by equation (36) satisfies this criterion.
+(We also take care that a sufficient number of transfer matrix multiplications are always
+performed to ensure that we have sufficient statistics to estimate the standard error
+reliably using equation (36), i.e, we set a minimum value for s.)
+In Figure 1, we show some typical results. The simulation has been set to terminate
+when according to equation (36) the precision is better than 1%. The simulation has
+been repeated 100 times using independent streams of random numbers. The observed
+fluctuation is 1.1%, which is within approximately a single standard deviation of the
+expected value 1%. Moreover, as expected from the form of equation (35), the normal
+distribution gives a reasonable description of the sample to sample fluctuations.
+2.5. Finite size scaling
+In our simulations we fix the energy E. There is then a critical disorder Wc ≡ Wc (E)
+that separates the localised and extended phases. We then accumulate data for the
+smallest positive Lyapunov exponent for a range of disorder around the critical disorder
+and for as wide a range of system sizes as practicable. The finite size scaling method
+is then used to extract information about the critical phenomena from this numerical
+data. This allows us to estimate universal properties such as the critical exponent, the
+value Γc of Γ (to be explained below) at the critical point, the scaling function etc., as
+well as non-universal properties such as the critical disorder. The starting point is to
+assume that the disorder and system sizes dependence of the dimensionless quantity
+Γ = γN L ,
+
+(38)
+
+are described by a scaling law of the form [26]
+Γ = F (φ1 , φ2 ) .
+
+(39)
+
+10
+
+Critical exponent for the Anderson transition...
+
+0.124
+
+0.126
+
+0.128
+
+0.130
+
+0.132
+
+N
+Figure 1. The distribution of the estimate of the smallest positive Lyapunov exponent
+obtained in repeated simulations with the same parameters with independent stream
+of random numbers. The results shown are for the box distribution with Ly = Lz = 10,
+W = 15.0 and E = 1. QR factorizations were performed every q = 6 transfer matrix
+multiplications and we set r = 5 for the determination of the precision.
+
+Here, F is a universal function, the arguments φ1 and φ2 are scaling variables
+φi = ui (w) Lαi ,
+
+(40)
+
+and w is the reduced disorder
+W − Wc
+.
+(41)
+w=
+Wc
+The first of the scaling variables is the relevant scaling variable and has associated with
+it a positive exponent α1 > 0. The critical exponent is given by the inverse of this
+exponent
+1
+ν=
+.
+(42)
+α1
+The second is an irrelevant scaling variable and has associated with it a negative
+exponent α2 < 0. The value of this exponent is usually denoted by the letter y
+y ≡ α2 .
+
+(43)
+
+The functions ui appearing in the scaling variables are expanded as Taylor series
+ui (w) =
+
+mi
+X
+
+bi,j w j .
+
+(44)
+
+j=0
+
+This allows us to take account of possible nonlinearity of the scaling variables in the
+disorder. For the relevant scaling variable we must have
+u1 (w = 0) = 0 .
+
+(45)
+
+Critical exponent for the Anderson transition...
+
+11
+
+The scaling function is expanded as a Taylor series in the scaling variables
+F =
+
+n2
+n1 X
+X
+
+aj1 ,j2 φj11 φj22 .
+
+(46)
+
+j1 =0 j2 =0
+
+To avoid ambiguity in the definition of the fitting model we set
+a1,0 = a0,1 = 1 .
+
+(47)
+
+In principle, there are many irrelevant scaling variables. However, in practice, it is
+extremely difficult to resolve contributions of different irrelevant variables. Therefore,
+we have made the approximation that the contribution of a single irrelevant variable
+dominates and neglected the others.
+For the purposes of fitting data near the critical point we expect that it is reasonable
+to truncate the Taylor series at fairly low order. The total number of parameters in the
+model is
+NP = 2 + m1 + m2 + (n1 + 1)(n2 + 1).
+
+(48)
+
+If the irrelevant variable is neglected in the analysis, the total number of parameters in
+the model becomes
+NP = 2 + m1 + n1 .
+
+(49)
+
+To find the best fit, we start with reasonable initial estimates for the fitting parameters
+and use the Levenberg-Marquardt algorithm to minimize the χ2 statistic
+2
+
+χ =
+
+ND
+X
+(Fi − Γi )2
+
+σi2
+
+i=1
+
+.
+
+(50)
+
+Here Fi is the value of finite size scaling model evaluated at the parameters used in the
+ith run of the simulation, Γi is the value of Γ found in that simulation and ND is the
+total number of simulations performed, i.e. the number of data.
+The use of the χ2 statistic is rigorously justified provided the deviations between
+the model and the data are independent normally distributed random errors, and the
+model is linear in all the parameters. In this case, the minimum value χ2min of the χ2
+statistic is distributed according to the χ2 distribution with
+NDOF = ND − NP
+
+(51)
+
+degrees of freedom. The goodness of fit P , which is the probability that a worse value
+of χ2min would be obtained by chance, is given by the formula (see Chapter 11 of the
+book by Bevington and Robinson [27])
+P =
+
+Z ∞
+
+χ2min
+
+
+
+
+
+pχ χ2 , NDOF dχ2
+
+(52)
+
+where pχ is the χ2 distribution with NDOF degrees of freedom
+
+
+
+
+
+
+pχ χ2 , NDOF = χ2
+
+(NDOF −2)/2
+
+exp (−χ2 /2)
+.
+2NDOF/2 Γ (NDOF /2)
+
+(53)
+
+This is calculated as described in [28]; we have
+
+
+P = 1 − P NDOF /2, χ2min/2
+
+
+
+(54)
+
+Critical exponent for the Anderson transition...
+
+12
+
+where
+x
+1
+exp (−t) ta−1 dt
+P (a, x) =
+Γ (a) 0
+
+Z
+
+(55)
+
+is the incomplete Gamma function and Γ (a) is the Gamma function.
+Here, in fact, the model is linear in some but not all of the parameters. We proceed
+on the basis that the data are sufficient to narrow down the possible values of the fitting
+parameters to a small enough region such that, at least in principle, the model could
+be replaced by a linear approximation. This is true for the most important parameters
+such as the critical exponent, disorder etc., but not for all the parameters. To determine
+the precision of the fitted parameters we use the Monte Carlo method described in [28].
+This involves the generation and fitting of large numbers of pseudo-data sets. We give
+the errors in the form of 95% confidence intervals.‡ This method also allows us to
+check the goodness of fit probability by calculating it directly from the histogram of χ2
+obtained in the Monte Carlo simulation. We have found no significant difference with
+the values obtained from equation (52).
+3. Results of the finite size scaling analysis
+For the three distributions of the random potential, we simulated systems with sizes
+L × L × Lx with L = 4, 6, 8, 10, 12, 16, 20, 24. In each case the simulations were
+terminated when Eqs. (35) and (36) indicated that the precision of the estimate of
+the smallest positive Lyapunov exponent had reached 0.1%. This was typically of
+the order of Lx = 106 ∼ 107 transfer matrix multiplications. The energies, disorder
+ranges and total numbers of data points are listed in Table 3. For the box and normal
+distributions of the random potential, QR factorizations were performed every q = 6
+transfer matrix multiplications. The precision of the estimate of the smallest positive
+Lyapunov exponent was checked after every r = 5 factorizations, i.e. after every p = 30
+transfer matrix multiplications. For the Cauchy distribution of the random potential,
+QR factorizations were performed every q = 2 transfer matrix multiplications and the
+precision was estimated after every r = 10 factorizations, i.e. after every p = 20 transfer
+matrix multiplications.
+The data for each distribution of the random potential were then fitted using
+the finite size scaling model described above. For the box distribution of the random
+potential, the starting values used in the non-linear least squares fitting were Wc = 16.53,
+Γc = 1.73, α1 = 0.63, b1,1 = 1.3, α2 = −2.5 and b2,0 = −0.3. For the normal distribution
+of the random potential, the starting values were Wc = 6.15, Γc = 1.73, α1 = 0.63,
+b1,1 = 1.1, α2 = −1.5 and b2,0 = −1.0. And for the Cauchy distribution, the starting
+values were Wc = 4.3, Γc = 1.72, α1 = 0.63, b1,1 = 1.0, α2 = −2.5 and b2,0 = 0.2. All
+the other parameters were initially set to zero.
+‡ In this article, errors expressed using square brackets are 95% confidence intervals, while numbers
+appearing after the symbol ± are standard errors.
+
+13
+
+Critical exponent for the Anderson transition...
+
+For each data set, a series of fits were performed with m1 = 1, 2, m2 = 0, 1, 2,
+n1 = 1, 2, 3, 4 and n2 = 1. This step was automated using a combination of fortran
+and Python scripting. Any fit with an unacceptable goodness of fit, i.e. P < 0.05, was
+discarded. From the remaining fits, a representative fit was chosen for each distribution
+of the random potential. The orders of the expansions and the values of χ2min are listed
+in Table 3. The estimates of the critical disorder, Γc , the critical exponent ν, and
+the irrelevant exponent y are listed in Table 4. The data and the fit for box, normal
+and Cauchy distributions of the random potential are displayed in Figures 2, 3 and 4,
+respectively.
+p(Wi )
+box
+normal
+Cauchy
+box
+normal
+
+Disorder
+W ∈ [15, 18]
+σ ∈ [5.75, 6.55]
+W ∈ [4.1, 4.5]
+W ∈ [15, 18]
+σ ∈ [5.75, 6.55]
+
+L
+≥4
+≥4
+≥4
+≥ 12
+≥ 12
+
+Orders of Expansions
+m1 = 2, m2 = 2, n1 = 3, n2 = 1
+m1 = 2, m2 = 1, n1 = 3, n2 = 1
+m1 = 2, m2 = 1, n1 = 2, n2 = 1
+m1 = 2, n1 = 3
+m1 = 2, n1 = 3
+
+Details of Fit
+ND = 248, χ2min = 239
+ND = 328, χ2min = 317
+ND = 328, χ2min = 318
+ND = 124, χ2min = 112
+ND = 164, χ2min = 158
+
+Table 3. The range of data, the orders of the expansions, the total number of data, and
+the value of χ2min obtained in the finite size scaling analysis. For the box distribution
+the energy E = 1, and for the normal and Cauchy distributions E = 0.
+
+p(Wi )
+box
+normal
+Cauchy
+box
+normal
+
+Wc
+16.536[.531, .543]
+21.293[.287, .304]
+4.2707[.2680, .2731]
+16.532[.526, .538]
+21.291[.284, .298]
+
+Γc
+1.7339[.7314, .7371]
+1.7371[.7351, .7411]
+1.7318[.7266, .7360]
+1.7316[.7286, .7345]
+1.7364[.7340, .7388]
+
+ν
+1.573[.562, .582]
+1.566[.549, .576]
+1.576[.546, .594]
+1.577[.568, .586]
+1.571[.560, .583]
+
+y
+−3.3[−3.9, −2.8]
+−3.1[−4.0, −2.1]
+−2.0[−2.4, −1.7]
+not applicable
+not applicable
+
+Table 4. The results of the finite size scaling analyses. Details of the simulations are
+given in the corresponding row of Table 3.
+
+In Figure 5, we plot the contribution of the irrelevant correction for the fit to the
+data for the box distribution of the random potential, i.e. we plot the modulus of the
+sum of the terms with j2 = 1 in Eq. (46) expressed as a percentage of the zero order
+term (the sum of the terms with j2 = 0). It can be seen that the correction is rapidly
+decaying with system size and that once L > 10 the correction term is smaller than the
+precision of our data. For the normal distribution of the random potential the correction
+was also found to decay rapidly and become negligible compared to the precision of our
+data for L > 10. For the Cauchy distribution of the random potential, however, the
+decay was much slower and the corrections are still comparable with the precision of our
+data even for the largest system sizes. Therefore, for the box and normal distributions,
+it seemed reasonable to fit data for larger system sizes L ≥ 12 without a correction due
+
+14
+
+Critical exponent for the Anderson transition...
+
+2.8
+
+2.4
+
+2.0
+
+1.6
+
+1.2
+
+0.8
+15.0
+
+15.5
+
+16.0
+
+16.5
+
+17.0
+
+W
+
+17.5
+
+18.0
+
+Figure 2. Fit of the data for the box distribution of the random potential.
+
+2.4
+
+2.2
+
+G
+
+2.0
+
+1.8
+
+1.6
+
+1.4
+
+1.2
+20.0
+
+20.5
+
+21.0
+
+W
+
+21.5
+
+22.0
+
+22.5
+
+Figure 3. Fit of the data for the normal distribution of the random potential.
+
+15
+
+Critical exponent for the Anderson transition...
+
+2.2
+
+2.0
+
+1.8
+
+1.6
+
+1.4
+4.1
+
+4.2
+
+4.3
+
+W
+
+4.4
+
+4.5
+
+Figure 4. Fit of the data for the Cauchy distribution of the random potential.
+
+to an irrelevant scaling variable. The details and results of these fits are also listed in
+Tables 3 and 4.
+4. Discussion
+We expect that the critical exponent ν and the quantity Γc are universal, i.e. they
+depend only on the universality class and not on other details of the model. The
+results we have presented in Table 4 are clearly consistent with this expectation and
+confirm the results of our previous analysis [26] based on data for smaller system sizes.
+In addition, while the irrelevant exponent is not very precisely determined, it seems
+reasonable to conclude that the irrelevant correction for the Cauchy distribution of the
+random potential is different from that for the box and normal distributions. There
+seem to be two possible alternative explanations for this. The first possibility, which
+we think unlikely, is that there are two fixed points. The scaling at the critical point of
+the box and normal distributions is controlled by one, and at the critical point of the
+Cauchy distribution by the other fixed point. Coincidentally, both these fixed points
+have the same (or at least very close) values of ν and Γc . The second possibility, which
+we consider more likely, is that there is only one fixed point but that the critical points
+for the box and normal distributions are positioned in the relevant space in such a
+way relative to the critical surface as to miss the direction associated with the smallest
+irrelevant index. This would be the case, for example, if the irrelevant correction of
+smallest index were associated in some way with distributions which do not have second
+
+16
+
+Critical exponent for the Anderson transition...
+
+correction term (%)
+
+1
+
+0.1
+
+0.01
+
+L
+1E-3
+15
+
+16
+
+17
+
+18
+
+W
+
+Figure 5. The relative value of the irrelevant correction to scaling in the fit of the
+data for the box distribution of the random potential.
+
+moments.
+In Table 5 we give the weighted average of our estimates for the critical exponent
+for the box, normal and Cauchy distributions of the random potential, i.e. a weighted
+average of the values in the first three rows of Table 4. Our result is sightly below
+the value ν = 1.590[1.579, 1.602] obtained from scaling analysis of the multi-fractal
+spectrum [13, 14]. There is also a clear difference with the value ν = 1.5 obtained from
+the formula proposed by Garcia-Garcia [29], which demonstrates that his semi-classical
+theory is not exact.
+In Table 5 we also compare our result for the three dimensional orthogonal
+universality class with published results for the three dimensional unitary and symplectic
+universality classes. The breaking of time reversal symmetry changes the exponent by
+roughly ten percent and the breaking of spin-rotation symmetry changes the exponent
+by a slightly larger but similar amount. The estimates of the exponents for the three
+dimensional symplectic and unitary classes differ only by a few percent, which is similar
+to the precision of the estimates themselves. It remains a challenge to reliably distinguish
+exponents for these latter universality classes in a numerical simulation.
+Our results for the critical exponent cannot be compared with the results of
+experiments on metal-insulator transitions observed in disordered electronic systems
+because interactions between electrons are neglected in Anderson’s model of localisation
+and how these affect the critical behaviour is not yet known. Nevertheless, we can
+compare our result with the value ν = 1.63 ± .05 found in measurements of the
+
+Critical exponent for the Anderson transition...
+
+17
+
+dynamical localisation transition observed in a realisation of the quasi-periodically
+quantum kicked rotor in a cold atomic gas [19]. Our numerical results are consistent
+with this experimental measurement.
+ν
+Universality Class
+1.571[.563, .579] 3D orthogonal (this paper)
+1.43[.39, .47]
+3D unitary [30]
+1.375[.359, .391]
+3D symplectic [31]
+Table 5. List of critical exponents for the three dimensional orthogonal, unitary and
+symplectic university classes.
+
+Before concluding, we comment on the Anderson transition in two dimensions. It
+is commonly believed that states are always localized in two dimensions [32]. In fact,
+this is true only for the orthogonal symmetry class. The other nine symmetry classes
+exhibit an Anderson transition in two dimensions. This includes both the unitary class
+(Class A) and the symplectic class (Class AII). As described below, in both cases, the
+finite size scaling method has played a vital role.
+The transition between quantum Hall plateaux in the integer quantum Hall effect
+(QHE) that occurs in the unitary class in high perpendicular magnetic fields is an
+Anderson transition. The critical exponent ν has been well studied both experimentally
+[33] and numerically. For the Chalker-Coddington model [34, 35], the exponent is
+estimated to be ν ≈ 2.6 [36, 37, 38, 39, 40] (and see Table 6). The universality of
+this value is supported by a study of the quantum Hall transition using a periodically
+driven Hamiltonian model [41]. These results, however, disagree with the experimentally
+measured value ν ≈ 2.38 [33]. The origin of this discrepancy has not yet been determined
+but there is a strong suspicion that it originates in the neglect of electron-electron
+interactions in the numerical simulations.
+Systems with symplectic symmetry are realized in the presence of strong spin-orbit
+interaction. Such systems have been attracting renewed interest because the insulating
+phase is now known to be classified into ordinary and topological insulators [42]. The
+critical exponent ν for the transition between the metal and the ordinary insulator
+transition is estimated to be ν ≈ 2.75 [43, 44] (and see Table 6). Most estimates of the
+exponent for the metal to topological insulator transition [45, 46, 47] are consistent with
+the conjecture [48] that the exponent for both transitions is the same. The exception
+is the quite different value ν ≈ 1.6 found [49] in a numerical analysis of the metaltopological insulator transition in the Kane-Mele model [50]. This discrepancy has not
+yet been explained.
+Acknowledgments
+The authors acknowledge F. Evers, A. Furusaki, H. Obuse, and L. Schweitzer for fruitful
+discussions. This work was supported by Grants-in-Aid for Scientific Research (C)
+
+Critical exponent for the Anderson transition...
+
+18
+
+ν
+Universality Class
+2.593[.587, .598] 2D unitary (QHE) [36]
+2.746[.737, .755]
+2D symplectic [44]
+Table 6. The critical exponents for the plateau transition in the integer quantum Hall
+effect and the 2D symplectic university class.
+
+(Grants No. 23540376) and Grants-in-Aid 24000013.
+Appendix A.
+The Wigner-Dyson classification needs to be extended to take into account discrete
+symmetries, in particular, the chiral and particle-hole symmetries, that occur in certain
+disordered systems[4, 5, 6, 7]. The classification is based on Lie algebra, and in addition
+to the Wigner-Dyson classes, there are 3 chiral and 4 Bogoliubov de Gennes classes.
+Here we summarize how the Wigner-Dyson classes discussed in this paper are classified
+according to Lie algebra.
+Consider an N × N Hermitian matrix H and set X = iH. X is anti-Hermitian, is
+an element of the Lie algebra u(N), and exp(X) is an element of the Lie group U(N).
+In the absence of any additional symmetries nothing further can be said, in general,
+about the Hamiltonian. This is the unitary class in the Wigner-Dyson classification.
+Any Hermitian matrix may be decomposed as H = H1 + iH2 , where H1 is a
+real symmetric matrix while H2 a real antisymmetric matrix. The matrices H2 are
+the elements of a Lie algebra that is a subalgebra of u(N) with the corresponding Lie
+group SO(N), which is a subgroup of U(N). The tangent space to the symmetric space
+U(N)/O(N) is the space of real symmetric matrices (up to a factor i). The orthogonal
+class consists of real symmetric matrices, i.e. it spans U(N)/O(N).
+For the symplectic class (class AII in Table A1) we must consider spin. When
+spin is included in the description, the number of degrees of freedom is doubled. The
+Hamiltonian is a 2N × 2N Hermitian matrix, which may be decomposed into 2 × 2
+blocks cij containing matrix elements between up and down spin states. Each block
+may be expressed in the form
+cij = (a0ij + ib0ij )τ0 + (a1ij + ib1ij )τ1 + (a2ij + ib2ij )τ2 + (a3ij + ib3ij )τ3 ,
+
+(A.1)
+
+with τ0 = 12 the 2-dimensional identity matrix, τk = iσk (k = 1, 2, 3) with σk the Pauli
+matrices, and akij , bkij (k = 0, 1, 2, 3) real numbers. Since H is Hermitian, ai,j and bi,j
+must satisfy
+a0ij = a0ji , akij = −akji (k = 1, 2, 3) , b0ij = −b0ji , bkij = bkji (k = 1, 2, 3) .(A.2)
+By use of (A.1), a general Hamiltonian is decomposed into H = H1 + H2 where H1 is a
+matrix with cij of the form
+cij = a0ij τ0 + a1ij τ1 + a2ij τ2 + a3ij τ3 ,
+
+(A.3)
+
+19
+
+Critical exponent for the Anderson transition...
+
+and H2 is expressed by the bkij (k = 0, 1, 2, 3), i.e. the remainder. We then define
+X = iH2 . The matrices X satisfy
+JX + X T J = 0 , Jij = δij τ2 ,
+
+(A.4)
+
+and are the elements of a Lie algebra that is a subalgebra of u(2N) with corresponding
+Lie group Sp(2N). The tangent space to the symmetric space U(2N)/Sp(2N) spans the
+space of matrices H1 (up to a factor i). The Hamiltonians of systems belonging to the
+symplectic class are quaternion real, and of precisely this form.
+WD
+[H, T ] [H, S] Symmetric space
+Orthogonal
+0
+0 ∀S
+U(N)/O(N)
+Symplectic
+0
+6= 0
+U(2N)/Sp(2N)
+Unitary
+6= 0
+–
+U(N)
+
+Symbol
+AI
+AII
+A
+
+Table A1. Universality classes, corresponding Lie group (symmetric spaces) and
+Cartan symbol. The first column is the Wigner-Dyson classification. In the second
+and the third columns, the commutation relations of H with the time reversal operator
+T and the spin rotation operator S are shown. The 4th column indicates the
+corresponding symmetric spaces, and the 5th column the Cartan symbols for the
+symmetry classes of the Hamiltonian.
+
+Random Hamiltonians can be mapped to non-linear sigma models [51, 8]. Reflecting
+the symmetries of the Hamiltonian, the non-linear sigma models are associated with
+different symmetric spaces. More details can be found in review articles such as
+[11, 35, 6].
+References
+[1] Dobrosavljevic V, Trivedi N and Valles J M 2012 Conductor-insulator quantum phase transitions
+(Oxford: Oxford University Press)
+[2] Anderson P W 1958 Phys. Rev. 109 1492
+[3] Abrahams E (ed) 2010 50 years of Anderson localization (World Scientific)
+[4] Gade R and Wegner F 1991 Nuclear Physics B 360 213
+[5] Gade R 1993 Nuclear Physics B 398 499
+[6] Zirnbauer M R 1996 J. Math. Phys 37 4986
+[7] Altland A and Zirnbauer M R 1997 Phys. Rev. B 55 1142
+[8] Hikami S 1981 Phys. Rev. B 24 2671
+[9] Bernreuther W and Wegner F J 1986 Phys. Rev. Lett. 57 1383
+[10] Wegner F J 1989 Nuclear Physics B 316 663
+[11] Evers F and Mirlin A D 2008 Rev. Mod. Phys. 80 1355
+[12] Rodriguez A, Vasquez L J and Römer R A 2009 Phys. Rev. Lett. 102 106406
+[13] Rodriguez A, Vasquez L J, Slevin K and Römer R A 2010 Phys. Rev. Lett. 105 046403
+[14] Rodriguez A, Vasquez L J, Slevin K and Römer R A 2011 Phys. Rev. B 84 134209
+[15] Sheng P 1995 Introduction to wave scattering, localization, and mesoscopic phenomena (San Diego:
+Academic Press)
+[16] Haake F 2010 Quantum signatures of chaos (Berlin ; New York: Springer)
+[17] Casati G, Guarneri I and Shepelyansky D L 1989 Phys. Rev. Lett. 62 345
+
+Critical exponent for the Anderson transition...
+
+20
+
+[18] Chabé J, Lemarié G, Grémaud B, Delande D, Szriftgiser P and Garreau J C 2008 Phys. Rev. Lett.
+101 255702
+[19] Lopez M, Clément J F, Szriftgiser P, Garreau J C and Delande D 2012 Phys. Rev. Lett. 108 095701
+[20] MacKinnon A and Kramer B 1981 Phys. Rev. Lett. 47 1546
+[21] Pichard J L and Sarma G 1981 J. Phys. C14 L127
+[22] MacKinnon A and Kramer B 1983 Z. Phys. B53 1
+[23] Slevin K, Asada Y and Deych L I 2004 Phys. Rev. B 70 054201
+[24] Pendry J B, MacKinnon A and Roberts P J 1992 Proceedings of the Royal Society of London.
+Series A: Mathematical and Physical Sciences 437 67
+[25] Slevin K and Ohtsuki T 2001 Phys. Rev. B 63 045108
+[26] Slevin K and Ohtsuki T 1999 Phys. Rev. Lett. 82 382
+[27] Bevington P R and Robinson D K 2003 Data reduction and error analysis for the physical sciences
+(Boston: McGraw-Hill)
+[28] Press W H, Flannery B P, Teukolsky S A and Vetterling W T 1992 Numerical recipes in FORTRAN
+: the art of scientific computing (Cambridge: Cambridge University Press)
+[29] Garcia-Garcia A M 2008 Phys. Rev. Lett. 100 076404
+[30] Slevin K and Ohtsuki T 1997 Phys. Rev. Lett. 78 4083
+[31] Asada Y, Slevin K and Ohtsuk T 2005 J. Phys. Soc. Jpn. Supplement 74 238
+[32] Abrahams E, Anderson P W, Licciardello D C and Ramakrishnan T V 1979 Phys. Rev. Lett. 42
+673
+[33] Li W, Vicente C L, Xia J S, Pan W, Tsui D C, Pfeiffer L N and West K W 2009 Phys. Rev. Lett.
+102 216801
+[34] Chalker J and Coddington P 1988 J. Phys. C21 2665
+[35] Kramer B, Ohtsuki T and Kettemann S 2005 Phys. Rep. 417 211
+[36] Slevin K and Ohtsuki T 2009 Phys. Rev. B 80 041304
+[37] Obuse H, Subramaniam A R, Furusaki A, Gruzberg I A and Ludwig A W W 2010 Phys. Rev. B
+82 035309
+[38] Amado M, Malyshev A V, Sedrakyan A and Domı́nguez-Adame F 2011 Phys. Rev. Lett. 107
+066402
+[39] Fulga I C, Hassler F, Akhmerov A R and Beenakker C W J 2011 Phys. Rev. B 84 245447
+[40] Obuse H, Gruzberg I A and Evers F 2012 Phys. Rev. Lett. 109 206804
+[41] Dahlhaus J P, Edge J M, Tworzydlo J and Beenakker C W J 2011 Phys. Rev. B 84 115133
+[42] Bernevig B A and Zhang S C 2006 Phys. Rev. Lett. 96 106802
+[43] Asada Y, Slevin K and Ohtsuki T 2002 Phys. Rev. Lett. 89 256601
+[44] Asada Y, Slevin K and Ohtsuki T 2004 Phys. Rev. B 70 035115
+[45] Obuse H, Furusaki A, Ryu S and Mudry C 2007 Phys. Rev. B 76 075301
+[46] Kobayashi K, Ohtsuki T and Slevin K 2012 Int. J. Mod. Phys. Conf. Series 11 114
+[47] Yamakage A, Nomura K, Imura K I and Kuramoto Y 2013 Phys. Rev. B 87 205141
+[48] Fu L and Kane C L 2012 Phys. Rev. Lett. 109 246605
+[49] Onoda M, Avishai Y and Nagaosa N 2007 Phys. Rev. Lett. 98 076802
+[50] Kane C L and Mele E J 2005 Phys. Rev. Lett. 95 146802
+[51] Effetov K B, Larkin A I and Khmel’nitsukii D E 1980 Soviet Phys. JETP 52 568
+
+Appendix B. Errata
+Caption of Figure 1
+In the original version of the article, the system size was given incorrectly as Ly = Lz =
+12. The data shown are for Ly = Lz = 10. The caption has been corrected.
+
+Critical exponent for the Anderson transition...
+
+21
+
+Table 3
+The table has been corrected to make clear that, for the normally distributed random
+potential, the disorder range given refers to the range of the standard deviation σ not
+the parameter W (see Eq. 12).
+Table 4
+For the normal distribution, the estimate of the critical value σc of the standard deviation
+σ was given rather than the critical value Wc of the parameter W . The table has been
+corrected and now shows the estimate of Wc .
+Figure 3
+The abscissa was labeled as the parameter W but the data were incorrectly plotted
+versus the standard deviation σ. The data are now correctly plotted versus W .
+
+

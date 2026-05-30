@@ -113,9 +113,10 @@ def make_all_figures() -> None:
         M_flat, W_flat, lam_flat, err_flat = [], [], [], []
         for M in M_list:
             for W in W_vals:
-                lam, err = data["lambda"][M][W]
-                M_flat.append(M); W_flat.append(W)
-                lam_flat.append(lam); err_flat.append(max(err, 1e-6))
+                if 15.5 <= float(W) <= 17.5:
+                    lam, err = data["lambda"][M][W]
+                    M_flat.append(M); W_flat.append(float(W))
+                    lam_flat.append(lam); err_flat.append(max(err, 1e-6))
         result_bench = fit_fss(M_flat, W_flat, lam_flat, err_flat,
                                x_c_guess=W_c, nu_guess=nu_bench)
 
@@ -136,7 +137,7 @@ def make_all_figures() -> None:
             fr"$\nu={result_bench.nu:.3f}\pm{result_bench.nu_err:.3f}$  [Slevin: 16.53, 1.571]"
         )
         fig.tight_layout()
-        p = FIGURES_DIR / "fig1_2_sc_benchmark.pdf"
+        p = FIGURES_DIR / "fig1_2_sc_benchmark.png"
         fig.savefig(p, bbox_inches="tight")
         plt.close(fig)
         figs_generated.append(p)
@@ -145,18 +146,19 @@ def make_all_figures() -> None:
     # --- Fig 3 + 4: SC quantum percolation ---
     if sc_dilut_path.exists():
         data    = load_lambda(sc_dilut_path)
-        M_list  = [int(m) for m in data["M_list"]]
+        M_list  = [int(m) for m in data["M_list"] if int(m) in [8, 10, 12, 16]]
         p_vals  = data["x_values"]
         meta    = data["metadata"]
-        p_q_sc  = float(meta.get("p_q",  0.44))
-        nu_sc   = float(meta.get("nu",   1.57))
+        p_q_sc  = float(meta.get("p_q",  0.506))
+        nu_sc   = float(meta.get("nu",   1.62))
 
         M_flat, p_flat, lam_flat, err_flat = [], [], [], []
         for M in M_list:
             for p in p_vals:
-                lam, err = data["lambda"][M][p]
-                M_flat.append(M); p_flat.append(p)
-                lam_flat.append(lam); err_flat.append(max(err, 1e-6))
+                if 0.48 <= float(p) <= 0.52:
+                    lam, err = data["lambda"][M][p]
+                    M_flat.append(M); p_flat.append(float(p))
+                    lam_flat.append(lam); err_flat.append(max(err, 1e-6))
         result_sc = fit_fss(M_flat, p_flat, lam_flat, err_flat,
                             x_c_guess=p_q_sc, nu_guess=nu_sc)
 
@@ -178,7 +180,7 @@ def make_all_figures() -> None:
             fr"$\nu={result_sc.nu:.3f}\pm{result_sc.nu_err:.3f}$"
         )
         fig.tight_layout()
-        p = FIGURES_DIR / "fig3_4_sc_dilution.pdf"
+        p = FIGURES_DIR / "fig3_4_sc_dilution.png"
         fig.savefig(p, bbox_inches="tight")
         plt.close(fig)
         figs_generated.append(p)
@@ -220,7 +222,7 @@ def make_all_figures() -> None:
             fr"$\nu={result_bcc.nu:.3f}\pm{result_bcc.nu_err:.3f}$  [FIRST MEASUREMENT]"
         )
         fig.tight_layout()
-        p = FIGURES_DIR / "fig5_6_bcc_dilution.pdf"
+        p = FIGURES_DIR / "fig5_6_bcc_dilution.png"
         fig.savefig(p, bbox_inches="tight")
         plt.close(fig)
         figs_generated.append(p)
@@ -250,7 +252,7 @@ def make_all_figures() -> None:
         ax.legend()
         ax.set_ylim(0, 0.65)
         fig.tight_layout()
-        p = FIGURES_DIR / "fig7_comparison.pdf"
+        p = FIGURES_DIR / "fig7_comparison.png"
         fig.savefig(p, bbox_inches="tight")
         plt.close(fig)
         figs_generated.append(p)

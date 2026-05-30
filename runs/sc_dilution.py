@@ -65,12 +65,12 @@ CKPT_DIR = Path("data/checkpoints")
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-M_LIST = [4, 6, 8, 10, 12]
+M_LIST = [8, 10, 12, 16]
 # M=12 required: Failure G (2026-05-08) showed only (M=8,M=10) crosses in [0.40,0.62].
 # Root cause: p*(M) = p_c + M^{-1.142} gives p*(M=4)=0.517 > p_q=0.506 (M=4 never in
 # scaling regime), p*(M=6)=0.441 (M/ξ_perc≈1.1-1.4 → O(1) percolation corrections).
-# With M=12: M/ξ_perc(p_q)=2.86, all three pairs (8,10),(10,12),(8,12) cross near 0.49-0.50.
-# Dense coverage around p_q ≈ 0.506 (Ujfalusi 2014 Table II, E=3.1).
+# M=8 is partially contaminated at the lower window bound. M=16 is added to provide
+# clean quantum crossings without classical geometric bias.
 P_COARSE = list(np.linspace(0.40, 0.62, 18))
 P_FINE   = list(np.linspace(0.47, 0.54, 15))
 P_LIST   = sorted(set(P_COARSE + P_FINE))

@@ -375,7 +375,7 @@ In an infinite system, all observables are non-analytic (singular) at $x_c$: $\L
 jumps, $\xi$ diverges, etc. The transition is a sharp point.
 
 In a finite system of linear size $L$, all observables are smooth analytic functions
-of $x$ everywhere - a finite system has no phase transitions in the strict sense.
+of $x$ everywhere. A finite system has no phase transitions in the strict sense.
 The divergence of $\xi$ is cut off: once $\xi$ reaches $L$, the system cannot develop
 further correlations. Equivalently, the system cannot resolve the difference between
 being exactly at $x_c$ and being at a distance $|x - x_c| \sim L^{-1/\nu}$ away (the

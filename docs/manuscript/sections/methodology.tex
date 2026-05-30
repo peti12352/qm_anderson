@@ -17,7 +17,7 @@ $$C_{l, l-1} \psi_{l-1} + H_l \psi_l + C_{l, l+1} \psi_{l+1} = E \psi_l$$
 
 This second-order recurrence is folded into a first-order product via the transfer matrix $T_l$:
 \begin{equation}
-\begin{pmatrix} \psi_{l+1} \\ \psi_l \end{pmatrix} = \begin{pmatrix} C_{l, l+1}^{-1}(E \mathbb{I} - H_l) & -C_{l, l+1}^{-1} C_{l, l-1} \\ \mathbb{I} & \mathbb{0} \end{pmatrix} \begin{pmatrix} \psi_l \\ \psi_{l-1} \end{pmatrix} = T_l \begin{pmatrix} \psi_l \\ \psi_{l-1} \end{pmatrix}
+\begin{pmatrix} \psi_{l+1} \\ \psi_l \end{pmatrix} = \begin{pmatrix} C_{l, l+1}^{-1}(E \mathbf{I} - H_l) & -C_{l, l+1}^{-1} C_{l, l-1} \\ \mathbf{I} & \mathbf{0} \end{pmatrix} \begin{pmatrix} \psi_l \\ \psi_{l-1} \end{pmatrix} = T_l \begin{pmatrix} \psi_l \\ \psi_{l-1} \end{pmatrix}
 \end{equation}
 
 The global transmission across the system is defined by the macroscopic matrix product $\mathcal{M}_L$:
@@ -64,7 +64,7 @@ To secure statistical confidence, the optimization of this highly nonlinear para
 
 \subsection{Considerations for the BCC Lattice} \label{subsec:mothod_bcc}
 
-Unlike the SC lattice, where $C_{l, l+1} = -t\mathbb{I}$, the BCC lattice exhibits a complex transport topography when oriented along the $\langle 100 \rangle$ axis. There are no intra-slice bonds, meaning $H_l$ contains only diagonal $\epsilon_i$ values. All hopping is inter-slice \cite{Eilmes2008}.
+Unlike the SC lattice, where $C_{l, l+1} = -t\mathbf{I}$, the BCC lattice exhibits a complex transport topography when oriented along the $\langle 100 \rangle$ axis. There are no intra-slice bonds, meaning $H_l$ contains only diagonal $\epsilon_i$ values. All hopping is inter-slice \cite{Eilmes2008}.
 
 Under periodic boundary conditions, the transverse momentum $\mathbf{k}_{\perp}$ is quantized: $k_{x,y} = 2\pi n_{x,y}/M$. The eigenvalues of the BCC connectivity matrix are $C_{l, l+1}(n_x, n_y) = 4t \cos(\pi n_x/M) \cos(\pi n_y/M)$. If $M$ is a multiple of 4, $n_x = M/2$ generates an eigenvalue equal to zero, making $C_{l,l+1}$ non-invertible and breaking the TMM algorithm.
 

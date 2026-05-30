@@ -9,7 +9,7 @@ For reference, the modular Transfer Matrix Method (TMM) slice propagation algori
 \begin{algorithmic}[1]
 \Require{System width $M$, longitudinal length $L$, energy $E$, reorthogonalization interval $I_{\text{orth}}$}
 \Ensure{Spectrum of Lyapunov exponents $\{\gamma_i\}$}
-\State Initialize state matrix $Q \leftarrow \mathbb{I}_{2M^2 \times 2M^2}$
+\State Initialize state matrix $Q \leftarrow \mathbf{I}_{2M^2 \times 2M^2}$
 \State Initialize accumulator vector $S \leftarrow \mathbf{0}_{M^2}$
 \For{$l = 1$ \textbf{to} $L$}
     \State Sample on-site disorder potentials $\{\epsilon_i\}$ for slice $l$ according to Eq.~(3)

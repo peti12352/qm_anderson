@@ -1,4 +1,13 @@
-\subsection{Body-Centered Cubic (BCC) Lattice}
+\subsection{Proposed Extrapolations to the BCC Lattice}
 \label{subsec:results_bcc}
 
+The rigorous geometric constraints derived from our SC lattice analysis provide a formal blueprint for exploring new, undocumented topologies. The site-diluted quantum percolation threshold $p_q$ for the Body-Centered Cubic (BCC) lattice remains entirely unmeasured in the literature via the Transfer Matrix Method.
 
+Unlike the SC lattice, the BCC topology oriented along the $\langle 100 \rangle$ axis lacks intra-slice bonds. This topography introduces unique numerical vulnerabilities. As detailed in Sec.~\ref{subsec:mothod_bcc}, restricting the system width $M$ to non-multiples of four is strictly required to preserve the invertibility of the $C_{l, l\pm1}$ inter-slice connectivity matrices without artificially breaking Time-Reversal Symmetry.
+
+Furthermore, our finding that the FSS ansatz catastrophically fails when $M \le \xi_{\text{perc}}$ establishes a hard lower bound on the valid computational geometries. For the BCC lattice, the classical percolation threshold is known to be $p_c^{\text{cl}} = 0.246$. To secure a clean, uncontaminated extraction of the BCC quantum phase transition, we propose the following numerical protocol:
+
+1. \textbf{Energy Selection:} Computations must be executed deep in the band interior ($E=3.1t$) to evade the $E=0$ BDI chiral anomaly and the mobility edge boundaries.
+2. \textbf{Geometric Bounds:} System sizes must be strictly constrained to odd integers $M \in \{9, 11, 13, 15\}$ to guarantee matrix invertibility while remaining significantly larger than the classical correlation length $\xi_{\text{perc}}$. 
+
+Executing this protocol will provide the first robust verification of the macroscopic quantum transport threshold on the BCC architecture.

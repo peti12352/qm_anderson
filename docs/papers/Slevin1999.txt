@@ -1,0 +1,507 @@
+Corrections to scaling at the Anderson transition
+Keith Slevin
+
+arXiv:cond-mat/9812065v1 [cond-mat.dis-nn] 4 Dec 1998
+
+Dept. of Physics, Graduate School of Science, Osaka University,
+1-16 Machikaneyama, Toyonaka, Osaka 560, Japan
+
+Tomi Ohtsuki
+Department of Physics, Sophia University, Kioi-cho 7-1, Chiyoda-ku, Tokyo 102-8554, Japan
+We report a numerical analysis of corrections to finite size scaling at the Anderson transition due
+to irrelevant scaling variables and non-linearities of the scaling variables. By taking proper account
+of these corrections, the universality of the critical exponent for the orthogonal universality class for
+three different distributions of the random potential is convincingly demonstrated.
+
+1
+
+tion marks over the validity of any conclusions drawn
+from the analysis of the numerical data. Here we consider two ways in which such corrections can arise: the
+presence of irrelevant scaling variables and non-linearity
+of the scaling variables [15]. These effects lead to systematic rather than random deviations from scaling and must
+be taken into account both when estimating the critical
+parameters and the likely accuracy of their estimation.
+Our work has also been inspired by the successful analyses of corrections to scaling in the Quantum Hall Effect
+(QHE) transition [16,17]. The present problem is, however, more difficult since, unlike the QHE, the critical
+point is not known a priori on grounds of symmetry.
+The universality of the exponent for the box and Gaussian distributions of random potential was demonstrated
+to a limited extent in [12] by taking account of corrections
+to scaling in an ad hoc manner. Here, taking account of
+corrections systematically, we confirm that result and extend its validity to include the Lloyd model [18].
+The Hamiltonian used in this study describes non- interacting electrons on a simple cubic lattice with nearest
+neighbor interactions only
+
+The possibility of the Anderson localization of electron states as a result of disorder was first suggested four
+decades ago [1]. Following the proposal of the scaling
+theory of localization [2] attention has focused on understanding the critical properties of the Anderson transition (AT), the quantum phase transition which occurs at
+a critical disorder separating a diffusive metallic phase
+from an insulating localized phase [3].
+Our current understanding of the AT is based on the
+non-linear σ model (NLσM) [4]. This has been analyzed
+using an expansion in powers of ǫ, where d = 2 + ǫ is
+the dimension of the system. According to the NLσM it
+should be possible to classify the critical behavior using
+three universality classes: orthogonal, unitary and symplectic depending on the symmetry of the Hamiltonian
+with respect to time reversal and spin rotation. Here
+we focus on the orthogonal universality class corresponding to systems with both time reversal and spin rotation
+symmetries.
+Beyond the suggestion of the appropriate universality
+classes, there has not been much success in making detailed predictions about the critical behavior with the
+NLσM. The problems are well illustrated by attempts to
+estimate the critical exponent ν which describes the divergence of the correlation length ξ at the AT. In early
+work it was found that ν = 1/ǫ [5] which gives ν = 1 when
+extrapolated to d ≡ ǫ + 2 = 3. When combined with the
+Wegner scaling law s = νǫ [6] this leads to a conductivity exponent s = 1. Measurements on some, but not all,
+materials do indeed yield s = 1 [7]. However, calculations at higher orders in ǫ produced strong corrections
+to the leading order when extrapolated to ǫ = 1 [8,9],
+showing that that this agreement is fortuitous. There is
+now no accepted estimate of the exponent based on the
+ǫ expansion or any other analytic technique.
+While the above can be regarded as a rather unfortunate technical difficulty, fears have also been expressed
+that there maybe an infinite number of relevant operators in the NLσM [10] and that the theory may be unsound. While it now seems unlikely in view of [11] that
+this is actually the case, in this context it is nevertheless
+important to have independent confirmation that our understanding of the AT is correct. At present numerical
+simulations [3,12–14] offer the only viable alternative.
+In this paper we demonstrate an important basic principle underlying our understanding of the AT: the universality of the critical properties of the AT. To do this
+has required us to address the principle uncertainty in
+previous numerical studies of the critical properties of
+the AT, the presence of systematic corrections to scaling
+in the numerical data due to the practical limitations on
+the sizes of system which can be studied.
+The computer time required in numerical studies of the
+AT increases very rapidly with increasing system size (as
+L7 for the method used here.) This sets a severe limitation on the system sizes which can be simulated. However, systematic corrections to scaling are expected in
+smaller systems and their neglect leaves important ques-
+
+< ~r|H|~r >
+= V (~r),
+< ~r|H|~r − x̂ > = −1,
+< ~r|H|~r − ŷ > = −1,
+< ~r|H|~r − ẑ > = −1.
+Here x̂, ŷ and ẑ are the lattice basis vectors. The potential V is independently and identically distributed with
+probability p(V )dV . We studied three models of the potential distribution: The box distribution
+p(V ) = 1/W |V | ≤ W/2,
+= 0
+otherwise,
+the Gaussian distribution
+
+
+1
+V2
+p(V ) = √
+exp − 2 ,
+2σ
+2πσ 2
+with σ 2 = W 2 /12, and the Lloyd model in which V has
+a Lorentz distribution
+p(V ) =
+
+W
+.
+π (W 2 + V 2 )
+
+For this distribution all moments higher than the mean
+are divergent and the parameter W is proportional to
+the full width at half maximum of the distribution. For
+these three models we analyzed the finite size scaling [15]
+of the localization length λ for electrons on a quasi-1d
+dimensional bar of cross section L × L. The length λ
+was determined to within a specified accuracy using a
+standard transfer matrix technique [19,20].
+The starting point of our analysis is the renormalization group equation which expresses the dimensionless
+quantity Λ = λ/L as function of the scaling variables
+
+
+L
+1/ν
+y
+Λ=f
+, χb , ψb .
+b
+2
+
+The functions F± are defined by F± (x) = F0 (±(ξ± x)1/ν ).
+In this case the correlation length ξ has a simple power
+law dependence on the dimensionless disorder ξ =
+ξ± |w|−ν . The constants ξ± are not normally determined
+in finite size scaling studies.
+On the other hand, if we neglect the irrelevant variable
+and consider only non-linearity in the scaling variable
+we find Λ = F± (L/ξ) without the need to subtract any
+corrections. No systematic shift of the estimated critical point should occur as the system size is increased.
+However, the correlation length ξ no longer has a simple
+−ν
+power law dependence on w but behaves as ξ = ξ± |χ| .
+The critical exponent ν, the irrelevant exponent y and
+the functions Fn are expected to be universal, while the
+coefficients {bn } and {cn } are not. Though we have explicitly considered corrections due to the leading irrelevant scaling variable only, the analysis can be easily extended to several such variables.
+In the simulation λ was evaluated as function of disorder W for a range of system sizes L. The best fit was
+determined by minimizing the χ2 statistic [21]. This is
+justified if we suppose a uniform prior probability for all
+parameters, that the deviations between the model and
+the simulation data are purely random in origin and distributed following a Gaussian distribution [21]. This last
+assumption is also important in determining the likely
+accuracy to which the critical parameters have been estimated. Since the inclusion of corrections to scaling allows for systematic rather than just random deviations
+from scaling in the numerical data, this assumption is
+more reasonable here than when corrections to scaling
+are neglected. Therefore we expect the estimates of the
+accuracy of the critical exponent etc. to be more reliable. The model (2)-(4) is nonlinear in some parameters
+so the goodness of fit Q has been checked using a Monte
+Carlo technique and the confidence intervals evaluated
+by re-sampling [22,23].
+The inclusion of the corrections in (2)-(4) leads to a
+rapid increase in the number of fitting parameters and
+high quality data are essential if meaningful fits are to
+be obtained. All data used here have an accuracy of
+either 0.1% or 0.05%. To achieve this accuracy between
+106 and 107 iterations in the transfer matrix method were
+required. When deciding which correction terms to include we attempted to maximize the goodness of fit Q
+while keeping the number of correction terms to a minimum.
+The details of the simulations and the types of fit used
+are listed in Table I. The estimated critical parameters
+and their confidence intervals are given in Table II. Some
+typical data are displayed in Fig. 1. To exhibit scaling
+the data are re-plotted after subtraction of the appropriate corrections in Fig. 2. The corrected data now fall
+on a single curve clearly exhibiting scaling in agreement
+with (6). The magnitude of the corrections needed to
+obtain the scaling shown in Fig. 2 are of the order of 2%
+or so for the smallest system size decreasing to around
+0.3% for the largest system size.
+
+In this equation b is the scale factor in the renormalization group, χ the relevant scaling variable and ψ the
+leading irrelevant scaling variable. We should find y < 0
+if ψ is irrelevant. An appropriate choice of the factor b
+[15] leads to
+
+
+(1)
+Λ = F χL1/ν , ψLy ,
+where F is a function related to f .
+For L finite there is no phase transition and F is a
+smooth function of its arguments. Assuming the irrelevant scaling variable is not dangerous, we make a Taylor
+expansion up to order nI
+Λ=
+
+nI
+X
+
+n=0
+
+
+
+ψ n Lny Fn χL1/ν ,
+
+(2)
+
+and obtain a series of functions Fn . Each Fn is then
+expanded as a Taylor series up to order nR
+Fn (χL1/ν ) =
+
+nR
+X
+
+χm Lm/ν Fnm .
+
+(3)
+
+m=0
+
+To take account of non- linearities in the scaling variables
+we expand both in terms of the dimensionless disorder
+w = (Wc − W )/Wc where Wc is the critical disorder
+separating the insulating (w < 0) and conducting phases
+(w > 0).
+P mR
+P mI
+χ(w) = n=1
+bn wn , ψ(w) = n=0
+cn w n .
+(4)
+
+The orders of the expansions are mR and mI respectively. Notice that χ(0) = 0. The absolute scales of the
+arguments in (1) are undefined, we fix them by setting
+F01 = F10 = 1 in (3). The total number of fitting parameters is Np = (nI + 1)(nR + 1) + mR + mI + 2
+The qualitative nature of the corrections can be understood by looking at some special cases. First let us suppose that non-linearities are absent (mR = 1 and mI = 0)
+and truncate (2) at nI = 1
+
+
+
+
+Λ = F0 χL1/ν + ψLy F1 χL1/ν .
+
+From this equation we can infer that the estimate of the
+critical disorder, and possibly also the critical exponent,
+will appear to shift in a systematic way as the size of
+the system increases. To exhibit scaling it is necessary
+to subtract the corrections due to the irrelevant scaling
+variable. When nI = 1 we define
+
+
+(5)
+Λcorrected = Λ − ψLy F1 χL1/ν ,
+with the obvious generalization when nI > 1. We then
+have
+ 
+L
+Λcorrected = F±
+.
+(6)
+ξ
+3
+
+tions to scaling have been explicitly taken into account
+when estimating the critical disorder and other critical
+parameters. The universality of the critical exponent
+with respect to the choice of the distribution of disorder has been accurately verified.
+While in this paper we concentrated on the scaling of
+the correlation length in the three dimensional Anderson
+model, corrections of a similar nature may also be important in finite size scaling analyses of the conductance
+distribution and energy level statistics. The method we
+have described here is applicable in these cases and, indeed, to any continuous quantum phase transition.
+Part of this work has been carried out on supercomputer facilities at the Institute for Solid State Physics,
+University of Tokyo.
+
+The most important point to be drawn from Table II
+is that the estimates of the exponent ν for the three different disorder distributions are in almost perfect agreement. The same is true for the estimates of the critical
+parameter Λc . This is strong evidence in favor of the
+universality of the critical exponent and other critical
+parameters.
+How do the results of the present analysis compare
+with those obtained when corrections to scaling are neglected? In Table III we give the results obtained for the
+same potentials neglecting corrections. The first thing
+to notice is that range of system sizes (and in the box
+distribution, the range of W ) for which an acceptable fit
+(Q > 0.1) can be achieved is very limited. After discarding data for the smaller system sizes reasonable agreement is obtained between Tables II and III. However,
+given the more limited range of system sizes, the estimates of the accuracy to which the critical parameters
+have been determined when corrections are neglected are
+too optimistic. The problem is more evident when looking at less accurate e.g. 0.2% data [24] for the box distribution. Ignoring corrections to scaling, it was found that
+Wc = 16.45 ± .01, Λc = 0.586 ± .001 and ν = 1.59 ± 0.03.
+The estimates of Wc and Λc are not consistent with Table II. The effect which gives rise to this inconsistency
+can also be seen in the data for Lloyd model displayed
+in Fig. 1. A systematic shift of the apparent critical
+disorder to a lower value as the system size increases
+is evident. For the box and Gaussian distributions the
+shift was found to be in the opposite sense to higher disorder. It seems likely that any analysis which assumes
+that deviations from scaling are purely random origin,
+rather than allowing for systematic corrections such as
+considered here, will lead to an over optimistic estimate
+of the accuracy to which the critical point has been determined and even to an incorrect determination of the
+critical point. In contrast the estimate of the critical
+exponent is quite consistent with that in Table II. Of
+course, the precise location of the critical point in any
+particular model is not in itself very important, but any
+inaccuracy in its estimate also affects the estimate of the
+critical conductance distribution [24].
+We should also mention that surface effects and the
+influence of boundary conditions may also give rise to
+corrections to scaling behavior. We have used periodic
+boundary conditions to minimize surface effects. Even so
+there may remain some influence of the boundary conditions. To quantify this we have evaluated λ for some
+representative values of the parameters for fixed (fbc),
+periodic (pbc) and anti- periodic boundary conditions
+(apbc). A large statistically significant shift in the localization length λ was found between fbc and pbc. However, even when calculating at a higher accuracy of 0.02%
+no such difference between pbc and apbc was found. We
+therefore think it reasonable to neglect such corrections
+here.
+We have presented a numerical study of the Anderson
+transition in three dimensions in which systematic correc-
+
+[1] P.W. Anderson, Phys. Rev. 109, 1492 (1958).
+[2] E. Abrahams et al., Phys. Rev. Lett. 42,673 (1979).
+[3] For a review see B. Kramer and A. MacKinnon, Rep.
+Prog. Phys. 56, 1469 (1993).
+[4] K. B. Efetov, Adv. Phys. 32, 53 (1983).
+[5] S. Hikami, Phys. Rev. B24, 2671 (1981).
+[6] F. Wegner, Z. Phys. B 25, 327 (1976).
+[7] S. Katumoto et al., J. Phys. Soc. Jpn. 56 , 2259 (1987);
+For more recent experiments see K. M. Itoh et al, Phys.
+Rev. Lett. 77, 4058 (1996) and references therein.
+[8] W. Bernreuther and F. Wegner, Phys. Rev. Lett. 57,
+1383 (1986)
+[9] S. Hikami, Prog. Theo. Phys. Supp. 107, 213 (1992).
+[10] V. E. Kravtsov, I. V. Lerner and V. I. Yudson, Sov-Phys.
+JETP 67, 1441 (1988) ; H. Mall and F. Wegner, Nucl.
+Phys. B393, 495 (1993).
+[11] E. Brezin and S. Hikami, Phys. Rev. B 55, R10169
+(1997).
+[12] A. MacKinnon, J. Phys.: Condens. Matt. 6, 2511 (1994).
+[13] B.I. Shklovskii et al., Phys. Rev. B47, 11487 (1993).
+[14] I. Kh. Zharakeshev and B. Kramer, Phys. Rev. Lett, 79,
+717 (1997).
+[15] Ch. 3, Scaling and Renormalization in Statistical Physics,
+J. Cardy (Cambridge University Press, 1996).
+[16] B. Huckestein, Phys. Rev. Lett. 72, 1080 (1994); Rev.
+Mod. Phys. 67, 357 (1995).
+[17] Z. Wang, B. Jovanovic and D.-H. Lee, Phys. Rev. Lett.
+77, 4426 (1996).
+[18] D. J. Thouless, J. Phys. C 16, L929 (1983).
+[19] J-L. Pichard and G. Sarma, J. Phys. C 14, L127 (1981).
+[20] A. MacKinnon and B. Kramer, Z. Phys. B 53, 1 (1983).
+[21] Ch. 3, Data Analysis, D. S. Sivia (Oxford University
+Press, 1996).
+[22] Ch. 15, Numerical Recipes in Fortran, W. Press, B. Flannery and S. Teukolsky, (Cambridge Univ. Press, 1992).
+[23] Chs. 4-5 Bootstrap Methods and their Application, A.
+C. Davison and D. V. Hinkley, (Cambridge Univ. Press,
+1997).
+
+4
+
+[24] K. Slevin and T. Ohtsuki, Phys. Rev. Lett. 78, 4085
+(1997).
+
+Disorder
+Box
+Gaussian
+Lorentz
+
+nR
+3
+2
+2
+
+nI
+1
+1
+2
+
+mR
+2
+2
+1
+
+mI
+0
+0
+0
+
+W
+[15,18]
+[20.2,22.2]
+[4.1,4.5]
+
+Nd
+224
+175
+224
+
+Np
+12
+10
+12
+
+χ2
+214
+174
+203
+
+Q
+0.5
+0.3
+0.7
+
+TABLE I. The disorder distribution, the type of fit, the
+range of disorder W , the number of data Nd , the number of
+parameters Np , the value of χ2 for the best fit and goodness
+of fit Q. The system sizes used were L = 4, 5, 6, 8, 10, 12, 14.
+
+B
+G
+L
+
+Wc
+16.54(53,56)
+21.29(28,31)
+4.265(52,72)
+
+Λc
+0.576(74,78)
+0.576(74,77)
+0.579(76,88)
+
+ν
+1.57(55,59)
+1.58(55,61)
+1.58(47,65)
+
+y
+-2.8(3.3,2.3)
+-3.9(5.9,2.7)
+-2.5(3.2,1.3)
+
+TABLE II. The best fit estimates of the critical disorder
+and the critical exponent and their 95% confidence intervals.
+The quantity Λc = F0 (0) is expected to be universal.
+
+L
+W
+Wc
+Λc
+ν
+B ≥ 8 [16,17]
+16.514(07, 22) 0.579(78, 80) 1.58(53, 63)
+G ≥ 8 [20.2,22.2] 21.28(26, 29) 0.577(76, 78) 1.58(54, 62)
+L ≥ 10 [4.1,4.5]
+4.275(72, 78) 0.574(73, 75) 1.58(53, 62)
+TABLE III. Best estimates of the critical parameters when
+corrections to scaling are neglected.
+
+FIG. 1. Λ as a function of disorder for the three dimensional Lloyd model. The solid lines are the fit (2)-(4).
+
+FIG. 2. The data in Fig. 1 after subtraction of corrections
+to scaling (see (5)) together with the the scaling functions
+(6). Here ξ = ξ± |χ|−ν . The upper branch corresponds to the
+metallic phase and the lower branch to the insulating phase.
+
+5
+
+0.66
+0.64
+0.62
+
+Λ=λ/L
+
+0.60
+0.58
+0.56
+0.54
+0.52
+0.50
+
+4.1
+
+4.2
+
+4.3
+
+W
+
+4.4
+
+4.5
+
+0.66
+0.64
+0.62
+
+Λcorrected
+
+0.60
+0.58
+0.56
+0.54
+0.52
+0.50
+0.48
+0.00001
+
+0.0001
+
+0.001
+
+L/ξ
+
+0.01
+
+0.1
+
+
