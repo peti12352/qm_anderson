@@ -164,11 +164,11 @@ def main(fast: bool = False) -> None:
     # Full W range [13,20] gives |u|_max ≈ 16 for M=10 - far outside scaling regime.
     # Window [15.0, 18.5] gives |u|_max ≈ 1.5 × 4.6 ≈ 7 - much more controlled.
     #
-    # Irrelevant exponent y is fixed at 1.12 (Slevin & Ohtsuki 1999, y=1.12±0.08).
+    # Irrelevant exponent y is fixed at 1.12 (Empirical effective value).
     # Fitting y freely is not identifiable with M={4,6,8,10}: the correction b·M^{-y}
     # degenerates with the polynomial constant a_0 as y→0, and the optimizer exploits
     # this. y requires M spanning a decade (e.g. {4..20}) to measure from TMM data.
-    Y_IRREL     = 1.12   # S&O99 central value; use --y-irrel to explore ±0.08 syst.
+    Y_IRREL     = 1.12   # Empirical central value; use --y-irrel to explore syst.
     W_FIT_RANGE = (15.0, 18.5)
     result = fit_fss(M_flat, W_flat, lam_flat, err_flat,
                      x_c_guess=16.5, nu_guess=1.57, poly_order=4,
@@ -218,7 +218,7 @@ if __name__ == "__main__":
     parser.add_argument("--w-max", type=float, default=18.5,
                         help="Upper bound of FSS fit window (default 18.5)")
     parser.add_argument("--y-irrel", type=float, default=1.12,
-                        help="Fixed irrelevant exponent y (S&O99: 1.12±0.08, default 1.12)")
+                        help="Fixed irrelevant exponent y (Empirical: 1.12±0.08, default 1.12)")
     args = parser.parse_args()
 
     if args.refit:
@@ -242,7 +242,7 @@ if __name__ == "__main__":
                          x_range=W_FIT_RANGE, y_irrel=args.y_irrel,
                          fit_y_irrel=False, n_corrections=1)
         print(f"\n  W fit range: {W_FIT_RANGE}")
-        print(f"  y = {args.y_irrel} (fixed; S&O99: 1.12±0.08)")
+        print(f"  y = {args.y_irrel} (fixed; Empirical: 1.12±0.08)")
         print(f"  W_c = {result.x_c:.4f} ± {result.x_c_err:.4f} (stat)  (expected 16.53)")
         print(f"  ν   = {result.nu:.4f} ± {result.nu_err:.4f} (stat)  (expected 1.571)")
         print(f"  b   = {result.b:.4f} ± {result.b_err:.4f} (stat)")
