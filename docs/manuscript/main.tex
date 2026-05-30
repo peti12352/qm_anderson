@@ -1,0 +1,74 @@
+\documentclass[10pt,twocolumn,twoside]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathptmx} % Times Roman font
+\usepackage[margin=0.75in,top=0.85in,bottom=0.85in,columnsep=0.25in]{geometry}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{dcolumn}
+\usepackage{bm}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Physics-style section formatting (Roman numerals for sections, alphabetic for subsections)
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\renewcommand{\thesubsubsection}{\arabic{subsubsection}}
+
+\titleformat{\section}
+  {\normalfont\small\bfseries\filcenter\MakeUppercase}
+  {\thesection.}
+  {1em}
+  {}
+\titleformat{\subsection}
+  {\normalfont\small\itshape\bfseries}
+  {\thesubsection.}
+  {1em}
+  {}
+\titleformat{\subsubsection}
+  {\normalfont\small\itshape}
+  {\thesubsubsection.}
+  {1em}
+  {}
+
+\titlespacing*{\section}{0pt}{12pt plus 4pt minus 2pt}{6pt plus 2pt}
+\titlespacing*{\subsection}{0pt}{10pt plus 3pt minus 2pt}{4pt plus 2pt}
+\titlespacing*{\subsubsection}{0pt}{8pt plus 3pt minus 2pt}{4pt plus 1pt}
+
+\begin{document}
+
+% Manual title and abstract block to perfectly replicate Physical Review style
+\twocolumn[
+  \begin{center}
+    \vspace*{0.5em}
+    {\large\bfseries Physics and Numerics of 3D Quantum Percolation} \par\vspace{1.0em}
+    {\small Tallosy Peter K14WR1} \par\vspace{0.4em}
+    % {\small\itshape Department of Physics, Budapest University of Technology and Economics, H-1111 Budapest, Hungary} \par\vspace{0.8em}
+    {\small (Dated: \today)}
+    \par\vspace{1.5em}
+  \end{center}
+  \begin{quote}
+    \small \textbf{Abstract.---} We study the metal-insulator transition in three-dimensional (3D) quantum percolation on simple cubic (SC) and body-centered cubic (BCC) lattices. Using the Transfer Matrix Method (TMM), we compute the dimensionless localization length $\Lambda_M$ for system sizes up to $M=11$. On the simple cubic lattice, we validate our numerical framework against existing high-precision results at non-zero energy $E = 0.1$, obtaining a critical threshold $p_q \approx 0.4538$ and critical exponent $\nu \approx 1.62$, which is consistent with the 3D Orthogonal (AI) class. At the band center $E = 0.0$, we find $p_q \approx 0.591$ and $\nu \approx 1.99$, which is consistent with the Chiral Orthogonal (BDI) symmetry class. For the body-centered cubic lattice, we overcome the connectivity matrix singularity by simulating odd transverse system widths $M$, yielding a quantum percolation threshold of $p_q \approx 0.315$ and a critical exponent $\nu \approx 1.59$. The lower threshold of the BCC lattice is attributed to its higher coordination number ($Z=8$).
+  \end{quote}
+  \vspace*{1.5em}
+]
+
+\input{sections/introduction}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/conclusions}
+
+\appendix
+\input{sections/appendix}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

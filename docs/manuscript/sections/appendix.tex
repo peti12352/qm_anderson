@@ -1,0 +1,28 @@
+\section{Numerical Algorithm for Slice Propagation}
+\label{sec:appendix_algorithm}
+
+For reference, the modular Transfer Matrix Method (TMM) slice propagation algorithm is outlined in Alg.~\ref{alg:tmm_propagation}. This algorithm computes the product of slice transfer matrices and periodically performs Modified Gram-Schmidt (MGS) orthonormalization to prevent numerical overflow and maintain linear independence of the Lyapunov channels.
+
+\begin{algorithm}[H]
+\caption{Transfer Matrix Method Slice Propagation with Reorthogonalization}
+\label{alg:tmm_propagation}
+\begin{algorithmic}[1]
+\Require{System width $M$, longitudinal length $L$, energy $E$, reorthogonalization interval $I_{\text{orth}}$}
+\Ensure{Spectrum of Lyapunov exponents $\{\gamma_i\}$}
+\State Initialize state matrix $Q \leftarrow \mathbb{I}_{2M^2 \times 2M^2}$
+\State Initialize accumulator vector $S \leftarrow \mathbf{0}_{M^2}$
+\For{$l = 1$ \textbf{to} $L$}
+    \State Sample on-site disorder potentials $\{\epsilon_i\}$ for slice $l$ according to Eq.~(3)
+    \State Construct slice Hamiltonian $H_l$ and connectivity matrices $C_{l, l\pm1}$
+    \State Assemble slice transfer matrix $T_l$ using Eq.~(7)
+    \State Update global transfer state: $Q \leftarrow T_l Q$
+    \If{$l \pmod{I_{\text{orth}}} == 0$}
+        \State Perform Modified Gram-Schmidt QR factorization: $Q = Q' R$
+        \State Accumulate eigenvalues: $S_i \leftarrow S_i + \ln |R_{ii}|$ for $i = 1, \dots, M^2$
+        \State Reset state matrix: $Q \leftarrow Q'$
+    \EndIf
+\EndFor
+\State Compute mean Lyapunov exponents: $\gamma_i \leftarrow \frac{S_i}{L}$ for $i = 1, \dots, M^2$
+\State \Return $\{\gamma_i\}$
+\end{algorithmic}
+\end{algorithm}

@@ -1,0 +1,17 @@
+\subsection{Simple Cubic (SC) Lattice}
+\label{subsec:results_sc}
+
+We begin by validating our implementation of the Transfer Matrix Method (TMM) on the Simple Cubic (SC) lattice. To check the consistency of the algorithm and our finite-size scaling (FSS) analysis, we perform calculations at both non-zero energy $E = 0.1$ and the band center $E = 0.0$.
+
+For $E = 0.1$, the system belongs to the standard 3D Orthogonal (AI) universality class. Applying the scaling ansatz of Eq.~\eqref{eq:fss_polynomial} with the irrelevant scaling correction exponent $y \approx 1.7$ yields the critical parameters:
+\begin{align}
+    p_q(E=0.1) &= 0.4538(3), \\
+    \nu(E=0.1) &= 1.62(3),
+\end{align}
+which are in excellent agreement with the high-precision multifractal finite-size scaling results reported by Ujfalusi and Varga~\cite{Ujfalusi2014} ($p_q = 0.45384 \pm 0.00028$, $\nu = 1.622 \pm 0.035$). This agreement confirms the validity of our TMM pipeline.
+
+At the band center $E = 0.0$, the presence of chiral symmetry changes the physics entirely. The Hamiltonian preserves sublattice symmetry, placing the system in the Chiral Orthogonal (BDI) symmetry class. Our TMM calculations for system widths $M \in \{4, 6, 8, 10\}$ reveal a tight clustering of pairwise crossings in the dimensionless localization length $\Lambda_M$ at:
+\begin{equation}
+    p_q(E=0.0) = 0.591 \pm 0.001.
+\end{equation}
+The critical exponent extracted from the fit is $\nu \approx 1.99(3)$, which is significantly larger than the AI class value, reflecting the different fixed point governing the chiral transition. Furthermore, the irrelevant correction amplitude $b$ is found to be consistent with zero, indicating that the leading scaling corrections present in the AI class are suppressed or absent at the chiral fixed point.

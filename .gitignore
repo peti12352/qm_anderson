@@ -7,3 +7,16 @@ __pycache__/
 
 # results/  is tracked (lightweight CSV summaries)
 # data/     is NOT tracked (raw HDF5 gammas, 100-400 MB each)
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.pdf
+
