@@ -6,18 +6,18 @@
 
 The single-particle tight-binding Hamiltonian is constructed by projecting the continuous Schrödinger equation onto the discrete Wannier basis. 
 
-In \textbf{Second Quantization} (the most common description in papers we read) with creation ($a_i^\dagger$) and annihilation ($a_i$) operators. It handles wave function anti-symmetrization, particle indistinguishability, and the Pauli exclusion principle. Because the tight-binding model preserves Time-Reversal Symmetry and SU(2) spin rotation symmetry without magnetic fields, the spin-up and spin-down transport channels are identical. We therefore neglect spin:
+In the second-quantization formalism (most common for theoretical work), the tight-binding Hamiltonian is written in terms of creation ($a_i^\dagger$) and annihilation ($a_i$) operators. It handles wave function anti-symmetrization, particle indistinguishability, and the Pauli exclusion principle. Since the tight-binding model preserves time-reversal symmetry and spin-rotation symmetry in the absence of external magnetic fields, the spin-up and spin-down transport channels are independent and symmetric. We can neglecting spin, so the Hamiltonian is:
 \begin{equation}
 \mathcal{H} = \sum_{i} \epsilon_i a_i^\dagger a_i + \sum_{\langle i,j \rangle} t_{ij} \left( a_i^\dagger a_j + a_j^\dagger a_i \right)
 \end{equation}
 Here, $a_i^\dagger a_i$ is the number operator tracking site occupation, multiplied by the on-site potential $\epsilon_i$. The operator $a_i^\dagger a_j$ annihilates an electron at $j$ and creates one at $i$, driving the kinetic hopping with amplitude $t_{ij} = -t$.
 
-In \textbf{First Quantization} (we use this for the simulations), the Hamiltonian is written using projection operators $|i\rangle\langle j|$, which physically represent an electron transitioning from the localized orbital at site $j$ to site $i$:
+For single-particle numerical simulations, the Hamiltonian is written in first-quantized form using projection operators $|i\rangle\langle j|$, which physically represent an electron transitioning from the localized orbital at site $j$ to site $i$:
 \begin{equation}
 \mathcal{H} = \sum_{i} \epsilon_i |i\rangle\langle i| + \sum_{\langle i,j \rangle} t_{ij} \left( |i\rangle\langle j| + |j\rangle\langle i| \right)
 \end{equation}
 
-\textbf{Wannier Orbitals:} A complete, orthonormal set of basis functions $|i\rangle$ created via a unitary Fourier transform of the Bloch states. They are localized around the atomic lattice sites $\mathbf{R}_i$. We use them as a basis unto which we poject our wave function: $|\Psi\rangle = \sum_i \alpha_i |i\rangle$
+\textbf{Wannier Orbitals:} A complete, orthonormal set of basis functions $|i\rangle$ created via a unitary Fourier transform of the Bloch states. They are localized around the atomic lattice sites $\mathbf{R}_i$. We use them as a basis onto which we project our wave function: $|\Psi\rangle = \sum_i \alpha_i |i\rangle$
 
 \textbf{Bloch States:} fully delocalized eigenstates $\psi_{\mathbf{k}}(\mathbf{r})$ of a perfect periodic crystal. In our disordered lattice, the continuous translational Bloch symmetry is broken by randomness.
 

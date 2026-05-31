@@ -48,7 +48,11 @@ We define the dimensionless localization length $\Lambda_M$ :
 \Lambda_M = \frac{\xi_M}{M} = \frac{1}{\langle \gamma_{\text{min}} \rangle M}
 \end{equation}
 
-Within a single simulation domain $M \times M \times L$, when $L$ is large, the calculation becomes "self-averaging" along the longitudinal direction (Oseledec's theorem). We simulate many independent random disorder configurations for a specific $M \times M \times L$ geometry to extract a statistical average of the Lyapunov exponent (apparently we have to average the lyapunov exponents $\gamma_i$, not the localization length $\xi$, but idk why).  We repeat for many values of $M$. Varying the cross-section $M$ provides the different length scales required to perform the FSS with to $M \to \infty$ (although we keep M quite small bc of computational constraints, but since we are interested in phase transitions, it should work out). 
+Within a single simulation domain $M \times M \times L$ of length $L \gg M$, the localization properties become "self-averaging" along the longitudinal direction (Oseledec's theorem). To reduce statistical fluctuations, we average the calculated Lyapunov exponent $\gamma_i$ over multiple independent realizations, as the Lyapunov exponent (being related to the logarithm of the transfer matrix eigenvalues) exhibits a normal distribution, unlike the localization length itself 
+\footnote{that is why we average the Lyapunov exponents and not the localization lengths}
+. Repeating this process for various system sizes $M$
+\footnote{Although we keep M quite small because of computational constraints, but since we are interested in phase transitions, it should work out}
+provides the scaling data needed to extrapolate the critical behavior in the thermodynamic limit $M \to \infty$ through finite-size scaling (FSS). 
 
 \subsection{Renormalization Group (RG) Theory and Finite-Size Scaling (FSS)} \label{subsec:rg}
 
