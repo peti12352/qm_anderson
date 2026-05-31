@@ -1,17 +1,15 @@
 \section{Methodology}
 \label{sec:methodology}
 
-
 \subsection{Solver: Transfer Matrix Method (TMM) Mechanics} \label{subsec:tmm}
 
-
-The Transfer Matrix Method solves the statics of the system. We are solving the time-independent Schrödinger equation. We simulate $M \times M \times L$ domains, with $L >> M$, and we cut this into many $M \times M$ coupled slices. For a tight-binding lattice, the projection of the wave equation onto the $l$-th spatial slice yields a linear recurrence relation:
-
-$$C_{l, l-1} \psi_{l-1} + H_l \psi_l + C_{l, l+1} \psi_{l+1} = E \psi_l$$
-
+The Transfer Matrix Method solves the statics of the system. We are solving the time-independent Schrödinger equation. We simulate $M \times M \times L$ domains, with $L \gg M$, and we partition this into $L$ coupled slices of size $M \times M$. For a tight-binding lattice, the projection of the wave equation onto the $l$-th spatial slice yields a linear recurrence relation:
+\begin{equation}
+C_{l, l-1} \psi_{l-1} + H_l \psi_l + C_{l, l+1} \psi_{l+1} = E \psi_l
+\end{equation}
 \begin{itemize}
     \item $\psi_l$ is an $M^2$-dimensional vector containing the quantum amplitudes for every site inside slice $l$.
-    \item $H_l$ is an $M^2 \times M^2$ matrix that dictates the internal state and coupling (internal coupling within the slice) of that specific slice. For a Simple Cubic lattice, it contains the on-site energies on its diagonal and the intra-slice nearest-neighbor hoppings on its off-diagonals.
+    \item $H_l$ is an $M^2 \times M^2$ matrix that dictates the internal state and coupling (internal coupling within the slice) of that specific slice.
     \item $C_{l, l \pm 1}$ are the $M^2 \times M^2$ connectivity matrices governing the inter-slice coupling (hopping from slice $l$ to $l+1$ and $l-1$).
 \end{itemize}
 
@@ -20,12 +18,24 @@ This second-order recurrence is folded into a first-order product via the transf
 \begin{pmatrix} \psi_{l+1} \\ \psi_l \end{pmatrix} = \begin{pmatrix} C_{l, l+1}^{-1}(E \mathbf{I} - H_l) & -C_{l, l+1}^{-1} C_{l, l-1} \\ \mathbf{I} & \mathbf{0} \end{pmatrix} \begin{pmatrix} \psi_l \\ \psi_{l-1} \end{pmatrix} = T_l \begin{pmatrix} \psi_l \\ \psi_{l-1} \end{pmatrix}
 \end{equation}
 
+For the Simple Cubic (SC) lattice, the inter-slice connectivity matrix simplifies to $C_{l, l\pm1} = -t\mathbf{I}$, where $t$ is the hopping energy, and the transfer matrix $T_l$ simplifies to:
+\begin{equation}
+T_l = \begin{pmatrix} \frac{H_l - E\mathbf{I}}{t} & -\mathbf{I} \\ \mathbf{I} & \mathbf{0} \end{pmatrix}
+\end{equation}
+Here, $\mathbf{I}$ is the identity matrix.
+
+We study two different disorder configurations on the SC lattice:
+\begin{enumerate}
+    \item \textbf{Anderson Disorder Model:} The lattice is fully occupied. The diagonal entries of $H_l$ are the on-site potential energies $\epsilon_i$ drawn randomly from a uniform distribution $[-W/2, W/2]$. The off-diagonal entries represent nearest-neighbor hoppings $-t$ within the slice.
+    \item \textbf{Site-Diluted Quantum Percolation Model:} Sites are randomly removed with probability $1-p$. For occupied sites, $\epsilon_i = 0$. For vacant sites, $\epsilon_i = V_{\text{absent}} \to \infty$, and all associated hopping terms to neighboring sites are set to $0$ to completely decouple them.
+\end{enumerate}
+
 The global transmission across the system is defined by the macroscopic matrix product $\mathcal{M}_L$:
 \begin{equation}
 \mathcal{M}_L = \prod_{l=1}^L T_l
 \end{equation}
 
-The limiting matrix $\Gamma$, which governs the asymptotic spatial decay rates of the transmission channels, is defined as:
+The limiting matrix $\Gamma$ governs the asymptotic spatial decay rates of the transmission channels:
 \begin{equation}
 \Gamma = \lim_{L \to \infty} \left( \mathcal{M}_L^\dagger \mathcal{M}_L \right)^{\frac{1}{2L}}
 \end{equation}
@@ -35,7 +45,7 @@ $\xi_M = 1/\langle \gamma_{\text{min}} \rangle$
 We define the dimensionless localization length $\Lambda_M$ :
 
 \begin{equation}
-\Lambda_M = \frac{\xi_M}{M} = \frac{1}{\gamma_{\text{min}} M}
+\Lambda_M = \frac{\xi_M}{M} = \frac{1}{\langle \gamma_{\text{min}} \rangle M}
 \end{equation}
 
 Within a single simulation domain $M \times M \times L$, when $L$ is large, the calculation becomes "self-averaging" along the longitudinal direction (Oseledec's theorem). We simulate many independent random disorder configurations for a specific $M \times M \times L$ geometry to extract a statistical average of the Lyapunov exponent (apparently we have to average the lyapunov exponents $\gamma_i$, not the localization length $\xi$, but idk why).  We repeat for many values of $M$. Varying the cross-section $M$ provides the different length scales required to perform the FSS with to $M \to \infty$ (although we keep M quite small bc of computational constraints, but since we are interested in phase transitions, it should work out). 
@@ -44,33 +54,21 @@ Within a single simulation domain $M \times M \times L$, when $L$ is large, the 
 
 RG theory says that near a critical point (phase transition), the system loses its microscopic length scales and becomes scale-invariant, governed by the diverging absolute correlation length $\xi(p)$. The foundational FSS hypothesis asserts that the dimensionless parameter $\Lambda_M = \xi_M / M$ behaves as a universal scaling function $F$, which depends exclusively on the ratio of the system width to the absolute correlation length:
 \begin{equation}
-\Lambda_M(p, M) = F\left( \frac{M}{\xi(p)} \right) = F\left( M^{1/\nu} \chi_r(p) \right) \label{eq:fss_basic}
+\Lambda_M(x, M) = F\left( \frac{M}{\xi(x)} \right) = F\left( M^{1/\nu} \chi_r(x) \right) \label{eq:fss_basic}
 \end{equation}
-where $\chi_r(p)$ is the relevant scaling variable behaving analytically at the critical point, $\chi_r(p) \approx c_r (p - p_q)$, and $\nu$ is the universal critical exponent \cite{Slevin1999, Ujfalusi2014}.
+Here, $x$ represents the parameter driving the transition ($x=W$ for the Anderson disorder model and $x=p$ for the site-diluted quantum percolation model), $\chi_r(x)$ is the relevant scaling variable behaving analytically at the critical point, $\chi_r(x) \approx c_r (x - x_c)$ (where $x_c$ is $W_c$ or $p_q$ respectively), and $\nu$ is the universal critical exponent\cite{Slevin1999, Ujfalusi2014}.
+
 
 However, because our computational domains are highly restricted in width ($M \leq 14$) (because of numericals constraints), the finite-size data computed from the TMM contains distortions originating from irrelevant scaling operators in the Hamiltonian. To extract the true infinite-volume parameters, the basic scaling function in Eq. \ref{eq:fss_basic} must be generalized to include these finite-size corrections:
 \begin{equation}
-\Lambda_M(p, M) = F\left( \chi_r(p) M^{1/\nu}, \chi_i(p) M^{-y} \right) \label{eq:fss_irrelevant}
+\Lambda_M(x, M) = F\left( \chi_r(x) M^{1/\nu}, \chi_i(x) M^{-y} \right) \label{eq:fss_irrelevant}
 \end{equation}
-Here, $\chi_i(p)$ represents the irrelevant scaling variable, and the exponent $y > 0$ governs how rapidly these finite-size artifacts decay as the system width $M$ increases \cite{Slevin1999}. 
+where $\chi_i(x)$ represents the irrelevant scaling variable, and the exponent $y > 0$ governs how rapidly these finite-size artifacts decay as the system width $M$ increases.
 
 For robust numerical fitting, the non-linear scaling function $F$ in Eq. \ref{eq:fss_irrelevant} is explicitly restructured via a multidimensional Taylor expansion around the critical threshold (the Slevin-Ohtsuki polynomial expansion) \cite{Slevin2014}:
 \begin{equation}
-\Lambda_M(p, M) = \sum_{j=0}^{n_r} \chi_r(p)^j M^{j/\nu} \left( \sum_{k=0}^{n_i} \chi_i(p)^k M^{-k y} a_{j,k} \right) \label{eq:fss_polynomial}
+\Lambda_M(x, M) = \sum_{j=0}^{n_r} \chi_r(x)^j M^{j/\nu} \left( \sum_{k=0}^{n_i} \chi_i(x)^k M^{-k y} a_{j,k} \right) \label{eq:fss_polynomial}
 \end{equation}
-where $a_{j,k}$ are the polynomial expansion coefficients, and the scaling variables are themselves expanded as polynomials $\chi_r(p) = \sum b_m (p - p_q)^m$ and $\chi_i(p) = \sum c_m (p - p_q)^m$. 
+where $a_{j,k}$ are the expansion coefficients, and the scaling variables are expanded as polynomials $\chi_r(x) = \sum b_m (x - x_c)^m$ and $\chi_i(x) = \sum c_m (x - x_c)^m$.
 
-To secure statistical confidence, the optimization of this highly nonlinear parameter space must utilize Monte Carlo Bootstrap resampling to prevent false convergence and accurately compute the confidence intervals of $p_q$ and $\nu$.
-
-\subsection{Considerations for the BCC Lattice} \label{subsec:mothod_bcc}
-
-Unlike the SC lattice, where $C_{l, l+1} = -t\mathbf{I}$, the BCC lattice exhibits a complex transport topography when oriented along the $\langle 100 \rangle$ axis. There are no intra-slice bonds, meaning $H_l$ contains only diagonal $\epsilon_i$ values. All hopping is inter-slice \cite{Eilmes2008}.
-
-Under periodic boundary conditions, the transverse momentum $\mathbf{k}_{\perp}$ is quantized: $k_{x,y} = 2\pi n_{x,y}/M$. The eigenvalues of the BCC connectivity matrix are $C_{l, l+1}(n_x, n_y) = 4t \cos(\pi n_x/M) \cos(\pi n_y/M)$. If $M$ is a multiple of 4, $n_x = M/2$ generates an eigenvalue equal to zero, making $C_{l,l+1}$ non-invertible and breaking the TMM algorithm.
-
-A common resolution is to introduce a complex phase twist $\phi$ at the boundaries ($k_x \to (2\pi n_x + \phi)/M$) to shift the momentum grid away from the zero nodes. However, applying arbitrary complex phase shifts acts as an artificial magnetic flux, breaking Time-Reversal Symmetry. This forcibly transitions the system from the Orthogonal universality class (GOE, $\nu \approx 1.57$) into the Unitary universality class (GUE, $\nu \approx 1.43$). To preserve the Orthogonal symmetry class, the only allowed phases are $\phi=0$ (periodic) and $\phi=\pi$ (anti-periodic). For BCC TMM, the robust solution is to restrict simulations entirely to odd widths $M \in \{3, 5, 7, 9, 11\}$.
-
-
-
-% A common misconception is that if a quantum particle can tunnel through barriers, it should bypass missing atoms, making the quantum network better connected than the classical one. The answer is no, because quantum mechanics introduces phase interference. While a quantum particle could theoretically tunnel through a void (if we used a realistic finite barrier instead of the ideal infinite one), the dominant physical mechanism dictating $p_q$ is coherent backscattering. The irregular fractal geometry of the classical percolation cluster causes severe destructive phase interference, trapping the wavepacket in localized standing waves. Therefore, a much denser network is required for macroscopic quantum transport, strictly enforcing $p_q > p_c$.
-
+To compute confidence intervals for $x_c$ and $\nu$, we perform Monte Carlo bootstrap resampling over the disorder realizations.

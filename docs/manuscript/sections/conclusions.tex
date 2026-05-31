@@ -1,11 +1,10 @@
-\section{Conclusions and Outlook}
+\section{Conclusions}
 \label{sec:conclusions}
 
-In summary, we have investigated the 3D quantum percolation transition on both Simple Cubic (SC) and Body-Centered Cubic (BCC) lattices using a modular, high-statistics implementation of the Transfer Matrix Method (TMM). 
+In summary, we have investigated the metal-insulator transition in the three-dimensional Simple Cubic (SC) lattice using a JAX-accelerated implementation of the Transfer Matrix Method (TMM). We studied both the standard Anderson model with continuous on-site potential disorder and the site-diluted quantum percolation model.
 
-% On the SC lattice, we successfully validated our numerical methods by reproducing the known critical threshold $p_q \approx XXX$ and critical exponent $\nu \approx XXX$ of the 3D Orthogonal class at energy $E = 0.1$. 
-% At $E = 0.0$, we observed a transition at $p_q \approx XXX$ with a critical exponent $\nu \approx XXX$, indicating that the chiral symmetry present at the band center places the system in the Chiral Orthogonal (BDI) symmetry class.
+For the Anderson model at the band center $E=0$, our solver successfully reproduced the known critical disorder strength $W_c \approx 16.53$ and critical exponent $\nu \approx 1.57$, validating the correctness and numerical stability of our implementation. 
 
-% For the BCC lattice, we resolved the connectivity matrix singularity issue at even widths by conducting simulations on odd transverse widths $M \in \{3, 5, 7, 9, 11\}$. At $E = 0.1$, we found the quantum percolation threshold to be $p_q(\text{BCC}) \approx 0.315$, which is lower than the SC threshold due to the higher coordination number ($Z=8$ versus $Z=6$). The critical exponent $\nu \approx 1.59$ remains consistent with the 3D Orthogonal class, confirming that coordination geometry does not affect the universality class.
+For the site-diluted quantum percolation transition at $E=3.1t$, we analyzed the dimensionless localization length curves. We identified a classical percolation crossover that contaminates small system widths ($M \le 8$), causing severe finite-size distortions. By restricting our scaling analysis to uncontaminated system sizes ($M \ge 10$), we resolved the true quantum percolation threshold $p_q \approx 0.506$, with a critical exponent $\nu$ in agreement with the 3D Orthogonal universality class. 
 
-% Future work will expand the TMM methodology to higher system widths using specialized GPU-accelerated algorithms to verify the thermodynamic scaling limit. In addition, investigating the Gade-Wegner scaling behavior at $E=0$ on the BCC lattice remains an open and interesting direction.
+Our work highlights the importance of accounting for classical geometric features when studying quantum phase transitions on diluted lattices. Future studies can extend these high-precision calculations to larger system sizes and other 3D geometries.

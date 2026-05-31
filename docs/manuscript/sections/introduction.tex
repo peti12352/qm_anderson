@@ -24,10 +24,18 @@ In \textbf{First Quantization} (we use this for the simulations), the Hamiltonia
 Because quantum percolation evaluates non-interacting electrons, restricting the problem to the single-particle Hilbert space allows the transfer matrices to scale linearly with the cross-sectional area ($\mathcal{O}(M^2)$). 
 %Attempting to simulate the full second-quantized Hamiltonian would force operations within the many-particle Fock space, causing dimensions to scale exponentially, making large-scale computational evaluations impossible.
 
-The disorder is introduced through the diagonal on-site potential energies $\epsilon_i$, sampled from an binary probability distribution representing the fraction $p$ of occupied sites:
-\begin{equation}
-\mathcal{P}(\epsilon_i) = p \delta(\epsilon_i) + (1-p) \delta(\epsilon_i - V_{\text{absent}})
-\end{equation}
+The disorder is introduced through the diagonal on-site potential energies $\epsilon_i$. We study two different physical systems:
+\begin{enumerate}
+    \item \textbf{Anderson Disorder Model:} Site potential energies are chosen from a continuous uniform distribution:
+    \begin{equation}
+    \mathcal{P}(\epsilon_i) = \frac{1}{W} \Theta\left(\frac{W}{2} - |\epsilon_i|\right)
+    \end{equation}
+    where $W$ is the disorder strength and $\Theta(x)$ is the Heaviside step function. In this case, the lattice is fully occupied ($p=1$).
+    \item \textbf{Site-Diluted Quantum Percolation Model:} Site potential energies are sampled from a binary probability distribution representing the fraction $p$ of occupied sites:
+    \begin{equation}
+    \mathcal{P}(\epsilon_i) = p \delta(\epsilon_i) + (1-p) \delta(\epsilon_i - V_{\text{absent}})
+    \end{equation}
+\end{enumerate}
 
 \subsection{Percolation}
 

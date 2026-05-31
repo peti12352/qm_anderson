@@ -5,7 +5,7 @@ We begin by validating our implementation of the Transfer Matrix Method (TMM) on
 
 By setting the site occupation to $p=1$ and driving the phase transition solely through the diagonal disorder width $W$, our simulation yields a critical point of $W_c = 16.617$ and an exponent $\nu = 1.62$, perfectly aligning with the high-precision literature values reported by Slevin and Ohtsuki \cite{Slevin1999, Slevin2014}. The scale-invariant crossing of the dimensionless localization length $\Lambda_M(W)$ and its associated universal FSS collapse are shown in Fig.~\ref{fig:sc_benchmark}.
 
-\begin{figure*}[t]
+\begin{figure*}[H]
     \centering
     \includegraphics[width=0.48\textwidth]{pub_sc_bench_crossing.png}
     \hfill
@@ -24,7 +24,7 @@ When the full optimization algorithm is applied to $M \in \{8, 10, 12\}$, it col
 
 As shown in Fig.~\ref{fig:sc_dilution} (Left), the $M=4$ and $M=6$ curves are severely flattened by the classical percolation boundary and never cross the others. However, by strictly discarding the contaminated geometries and optimizing the FSS scaling only for $M \ge 8$, the data snaps to the true quantum critical fixed point.
 
-\begin{figure*}[t]
+\begin{figure*}[H]
     \centering
     \includegraphics[width=0.48\textwidth]{pub_sc_dilut_crossing.png}
     \hfill
@@ -33,4 +33,4 @@ As shown in Fig.~\ref{fig:sc_dilution} (Left), the $M=4$ and $M=6$ curves are se
     \label{fig:sc_dilution}
 \end{figure*}
 
-Stripped of classical interference, the raw physics yields $p_q = 0.5065$ and $\nu = 1.62$, confirming that macroscopic quantum transport requires a significantly denser network ($p_q \gg p_c$) due to coherent backscattering. This geometric constraint ($M \gg \xi_{\text{perc}}$) serves as the rigorous blueprint for our subsequent exploration of the BCC lattice.
+Stripped of classical interference, the raw physics yields a quantum percolation threshold of $p_q = 0.506$ and critical exponent $\nu \approx 1.6$, confirming that macroscopic quantum transport requires a significantly denser network ($p_q \gg p_c$) due to coherent backscattering.
