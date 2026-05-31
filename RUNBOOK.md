@@ -507,3 +507,70 @@ pixi run python runs/sc_benchmark.py --refit --y-irrel 1.20
 
 To force a full rerun of one M: `rm data/checkpoints/{run}_M{M}.npz`
 To force a full rerun of everything: `rm -rf data/checkpoints/ data/*.h5`
+
+
+
+## Fast Pure-Polynomial Fits (y=0) without Scaling Corrections
+
+**Context & Configuration:** 
+The terminal logs below execute the FSS optimizations explicitly restricted to a pure polynomial (`--y-irrel 0.0`). 
+By forcing the irrelevant scaling correction amplitude to zero ($b=0$), the 8-parameter Nelder-Mead optimizer collapses to 5 parameters, allowing the 500-sample Monte Carlo Bootstrap to converge in seconds instead of timing out.
+
+**Physical Meaning:** 
+- **SC Benchmark:** Removing the $bM^{-y}$ correction causes a known systematic bias for small systems ($M \le 10$). The critical disorder is pulled down to $W_c = 16.33$ (vs truth $16.53$) and the $\chi^2/\text{dof}$ increases to $8.23$, proving that corrections-to-scaling are strictly necessary to perfectly extract the transition at these system sizes.
+- **SC Dilution (E=3.1):** Without the correction term to absorb the residual classical percolation boundary effects at $M \in \{8, 10, 12\}$, the fit degrades ($\chi^2/\text{dof} = 28$). The transition is artificially pulled down to $p_q = 0.491$ and $\nu$ inflates to $2.12$. 
+
+*Conclusion:* While `--y-irrel 0.0` provides instant, visually smooth curves for plotting, precise extraction of the true quantum critical points strictly requires modeling the leading finite-size correction (`--y-irrel 1.12`).
+
+raw output:
+(base) v@greengoblin:~/proj/petya/simulations/qm_anderson$ pixi run python runs/sc_benchmark.py --refit --w-min 15.5 --w-max 17.5 --y-irrel 0.0
+Refit mode: loading data/sc_benchmark.h5, FSS window [15.5, 17.5]
+/home/v/proj/petya/simulations/qm_anderson/src/fss.py:217: UserWarning: chi^2/dof = 8.23 >> 1. FSS fit is poor. Consider: (1) wider x range, (2) more system sizes, (3) higher poly_order, (4) corrections-to-scaling (y_irrel > 0).
+  warnings.warn(
+
+W fit range: (15.5, 17.5)
+y = 0.0 fixed; SB099: 1.12±0.08)
+W_c = 16.3363 ± 0.0047 (stat) (expected 16.53)
+v = 1.5405 ± 0.0123 (stat) (expected 1.571)
+b = 0.0000 ± 0.0000 (stat)
+chi^2/dof = 8.233
+
+Systematic from y ± 0.88 (-0.88..0.88):
+W_c syst = +0.8250 | v syst = ±0.2687
+W_c = 16.3363 ± 0.0047 (stat) ± 0.8250 (syst)
+v   = 1.5405 ± 0.0123 (stat) ± 0.2687 (syst)
+(base) v@greengoblin:~/proj/petya/simulations/qm_anderson$ pixi run python runs/sc_dilution.py --refit --data-file data/sc_dilution_E3p1.h5 --m-list 8,10,12 --p-min 0.40 --p-max 0.62 --y-irrel 0.0
+Loading data from data/sc_dilution_E3p1.h5 ...
+--m-list filter applied: using M=[8, 10, 12]
+Loaded: M=[8, 10, 12] | 33 p values | p \in [0.400, 0.620]
+
+A_M(p) table (every 4th p):
+p          A(M=8)     A(M=10)    A(M=12)
+0.4000     0.14104    0.13862    0.12981
+0.4518     0.28506    0.27855    0.26417
+0.4776     0.38762    0.38607    0.37593
+0.4906     0.44878    0.45403    0.44898
+0.5036     0.52842    0.54322    0.54513
+0.5293     0.62448     0.65358    0.66576
+0.5552     0.73165    0.78843    0.81513
+0.5812     1.03419    1.14574    1.24123
+0.6200     1.69987    1.94609    2.20738
+
+Rough p_c (pairwise crossings): 0.492 [individual: ['0.482', '0.502']]
+FSS fit window: [0.400, 0.520] (manual)
+/home/v/proj/petya/simulations/qm_anderson/src/fss.py:217: UserWarning: chi^2/dof = 28.19 >> 1. FSS fit is poor. Consider: (1) wider x range, (2) more system sizes, (3) higher poly_order, (4) corrections-to-scaling (y_irrel > 0).
+  warnings.warn(
+/home/v/proj/petya/simulations/qm_anderson/src/fss.py:217: UserWarning: chi^2/dof = 23.68 >> 1. FSS fit is poor. Consider: (1) wider x range, (2) more system sizes, (3) higher poly_order, (4) corrections-to-scaling (y_irrel > 0).
+  warnings.warn(
+
+FSS RESULT (SC site-diluted quantum percolation)
+y    = 0.0 fixed (empirical; SB099 fits freely, gets |y|≈2.8)
+p_c  = 0.49081 ± 0.00023 (stat) (Ujfalusi 2014 PRB 90,174203 E=3.1: 0.50628)
+v    = 2.1295 ± 0.0358 (stat) (3D-AI class: 1.622)
+b    = 0.0000 ± 0.0000 (stat)
+chi^2/dof = 28.194 (Q = 0.00e+00; SB099 criterion: Q > 0.1)
+Systematic from y±0.88: p_c syst=+0.01591 v syst=±0.3851
+p_c  = 0.49081 ± 0.00023 (stat) ± 0.01591 (syst)
+v    = 2.1295 ± 0.0358 (stat) ± 0.3851 (syst)
+
+(base) v@greengoblin:~/proj/petya/simulations/qm_anderson$ 
