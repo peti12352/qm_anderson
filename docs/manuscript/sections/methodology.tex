@@ -69,7 +69,7 @@ However, because our computational domains are highly restricted in width ($M \l
 \end{equation}
 where $\chi_i(x)$ represents the irrelevant scaling variable, and the exponent $y > 0$ governs how rapidly these finite-size artifacts decay as the system width $M$ increases.
 
-For robust numerical fitting, the non-linear scaling function $F$ in Eq. \ref{eq:fss_irrelevant} is explicitly restructured via a multidimensional Taylor expansion around the critical threshold (the Slevin-Ohtsuki polynomial expansion) \cite{Slevin2014}:
+For robust numerical fitting, the non-linear scaling function $F$ in Eq. \ref{eq:fss_irrelevant} is Taylor expanded around the critical threshold (the Slevin-Ohtsuki polynomial expansion) \cite{Slevin2014}:
 \begin{equation}
 \Lambda_M(x, M) = \sum_{j=0}^{n_r} \chi_r(x)^j M^{j/\nu} \left( \sum_{k=0}^{n_i} \chi_i(x)^k M^{-k y} a_{j,k} \right) \label{eq:fss_polynomial}
 \end{equation}
