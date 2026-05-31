@@ -3,8 +3,12 @@
 
 In summary, we have investigated the metal-insulator transition in the three-dimensional Simple Cubic (SC) lattice using a JAX-accelerated implementation of the Transfer Matrix Method (TMM). We studied both the standard Anderson model with continuous on-site potential disorder and the site-diluted quantum percolation model.
 
-For the Anderson model at the band center $E=0$, our solver successfully reproduced the known critical point and exponent, yielding $W_c = 16.6174 \pm 0.0156 \text{ (stat)} \pm 0.0148 \text{ (syst)}$ and $\nu = 1.6205 \pm 0.0085 \text{ (stat)} \pm 0.0052 \text{ (syst)}$, validating the correctness and numerical stability of our implementation. 
+For the Anderson model at the band center $E=0$, our solver successfully reproduced the known critical point and exponent, 
+%yielding $W_c = 16.6174 \pm 0.0156 \text{ (stat)} \pm 0.0148 \text{ (syst)}$ and $\nu = 1.6205 \pm 0.0085 \text{ (stat)} \pm 0.0052 \text{ (syst)}$, 
+validating the correctness and numerical stability of our implementation. 
 
-For the site-diluted quantum percolation transition at $E=3.1t$, we analyzed the dimensionless localization length curves. We identified a classical percolation crossover that contaminates small system widths ($M \le 8$), causing severe finite-size distortions. By restricting our scaling analysis to uncontaminated system sizes ($M \ge 10$), and despite the limitation of having only two system sizes ($M=10, 12$) available for the final fit, we resolved the quantum percolation threshold $p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$ with a critical exponent $\nu = 1.5992 \pm 0.1107 \text{ (stat)} \pm 0.1119 \text{ (syst)}$ in excellent agreement with the expected 3D Orthogonal universality class ($\nu \approx 1.622$). 
+For the site-diluted quantum percolation transition at $E=3.1t$, we analyzed the dimensionless localization length curves. We identified a classical percolation crossover that contaminates small system widths ($M \le 8$), causing severe finite-size distortions. By restricting our scaling analysis to uncontaminated system sizes ($M \ge 10$), and despite the limitation of having only two system sizes ($M=10, 12$) available for the final fit, we resolved the quantum percolation threshold 
+%$p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$ with a critical exponent $\nu = 1.5992 \pm 0.1107 \text{ (stat)} \pm 0.1119 \text{ (syst)}$ 
+in excellent agreement with the expected 3D Orthogonal universality class ($\nu \approx 1.622$). 
 
-Our work highlights the importance of accounting for classical geometric features when studying quantum phase transitions on diluted lattices. Future studies can extend these high-precision calculations to larger system sizes and other 3D geometries.
+Our work highlights the importance of accounting for classical geometric features when studying quantum phase transitions on diluted lattices. Future studies can extend these calculations to larger system sizes and other 3D geometries.
