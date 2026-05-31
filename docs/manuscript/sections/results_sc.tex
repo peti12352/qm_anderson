@@ -14,29 +14,24 @@ By setting the site occupation to $p=1$ and driving the phase transition solely 
 \footnote{stat represents the error originating from the finite simulation data, and is calculated via the bootstrap method.}
  $\pm 0.0148$ (syst) 
 \footnote{syst represents the error originating from our model assumptions. We fixed the irrelevant scaling exponent $y = 1.12$ so we estimate how much our fitted values would shift if $y$ was actually slightly different.}
- and an exponent $\nu = 1.6205 \pm 0.0085 \text{ (stat)} \pm 0.0052 \text{ (syst)}$, with a correction amplitude of $b = 0.0958 \pm 0.0045 \text{ (stat)}$ and a goodness-of-fit $\chi^2/\text{dof} = 2.421$. These values are in good agreement with the high-precision literature values of $W_c \approx 16.53 \pm 0.05$ and $\nu \approx 1.571 \pm 0.007$ \cite{Slevin1999, Slevin2014}. The scale-invariant crossing of the dimensionless localization length $\Lambda_M(W)$ is shown in Fig.~\ref{fig:sc_bench_crossing}, and its associated universal FSS collapse is shown in Fig.~\ref{fig:sc_bench_collapse}.
+ and an exponent $\nu = 1.6205 \pm 0.0085 \text{ (stat)} \pm 0.0052 \text{ (syst)}$, with a correction amplitude of $b = 0.0958 \pm 0.0045 \text{ (stat)}$ and a goodness-of-fit $\chi^2/\text{dof} = 2.421$. These values are in good agreement with the literature values of $W_c \approx 16.53 \pm 0.05$ and $\nu \approx 1.571 \pm 0.007$ \cite{Slevin1999, Slevin2014}. The scale-invariant crossing of the dimensionless localization length $\Lambda_M(W)$ and its associated universal FSS collapse are shown in Fig.~\ref{fig:sc_benchmark}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{pub_sc_bench_crossing.png}
-    \caption{Anderson localization benchmark on the fully connected SC lattice. The pairwise crossings of the dimensionless localization length $\Lambda_M(W)$ precisely isolate the critical disorder $W_c = 16.6174 \pm 0.0156 \text{ (stat)} \pm 0.0148 \text{ (syst)}$.}
-    \label{fig:sc_bench_crossing}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
+    \vspace{0.2em}
     \includegraphics[width=\linewidth]{pub_sc_bench_collapse.png}
-    \caption{Universal finite-size scaling collapse of the dimensionless localization length data for the simple cubic Anderson localization transition, confirming the scaling ansatz.}
-    \label{fig:sc_bench_collapse}
+    \caption{Anderson localization benchmark on the fully connected SC lattice. (Top) The pairwise crossings of $\Lambda_M(W)$ identify the critical disorder $W_c=16.6174 \pm 0.0156 \text{ (stat)} \pm 0.0148 \text{ (syst)}$. (Bottom) The FSS optimization collapses the raw data onto a single universal scaling curve, confirming the structural integrity of our TMM solver.}
+    \label{fig:sc_benchmark}
 \end{figure}
 
 \subsection{SC Quantum Percolation and Geometric Constraints}
 
-For the site-diluted quantum percolation transition, we must carefully select the evaluation energy $E$. As documented in previous literature, the SC lattice is bipartite. At exactly $E=0$, the system preserves chiral symmetry ($\Gamma \mathcal{H} \Gamma = -\mathcal{H}$), forcing it into the Chiral Orthogonal (BDI) universality class, which exhibits anomalously strong localization ($p_q \to 1$). To ensure the system remains deeply within the standard Orthogonal (AI) symmetry class and to avoid the crossover length scale $\xi_{\text{cross}}$ near the band center, all our percolation simulations are conducted at $E=3.1t$.
+For the site-diluted quantum percolation transition, we must select the evaluation energy $E$. As documented in previous literature, the SC lattice is bipartite. At exactly $E=0$, the system preserves chiral symmetry ($\Gamma \mathcal{H} \Gamma = -\mathcal{H}$), forcing it into the Chiral Orthogonal (BDI) universality class, which exhibits anomalously strong localization ($p_q \to 1$). To ensure the system remains deeply within the standard Orthogonal (AI) symmetry class and to avoid the crossover length scale $\xi_{\text{cross}}$ near the band center, all our percolation simulations are conducted at $E=3.1t$.
 
 At $E=3.1t$, we computed $\Lambda_M(p)$ for widths $M \in \{4, 6, 8, 10, 12\}$. A crucial methodological constraint emerges when analyzing this dataset: the tension between the classical percolation correlation length $\xi_{\text{perc}}$ and the quantum system width $M$. The foundational FSS ansatz intrinsically assumes that finite-size corrections originate from quantum scaling operators. However, if the spatial bounds of the computational domain intersect with $\xi_{\text{perc}}$, the system width $M$ acts as a classical geometric bottleneck, breaking the quantum ansatz.
 
-If we attempt to include the intermediate size $M=8$ in our scaling analysis (fitting over $M \in \{8, 10, 12\}$), the optimization collapses into an unphysical local minimum, producing a massive $+0.024$ bias in the critical point ($p_q = 0.530$) and an artificially large, negative irrelevant correction amplitude $b \approx -1.92$. This failure is a direct consequence of geometric contamination. At the lower boundary of our optimization window ($p \approx 0.48$), the classical correlation length is $\xi_{\text{perc}} \approx (0.48 - 0.3115)^{-0.876} \approx 4.6$ lattice spacings. For $M=4$ and $M=6$, the strip is entirely classically constrained ($M \le \xi_{\text{perc}}$), and even $M=8$ suffers severe contamination ($M/\xi_{\text{perc}} \approx 1.7$), meaning only the $M \in \{10, 12\}$ group is clean.
+If we attempt to include the intermediate size $M=8$ in our scaling analysis (fitting over $M \in \{8, 10, 12\}$), the optimization collapses into an unphysical local minimum, producing a massive $+0.024$ bias in the critical point ($p_q = 0.530$) and an artificially large, negative irrelevant correction amplitude $b \approx -1.92$. This failure is a consequence of geometric contamination. At the lower boundary of our optimization window ($p \approx 0.48$), the classical correlation length is $\xi_{\text{perc}} \approx (0.48 - 0.3115)^{-0.876} \approx 4.6$ lattice spacings. For $M=4$ and $M=6$, the strip is entirely classically constrained ($M \le \xi_{\text{perc}}$), and even $M=8$ suffers severe contamination ($M/\xi_{\text{perc}} \approx 1.7$), meaning only the $M \in \{10, 12\}$ group is clean.
 
 % DATA SOURCE AND CONFIGURATION FOR QUANTUM PERCOLATION FIT:
 % Data file: data/sc_dilution_E3p1.h5 (computed with L=10,000, N_real=500 realizations).
@@ -46,18 +41,13 @@ If we attempt to include the intermediate size $M=8$ in our scaling analysis (fi
 % The irrelevant exponent y is fixed to 1.12 (from Slevin & Ohtsuki 1999) because the size range M in {10, 12} cannot constrain y as a free parameter.
 % Statistical errors are computed via 1000 Monte Carlo bootstrap resamples.
 % Systematic errors are propagated by shifting y by +/- 0.08.
-Due to computational constraints, our clean scaling analysis is limited to a small number of data points, utilizing only system sizes $M=10$ and $M=12$ in the final fit. Because we only have two system sizes, the fit is underconstrained; we must fix the irrelevant exponent to $y = 1.12$, and the optimizer is highly sensitive to the initial parameters. We obtained our results only by utilizing a high-precision initial guess ($p_q \approx 0.502$) derived from the linear crossings of the curves, without which the solver gets trapped in unphysical local minima. Within the window $p \in [0.46, 0.54]$, we extract a critical threshold of $p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$ and an exponent of $\nu = 1.5992 \pm 0.1107 \text{ (stat)} \pm 0.1119 \text{ (syst)}$. Despite the underconstrained nature of the fit, the quality is high, yielding a robust $\chi^2/\text{dof} = 1.068$ and a goodness-of-fit probability $Q = 0.362$. Furthermore, the critical exponent $\nu$ is consistent with the 3D Orthogonal universality class ($\nu \approx 1.622$) within statistical error. However, our current data is insufficient to fully characterize the transition or resolve the systematic shift in $p_q$ relative to the asymptotic literature value ($p_q \approx 0.50628$) \cite{Ujfalusi2014}. Additional data, particularly at larger system sizes ($M \ge 14$), is necessary to perform a fully unconstrained scaling analysis. The dimensionless localization length curves are shown in Fig.~\ref{fig:sc_dilut_crossing}, and their universal scaling collapse is presented in Fig.~\ref{fig:sc_dilut_collapse}.
+Due to computational constraints, our scaling analysis is limited to system sizes $M=10$ and $M=12$ in the final fit. Because we only have two system sizes, the fit is underconstrained; we must fix the irrelevant exponent to $y = 1.12$, and the optimizer is highly sensitive to the initial parameters. We obtained our results only by utilizing a initial guess ($p_q \approx 0.502$) derived from the linear crossings of the curves, without which the solver gets trapped in unphysical local minima. Within the window $p \in [0.46, 0.54]$, we extract a critical threshold of $p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$ and an exponent of $\nu = 1.5992 \pm 0.1107 \text{ (stat)} \pm 0.1119 \text{ (syst)}$. Despite the fit being underconstrained, the quality is high, yielding a robust $\chi^2/\text{dof} = 1.068$ and a goodness-of-fit probability $Q = 0.362$. Furthermore, the critical exponent $\nu$ is consistent with the 3D Orthogonal universality class ($\nu \approx 1.622$) within statistical error. However, our current data is insufficient to fully characterize the transition or get a more accurate $p_q$ relative to the literature value ($p_q \approx 0.50628$) \cite{Ujfalusi2014}. Additional data, particularly at larger system sizes ($M \ge 14$), is necessary to perform a fully unconstrained scaling analysis. The dimensionless localization length curves and their universal scaling collapse are presented in Fig.~\ref{fig:sc_dilution}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{pub_sc_dilut_crossing.png}
-    \caption{Dimensionless localization length $\Lambda_M(p)$ for site-diluted quantum percolation on the SC lattice at $E=3.1t$. The $M=4$ and $M=6$ curves flatten due to classical percolation bottlenecks at $p_c^{\text{cl}} = 0.3115$.}
-    \label{fig:sc_dilut_crossing}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
+    \vspace{0.2em}
     \includegraphics[width=\linewidth]{pub_sc_dilut_collapse.png}
-    \caption{Universal finite-size scaling collapse for the site-diluted quantum percolation transition at $E=3.1t$, utilizing only the uncontaminated system sizes $M \ge 10$ to extract $p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$.}
-    \label{fig:sc_dilut_collapse}
+    \caption{Site-diluted quantum percolation on the SC lattice at $E=3.1t$. (Top) The dimensionless localization length $\Lambda_M(p)$. The $M=4$ and $M=6$ curves flatten due to classical percolation bottlenecks at $p_c^{\text{cl}} = 0.3115$. The true quantum phase transition occurs at $p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$, strictly isolating the macroscopic quantum transport threshold. (Bottom) The universal FSS collapse for the uncontaminated $M \ge 10$ geometries.}
+    \label{fig:sc_dilution}
 \end{figure}
