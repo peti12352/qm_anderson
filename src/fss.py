@@ -72,6 +72,7 @@ class FSSResult:
     b2:         float = 0.0   # second correction amplitude  b₂ (b₂·M^{-2y})
     b2_err:     float = 0.0
     y_irrel:    float = 0.0   # irrelevant exponent (fitted value or fixed input)
+    coeffs:     np.ndarray | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -239,6 +240,7 @@ def fit_fss(
         b2=b2_fit,
         b2_err=float(np.std(b2_boot)),
         y_irrel=y_fit,
+        coeffs=best[2:2 + n_poly],
     )
 
 

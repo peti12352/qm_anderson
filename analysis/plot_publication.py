@@ -15,8 +15,8 @@ import warnings
 import sys; sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import src.config
-from src.fss import fit_fss
 from src.io_utils import load_lambda
+from types import SimpleNamespace
 
 FIGURES_DIR = Path("figures/publication")
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
@@ -27,7 +27,7 @@ plt.rcParams.update({
     "font.family": "serif",
     "axes.linewidth": 1.5,
     "lines.linewidth": 2,
-    "lines.markersize": 8,
+    "lines.markersize": 4,
     "legend.frameon": True,
     "legend.edgecolor": "black",
     "figure.dpi": 300,
@@ -56,17 +56,22 @@ def filter_data(data, m_list_allowed, x_min, x_max):
     return M_list, x_vals, M_flat, x_flat, lam_flat, err_flat
 
 
-def plot_crossing(M_list, x_values, data_dict, result, xlabel, title, filename, pc_classical=None, xc_label="p_q"):
+def plot_crossing(M_list, x_values, data_dict, result, xlabel, title, filename, pc_classical=None, xc_label="p_q", xlim=None):
     fig, ax = plt.subplots(figsize=(6, 5))
     
+    if xlim is not None:
+        x_plot = [x for x in x_values if xlim[0] <= float(x) <= xlim[1]]
+    else:
+        x_plot = x_values
+
     for i, M in enumerate(M_list):
-        x_arr = np.array(x_values)
-        lam_arr = np.array([data_dict["lambda"][M][x][0] for x in x_values])
-        err_arr = np.array([data_dict["lambda"][M][x][1] for x in x_values])
+        x_arr = np.array(x_plot)
+        lam_arr = np.array([data_dict["lambda"][M][x][0] for x in x_plot])
+        err_arr = np.array([data_dict["lambda"][M][x][1] for x in x_plot])
         ax.errorbar(x_arr, lam_arr, yerr=err_arr, fmt="o-", color=COLORS[i % len(COLORS)], label=f"$M={M}$", capsize=3, alpha=0.9)
     
     ax.axvline(result.x_c, color="black", linestyle="--", linewidth=1.5, label=fr"${xc_label}={result.x_c:.4f}$")
-    if pc_classical:
+    if pc_classical and (xlim is None or xlim[0] <= pc_classical <= xlim[1]):
         ax.axvline(pc_classical, color="grey", linestyle=":", linewidth=1.5, label=fr"$p_c^{{\rm cl}}={pc_classical}$")
         
     ax.set_xlabel(xlabel)
@@ -75,6 +80,8 @@ def plot_crossing(M_list, x_values, data_dict, result, xlabel, title, filename, 
     ax.legend()
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
+    if xlim is not None:
+        ax.set_xlim(xlim)
     fig.tight_layout()
     fig.savefig(FIGURES_DIR / filename)
     plt.close(fig)
@@ -84,15 +91,29 @@ def plot_collapse(M_list, x_values, data_dict, result, xlabel, title, filename):
     fig, ax = plt.subplots(figsize=(6, 5))
     x_c, nu = result.x_c, result.nu
     
+    all_u = []
     for i, M in enumerate(M_list):
         x_arr = np.array(x_values)
         lam_arr = np.array([data_dict["lambda"][M][x][0] for x in x_values])
         err_arr = np.array([data_dict["lambda"][M][x][1] for x in x_values])
         u = M ** (1.0 / nu) * (x_arr - x_c) / x_c
+        all_u.extend(u)
         ax.errorbar(u, lam_arr, yerr=err_arr, fmt="o", color=COLORS[i % len(COLORS)], label=f"$M={M}$", capsize=3, alpha=0.8)
         
+    # Draw fitted scaling curve F(u)
+    if result.coeffs is not None and len(all_u) > 0:
+        u_min, u_max = min(all_u), max(all_u)
+        u_dense = np.linspace(u_min, u_max, 300)
+        y_dense = sum(c * u_dense**k for k, c in enumerate(result.coeffs))
+        ax.plot(u_dense, y_dense, color="black", linestyle="-", linewidth=1.0, 
+                label=fr"Fit ($\nu={nu:.3f}$)")
+
     ax.axvline(0, color="black", linestyle="--", linewidth=1)
-    ax.set_xlabel(r"$M^{1/\nu}(p - p_q)/p_q$")
+    
+    var_name = xlabel.strip("$")
+    subscript = "q" if var_name == "p" else "c"
+    ax.set_xlabel(fr"$M^{{1/\nu}}({var_name} - {var_name}_{subscript})/{var_name}_{subscript}$")
+    
     ax.set_ylabel(r"$\Lambda_M$")
     ax.set_title(title)
     ax.legend()
@@ -111,34 +132,30 @@ def main():
         print("Generating SC Benchmark plots...")
         data = load_lambda(sc_bench_path)
         meta = data["metadata"]
-        W_c_guess = float(meta.get("W_c", 16.5))
-        nu_guess = float(meta.get("nu", 1.571))
+        W_c = float(meta.get("W_c", 16.53))
+        nu = float(meta.get("nu", 1.571))
         
-        M_list, x_vals, M_flat, x_flat, lam_flat, err_flat = filter_data(data, [4, 6, 8, 10], 15.5, 17.5)
+        M_list = [int(m) for m in data["M_list"] if int(m) in [4, 6, 8, 10]]
+        x_vals = data["x_values"]
+        res = SimpleNamespace(x_c=W_c, nu=nu, coeffs=None)
         
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            res = fit_fss(M_flat, x_flat, lam_flat, err_flat, x_c_guess=W_c_guess, nu_guess=nu_guess, poly_order=4)
-            
         plot_crossing(M_list, x_vals, data, res, r"Disorder $W/t$", r"SC Anderson Benchmark", "pub_sc_bench_crossing.png", xc_label="W_c")
         plot_collapse(M_list, x_vals, data, res, r"$W$", fr"FSS Collapse ($\nu={res.nu:.3f}$)", "pub_sc_bench_collapse.png")
         
     if sc_dilut_path.exists():
         print("Generating SC Dilution plots...")
         data = load_lambda(sc_dilut_path)
+        meta = data["metadata"]
+        p_q = float(meta.get("p_q", 0.50628))
+        nu = float(meta.get("nu", 1.62))
         
-        # KEY FIX: Strictly only fit M=8, 10, 12. Ignore M=4, 6 contamination.
-        M_list, x_vals, M_flat, x_flat, lam_flat, err_flat = filter_data(data, [8, 10, 12, 16], 0.48, 0.52)
+        M_list = [int(m) for m in data["M_list"] if int(m) in [10, 12, 16]]
+        x_vals = data["x_values"]
+        res = SimpleNamespace(x_c=p_q, nu=nu, coeffs=None)
         
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            res = fit_fss(M_flat, x_flat, lam_flat, err_flat, x_c_guess=0.506, nu_guess=1.62, poly_order=3)
-            
-        # Plot all M values in the crossing plot so we can VISUALLY see the M=4, 6 contamination
         M_all = [int(m) for m in data["M_list"]]
         plot_crossing(M_all, x_vals, data, res, r"Site occupation $p$", r"SC Dilution: $\Lambda_M(p)$", "pub_sc_dilut_crossing.png", pc_classical=0.3115, xc_label="p_q")
-        
-        # Only plot the valid M=8, 10, 12 in the collapse
+        plot_crossing(M_all, x_vals, data, res, r"Site occupation $p$", r"SC Dilution: $\Lambda_M(p)$ (Zoom)", "pub_sc_dilut_crossing_zoom.png", pc_classical=0.3115, xc_label="p_q", xlim=(0.47, 0.53))
         plot_collapse(M_list, x_vals, data, res, r"$p$", fr"FSS Collapse ($\nu={res.nu:.3f}$)", "pub_sc_dilut_collapse.png")
 
 if __name__ == "__main__":

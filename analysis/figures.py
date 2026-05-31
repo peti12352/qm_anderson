@@ -46,7 +46,7 @@ plt.rcParams.update({
     "figure.dpi":       150,
     "text.usetex":      False,   # set True if LaTeX is installed
     "lines.linewidth":  1.5,
-    "lines.markersize": 5,
+    "lines.markersize": 2,
 })
 COLORS = plt.cm.viridis(np.linspace(0.1, 0.9, 6))
 
@@ -70,19 +70,29 @@ def _crossing_plot(ax, M_list, x_values, lam_dict, xlabel, title):
 
 def _collapse_plot(ax, M_list, x_values, lam_dict, result, x_label, title):
     x_c, nu = result.x_c, result.nu
+    all_u = []
     for i, M in enumerate(M_list):
         x_arr  = np.array(x_values)
         lam_arr = np.array([lam_dict[M][x][0] for x in x_values])
         err_arr = np.array([lam_dict[M][x][1] for x in x_values])
         u = M ** (1.0 / nu) * (x_arr - x_c) / x_c
+        all_u.extend(u)
         ax.errorbar(u, lam_arr, yerr=err_arr,
                     fmt="o", color=COLORS[i], label=f"M={M}", capsize=2, alpha=0.7)
     # Draw fitted curve
-    u_dense = np.linspace(ax.get_xlim()[0] if ax.get_xlim()[0] != 0 else -3, 3, 200)
-    # Fit curve uses the best-fit polynomial coefficients embedded in fss_curve
-    # (coefficients not stored in FSSResult - refine by re-fitting or just draw data)
+    if result.coeffs is not None and len(all_u) > 0:
+        u_min, u_max = min(all_u), max(all_u)
+        u_dense = np.linspace(u_min, u_max, 200)
+        y_dense = sum(c * u_dense**k for k, c in enumerate(result.coeffs))
+        ax.plot(u_dense, y_dense, color="black", linestyle="-", linewidth=1.0, 
+                label=fr"Fit ($\nu={nu:.3f}$)")
+                
     ax.axvline(0, color="black", linestyle="--", linewidth=0.8)
-    ax.set_xlabel(r"$M^{1/\nu}(x - x_c)/x_c$")
+    
+    var_name = x_label.strip("$")
+    subscript = "q" if var_name == "p" else "c"
+    ax.set_xlabel(fr"$M^{{1/\nu}}({var_name} - {var_name}_{subscript})/{var_name}_{subscript}$")
+    
     ax.set_ylabel(r"$\Lambda_M$")
     ax.set_title(title)
     ax.legend()
@@ -146,7 +156,8 @@ def make_all_figures() -> None:
     # --- Fig 3 + 4: SC quantum percolation ---
     if sc_dilut_path.exists():
         data    = load_lambda(sc_dilut_path)
-        M_list  = [int(m) for m in data["M_list"] if int(m) in [8, 10, 12, 16]]
+        # Exclude M=8 due to classical percolation bottleneck contamination
+        M_list  = [int(m) for m in data["M_list"] if int(m) in [10, 12, 16]]
         p_vals  = data["x_values"]
         meta    = data["metadata"]
         p_q_sc  = float(meta.get("p_q",  0.506))
@@ -164,7 +175,7 @@ def make_all_figures() -> None:
 
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4.5))
         _crossing_plot(ax1, M_list, p_vals, data["lambda"],
-                       xlabel=r"Site occupation $p$",
+                       xlabel=r"$p$",
                        title=r"SC Site-Diluted: $\Lambda_M(p)$")
         ax1.axvline(result_sc.x_c, color="red", linestyle="--",
                     label=f"$p_q={result_sc.x_c:.4f}$", linewidth=1)
