@@ -12,14 +12,14 @@ We begin by validating our implementation of the Transfer Matrix Method (TMM) on
 % Systematic errors are propagated by shifting y by +/- 0.08.
 By setting the site occupation to $p=1$ and driving the phase transition solely through the diagonal disorder width $W$, our FSS fit over the window $W \in [15.0, 18.5]$ yields a critical point of $W_c = 16.6174 \pm 0.0156 \text{ (stat)} \pm 0.0148 \text{ (syst)}$ and an exponent $\nu = 1.6205 \pm 0.0085 \text{ (stat)} \pm 0.0052 \text{ (syst)}$, with a correction amplitude of $b = 0.0958 \pm 0.0045 \text{ (stat)}$ and a goodness-of-fit $\chi^2/\text{dof} = 2.421$. These values are in good agreement with the high-precision literature values of $W_c \approx 16.53 \pm 0.05$ and $\nu \approx 1.571 \pm 0.007$ \cite{Slevin1999, Slevin2014}. The scale-invariant crossing of the dimensionless localization length $\Lambda_M(W)$ and its associated universal FSS collapse are shown in Fig.~\ref{fig:sc_benchmark}.
 
-\begin{figure*}[t]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.48\textwidth]{pub_sc_bench_crossing.png}
-    \hfill
-    \includegraphics[width=0.48\textwidth]{pub_sc_bench_collapse.png}
-    \caption{Anderson localization benchmark on the fully connected SC lattice. (Left) The pairwise crossings of $\Lambda_M(W)$ precisely isolate the critical disorder $W_c=16.6174 \pm 0.0156 \text{ (stat)} \pm 0.0148 \text{ (syst)}$. (Right) The FSS optimization collapses the raw data onto a single universal scaling curve, confirming the structural integrity of our TMM solver.}
+    \includegraphics[width=\linewidth]{pub_sc_bench_crossing.png}
+    \vspace{0.2em}
+    \includegraphics[width=\linewidth]{pub_sc_bench_collapse.png}
+    \caption{Anderson localization benchmark on the fully connected SC lattice. (Top) The pairwise crossings of $\Lambda_M(W)$ precisely isolate the critical disorder $W_c=16.6174 \pm 0.0156 \text{ (stat)} \pm 0.0148 \text{ (syst)}$. (Bottom) The FSS optimization collapses the raw data onto a single universal scaling curve, confirming the structural integrity of our TMM solver.}
     \label{fig:sc_benchmark}
-\end{figure*}
+\end{figure}
 
 \subsection{SC Quantum Percolation and Geometric Constraints}
 
@@ -39,11 +39,11 @@ When the full optimization algorithm is applied to $M \in \{8, 10, 12\}$, it col
 % Systematic errors are propagated by shifting y by +/- 0.08.
 Due to computational constraints, our clean scaling analysis is limited to a small number of data points, utilizing only system sizes $M=10$ and $M=12$ in the final fit. Because of this restricted range, the leading irrelevant scaling exponent $y$ is fixed to the empirical literature value of $1.12$, as it cannot be constrained as an independent free parameter. Within a narrow fitting window $p \in [0.46, 0.54]$ centered around the crossing point, we confidently extract a critical exponent of $\nu = 1.5992 \pm 0.1107 \text{ (stat)} \pm 0.1119 \text{ (syst)}$, which is in excellent agreement with the expected 3D Orthogonal universality class value ($\nu \approx 1.622$), and a threshold $p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$ with a robust goodness-of-fit $\chi^2/\text{dof} = 1.068$ and $Q = 0.362$. However, due to the lack of larger system sizes ($M \ge 14$), we could not completely eliminate residual finite-size corrections, leading to a small systematic shift in our threshold $p_q$ compared to the asymptotic literature value of $p_q \approx 0.50628$ \cite{Ujfalusi2014}. The dimensionless localization length curves and their universal scaling collapse are presented in Fig.~\ref{fig:sc_dilution}.
 
-\begin{figure*}[t]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.48\textwidth]{pub_sc_dilut_crossing.png}
-    \hfill
-    \includegraphics[width=0.48\textwidth]{pub_sc_dilut_collapse.png}
-    \caption{Site-diluted quantum percolation on the SC lattice at $E=3.1t$. (Left) The dimensionless localization length $\Lambda_M(p)$. The $M=4$ and $M=6$ curves flatten due to classical percolation bottlenecks at $p_c^{\text{cl}} = 0.3115$. The true quantum phase transition occurs at $p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$, strictly isolating the macroscopic quantum transport threshold. (Right) The universal FSS collapse for the uncontaminated $M \ge 10$ geometries.}
+    \includegraphics[width=\linewidth]{pub_sc_dilut_crossing.png}
+    \vspace{0.2em}
+    \includegraphics[width=\linewidth]{pub_sc_dilut_collapse.png}
+    \caption{Site-diluted quantum percolation on the SC lattice at $E=3.1t$. (Top) The dimensionless localization length $\Lambda_M(p)$. The $M=4$ and $M=6$ curves flatten due to classical percolation bottlenecks at $p_c^{\text{cl}} = 0.3115$. The true quantum phase transition occurs at $p_q = 0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$, strictly isolating the macroscopic quantum transport threshold. (Bottom) The universal FSS collapse for the uncontaminated $M \ge 10$ geometries.}
     \label{fig:sc_dilution}
-\end{figure*}
+\end{figure}
