@@ -1,5 +1,5 @@
 data/
-figures/
+# figures/
 __pycache__/
 *.pyc
 .pixi/
@@ -20,3 +20,5 @@ __pycache__/
 *.blg
 *.pdf
 
+docs/manuscript/presentation.nav
+docs/manuscript/presentation.snm
