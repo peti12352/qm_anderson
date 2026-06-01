@@ -127,25 +127,25 @@
   \end{columns}
 \end{frame}
 
-% Slide 6: Symmetry Classes \& Bipartite Lattice
-\begin{frame}{Symmetry Classes \& Bipartite Lattice}
-  \begin{itemize}
-    \item \textbf{Chiral Symmetry}:
-      \begin{itemize}
-        \item Simple Cubic (SC) lattice is bipartite (A and B sublattices).
-        \item Band center $E=0$: Chiral Orthogonal (BDI) class.
-        \item Result: Anomalously strong localization ($p_q \to 1$).
-      \end{itemize}
-    \vspace{0.4cm}
-    \item \textbf{Orthogonal Symmetry Class (AI)}:
-      \begin{itemize}
-        \item Shift energy to $E = 3.1t$.
-        \item Breaks chiral symmetry, avoids band-center crossover.
-        \item Standard Orthogonal class AI (universal transition).
-        \item Critical exponent expected: $\nu \approx 1.62$.
-      \end{itemize}
-  \end{itemize}
-\end{frame}
+% % Slide 6: Symmetry Classes \& Bipartite Lattice
+% \begin{frame}{Symmetry Classes \& Bipartite Lattice}
+%   \begin{itemize}
+%     \item \textbf{Chiral Symmetry}:
+%       \begin{itemize}
+%         \item Simple Cubic (SC) lattice is bipartite (A and B sublattices).
+%         \item Band center $E=0$: Chiral Orthogonal (BDI) class.
+%         \item Result: Anomalously strong localization ($p_q \to 1$).
+%       \end{itemize}
+%     \vspace{0.4cm}
+%     \item \textbf{Orthogonal Symmetry Class (AI)}:
+%       \begin{itemize}
+%         \item Shift energy to $E = 3.1t$.
+%         \item Breaks chiral symmetry, avoids band-center crossover.
+%         \item Standard Orthogonal class AI (universal transition).
+%         \item Critical exponent expected: $\nu \approx 1.62$.
+%       \end{itemize}
+%   \end{itemize}
+% \end{frame}
 
 \section{Methodology}
 
@@ -156,7 +156,8 @@
       \textbf{Recurrence \& Transfer Matrix}:
       \begin{itemize}
         \item Bar domain $M \times M \times L$ with $L \gg M$.
-        \item Recurrence on coupled slices:
+        \item Solve statics. Time independent Schrodinger
+        \item Recurrence on coupled slices (second-order):
           $$C_{l, l-1} \psi_{l-1} + H_l \psi_l + C_{l, l+1} \psi_{l+1} = E \psi_l$$
         \item First-order recurrence product:
           $$\begin{pmatrix} \psi_{l+1} \\ \psi_l \end{pmatrix} = T_l \begin{pmatrix} \psi_l \\ \psi_{l-1} \end{pmatrix}$$
@@ -171,9 +172,9 @@
         \item Limiting matrix (Oseledec theorem):
           $$\Gamma = \lim_{L \to \infty} \left( \mathcal{M}_L^\dagger \mathcal{M}_L \right)^{\frac{1}{2L}}$$
         \item Exponents occur in conjugate pairs $\pm\gamma_i$.
-        \item Exponents occur in conjugate pairs $\pm\gamma_i$.
         \item Localization length: $\xi_M = 1/\langle \gamma_{\text{min}} \rangle$
-          $$\Lambda_M = \frac{\xi_M}{M} = \frac{1}{\langle \gamma_{\text{min}} \rangle M}$$
+        \item Dimensionless localization length
+          $$\Lambda_M = \frac{\xi_M}{M}$$
         \item Self-averaging: average $\gamma_i$, \textbf{not} $\xi_M$.
       \end{itemize}
     \end{column}
@@ -277,7 +278,7 @@
       \vspace{0.3cm}
       \textbf{Critical Exponent} $\nu$:
       \begin{itemize}
-        \item \textbf{Raw}: $1.6205 \pm 0.0085 \text{ (stat)} \pm 0.0052 \text{ (syst)}$
+        \item \textbf{Obtained}: $1.6205 \pm 0.0085 \text{ (stat)} \pm 0.0052 \text{ (syst)}$
         \item \textbf{Lit}: $1.571 \pm 0.007$
       \end{itemize}
       \vspace{0.3cm}
@@ -329,13 +330,13 @@
       \vspace{0.3cm}
       \textbf{Percolation Threshold} $p_q$:
       \begin{itemize}
-        \item \textbf{Results}: $0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$
+        \item \textbf{Obrained}: $0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$
         \item \textbf{Lit}: $0.50628$
       \end{itemize}
       \vspace{0.3cm}
       \textbf{Goodness of Fit}:
       \begin{itemize}
-        \item $\chi^2/\text{dof} = 1.068$ (should be close to 1), $Q = 0.362$ (should be > 0.1)
+        \item $\chi^2/\text{dof} = 1.068$ (should be close to 1), $Q = 0.362$ (should be $> 0.1$)
         \item Results are good
       \end{itemize}
     \end{column}
@@ -360,7 +361,7 @@
       \vspace{0.3cm}
       \textbf{Critical Exponent} $\nu$:
       \begin{itemize}
-        \item \textbf{Raw}: $1.5992 \pm 0.1107 \text{ (stat)} \pm 0.1119 \text{ (syst)}$
+        \item \textbf{Obtained}: $1.5992 \pm 0.1107 \text{ (stat)} \pm 0.1119 \text{ (syst)}$
         \item \textbf{Lit}: $1.622$ (Orthogonal AI)
         \item Consistent within error.
       \end{itemize}
