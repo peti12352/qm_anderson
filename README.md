@@ -8,13 +8,13 @@ Anderson disorder means every site is occupied and the on-site energy is drawn u
 
 The simple-cubic runs have been done. The body-centered cubic lattice is in the code and has not been run.
 
-## Where things stand
+## Status
 
-18 October 2026. The simple-cubic Anderson benchmark is inside the gate in RUNBOOK.md. Site dilution at E = 3.1t has been computed through M = 12, and the crossings of Λ_M are still moving toward the published threshold. The May draft quotes a separate two-width fit, p_q = 0.517. The crossings are the measurement. The body-centered run has not been started.
+18 October 2026. The simple-cubic Anderson benchmark is inside the gate in RUNBOOK.md. Site dilution at E = 3.1t has been computed through M = 12, and the crossings of Λ_M are still moving toward the published threshold. The May draft quotes a separate two-width fit, p_q = 0.517. The body-centered run has not been started.
 
 Numbers and the next run: docs/next_steps.md. Papers: docs/literature.md. Failed runs: RUNBOOK.md. docs/manuscript/ is the draft from May 2026.
 
-## Running it
+## Run
 
 Linux, CUDA 12, and [pixi](https://pixi.sh).
 

@@ -1,7 +1,7 @@
 # Runbook
 
 Order of work: simple-cubic Anderson benchmark, simple-cubic dilution, body-centered dilution.
-Where the measurement stands: `docs/next_steps.md`. Papers: `docs/literature.md`.
+Status: `docs/next_steps.md`. Papers: `docs/literature.md`.
 
 Each step has a success criterion. Meet it before starting the next one.
 

@@ -1,6 +1,6 @@
 # Next steps
 
-The measurement this project is built for is the quantum percolation threshold on the body-centered cubic lattice, at an energy where the bar is wider than the classical percolation length. A literature search on 18 October 2026 did not find that number. What the search did find is in docs/literature.md.
+The measurement this project is built for is the quantum percolation threshold on the body-centered cubic lattice, at an energy where the bar is wider than the classical percolation length. A literature search on 18 October 2026 did not find that number. The papers from that search are in docs/literature.md.
 
 In the 3D orthogonal class the exponent ν is universal. Ujfalusi and Varga average it to 1.622, with the interval 1.587 to 1.658, on the simple cubic lattice. A body-centered run that returns ν near 1.6 is a check that the symmetry class is the ordinary orthogonal one. The quantity that depends on the lattice is p_q.
 
@@ -42,7 +42,7 @@ p_q      = 0.51670 ± 0.00456 (stat) ± 0.00450 (syst)
 
 0.517 lies above the M = 10, 12 crossing and above 0.506. The crossings are still rising toward 0.506. A chi-squared near 1, with a fourth-order polynomial and only two widths, means those two curves have been interpolated. No body-centered output file exists.
 
-## Wider simple-cubic bar
+## M = 16
 
 Same energy, one more width, M = 14 or M = 16, L = 10000, 500 samples, with p concentrated between 0.48 and 0.54.
 
@@ -60,8 +60,8 @@ The classical site threshold in the code is 0.2457. p_q is the output of the run
 pixi run bcc-dilution
 ```
 
-The face-centered cubic lattice is a separate calculation. Triangles in the nearest-neighbour graph put the band centre in the ordinary orthogonal class, with no need to move off E = 0. A slice uses a four-site cell, and at the same M the matrix costs about 64 times a simple-cubic slice. It is worth doing once a body-centered threshold is in hand.
+The face-centered cubic lattice is a separate calculation. Triangles in the nearest-neighbour graph put the band centre in the ordinary orthogonal class, with no need to move off E = 0. A slice uses a four-site cell, and at the same M the matrix costs about 64 times a simple-cubic slice. Run it after the body-centered threshold.
 
-## What a paper from the present data would be claiming
+## Draft fit
 
 Ujfalusi and Varga mapped the simple-cubic mobility edge on cubes down to side 20. Our widest bar is M = 12. Their exponent, averaged along the edge, is 1.622. A paper whose main number was p_q = 0.517 would be setting a two-width fit, started from a guess, against a published interval of width 0.0004.

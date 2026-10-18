@@ -1,6 +1,6 @@
 # Literature
 
-Papers this calculation is compared with, and papers from 2025–2026 that a search for the same problem turns up. The sentences in quotation marks are from the papers.
+Papers this calculation is compared with, and papers from 2025–2026 turned up by a search for the same problem. Quotations are from the papers.
 
 ## Simple-cubic quantum percolation
 
@@ -48,7 +48,7 @@ Review of quantum percolation. The simple-cubic mobility edges that Ujfalusi and
 Quantum percolation on the face-centered cubic lattice: Phys. Rev. B 44, 9926 (1991).
 https://doi.org/10.1103/PhysRevB.44.9926
 
-## Papers since the project was paused
+## 2025–2026
 
 Last commit before the pause: 4 June 2026. Literature checked again on 18 October 2026. An arXiv search for BCC together with "quantum percolation" returned nothing. An OpenAlex title search for "body-centered cubic anderson" returned nothing. The four papers below are the neighbouring results those searches return.
 
