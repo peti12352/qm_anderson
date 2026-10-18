@@ -4,7 +4,7 @@ Week 1 gate: reproduce the 3D SC Anderson metal-insulator transition.
 Gate (Slevin & Ohtsuki, PRL 82, 382, 1999, Table II: W_c = 16.54):
     W_c within 0.30 of 16.54
     ν   within 0.10 of 1.57
-y = 1.12 in the fit is empirical, not theirs.
+y = 1.12 is an effective exponent for these sizes. Slevin and Ohtsuki fit y.
 
 If the gate fails, stop. Common failure modes:
     - Wrong transfer matrix (see TRANSFER MATRIX BUG CHECKLIST in lattice.py)

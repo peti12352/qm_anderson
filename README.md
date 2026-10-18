@@ -1,47 +1,47 @@
 # qm_anderson
 
-Transfer-matrix study of the 3D Anderson transition and of quantum percolation.
+Transfer-matrix calculation of the 3D Anderson transition and of quantum percolation on cubic lattices.
 
-A quasi-1D bar, cross section \(M \times M\), length \(L\). The smallest Lyapunov exponent \(\gamma_{\min}\) comes from a QR-stabilized product of slice transfer matrices. The scaling variable is \(\Lambda_M = 1/(M \gamma_{\min})\). Critical points are read from finite-size scaling of \(\Lambda_M\) across several \(M\).
+The sample is a bar, cross section M by M, length L. The wavefunction is stepped from slice to slice by a transfer matrix. A QR factorization at each step keeps the product from overflowing, and the smallest Lyapunov exponent γ_min is the one that decays slowest. The quantity we scale is Λ_M = 1 / (M γ_min). The critical point is the value of the control parameter at which Λ_M for several M fall on one curve.
 
-Two disorders. Anderson: every site occupied, on-site energies uniform in \([-W/2, W/2]\), band centre. Quantum percolation: \(W = 0\), each site occupied with probability \(p\), spectrum taken at a fixed energy \(E\).
+Anderson disorder means every site is occupied and the on-site energy is drawn uniformly from −W/2 to W/2, at the band centre. Quantum percolation means no on-site disorder: each site is present with probability p, and the energy E is held fixed.
 
-Simple cubic is running. Body-centered cubic is implemented and has not been measured.
+The simple-cubic runs have been done. The body-centered cubic lattice is in the code and has not been run.
 
-## Status
+## Where things stand
 
-18 October 2026. The simple-cubic Anderson benchmark passes the gate in `RUNBOOK.md`. Site dilution on the same lattice at \(E = 3.1t\) has been run through \(M = 12\). The crossings move toward the known threshold and are not there yet. A two-width fit that lands at \(p_q = 0.517\) is not a measurement. BCC has no output file. What would be worth publishing, and the run that has to come first, is `docs/next_steps.md`. Papers are `docs/literature.md`. What failed, and why, is `RUNBOOK.md`.
+18 October 2026. The simple-cubic Anderson benchmark is inside the gate in RUNBOOK.md. Site dilution at E = 3.1t has been computed through M = 12, and the crossings of Λ_M are still moving toward the published threshold. The May draft quotes a separate two-width fit, p_q = 0.517. The crossings are the measurement. The body-centered run has not been started.
 
-`docs/manuscript/` is a draft from May 2026. Do not cite it.
+Numbers and the next run: docs/next_steps.md. Papers: docs/literature.md. Failed runs: RUNBOOK.md. docs/manuscript/ is the draft from May 2026.
 
-## Run
+## Running it
 
-Linux, CUDA 12, [pixi](https://pixi.sh).
+Linux, CUDA 12, and [pixi](https://pixi.sh).
 
 ```bash
 pixi install
 pixi run test
 ```
 
-Anderson benchmark, hours on an RTX 5090 in FP64:
+The Anderson benchmark is hours on an RTX 5090. The arithmetic is double precision.
 
 ```bash
 pixi run benchmark
 ```
 
-The dilution data are already in `data/sc_dilution_E3p1.h5` (\(E = 3.1\), \(L = 10^4\), 500 samples, \(M = 4,6,8,10,12\)). Refit without another transfer-matrix run:
+Dilution data are already in `data/sc_dilution_E3p1.h5`: E = 3.1, L = 10000, 500 samples, M = 4, 6, 8, 10, 12. Refit without another transfer-matrix run:
 
 ```bash
 pixi run python runs/sc_dilution.py --refit \
     --data-file data/sc_dilution_E3p1.h5 --m-list 8,10,12
 ```
 
-A killed run resumes from `data/checkpoints/`.
+A killed job continues from `data/checkpoints/`.
 
-## Layout
+## Files
 
 ```
-src/         transfer matrix, finite-size scaling, SC and BCC lattices
+src/         transfer matrix, finite-size scaling, both lattices
 runs/        sc_benchmark.py, sc_dilution.py, bcc_dilution.py
 analysis/    tables and figures
 tests/

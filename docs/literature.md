@@ -1,72 +1,76 @@
 # Literature
 
-What this calculation is matched against, then what appeared while it was parked (June–October 2026). Quotes below are from the papers or from their abstracts, not from a review.
+Papers this calculation is compared with, and papers from 2025–2026 that a search for the same problem turns up. The sentences in quotation marks are from the papers.
 
-## The threshold we are trying to reproduce
+## Simple-cubic quantum percolation
 
-L. Ujfalusi and I. Varga, Phys. Rev. B **90**, 174203 (2014).
-[doi:10.1103/PhysRevB.90.174203](https://doi.org/10.1103/PhysRevB.90.174203)
+L. Ujfalusi and I. Varga, Phys. Rev. B 90, 174203 (2014).
+https://doi.org/10.1103/PhysRevB.90.174203
 
-Simple cubic site quantum percolation. Multifractal finite-size scaling, not transfer matrices. They say the sites "form a regular, usually simple cubic lattice," and they quote the classical threshold \(p_c^C = 0.3116 \pm 0.0002\).
+Site dilution on the simple cubic lattice, analysed by multifractal finite-size scaling. They write that the sites "form a regular, usually simple cubic lattice," and they use the classical threshold 0.3116 ± 0.0002.
 
-Table II at \(E = 3.1\): \(p_c^Q = 0.50628\ (0.50606..0.50647)\), \(\nu = 1.603\ (1.515..1.695)\), \(L_{\min} = 20\). Averaged over the mobility edge: \(\nu = 1.622\ (1.587..1.658)\). At \(E = 0.7\): \(p_c^Q = 0.38402\ (0.38387..0.38418)\). At \(E = 0.1\): \(p_c^Q = 0.45384\ (0.45365..0.45402)\). Below \(E = 0.1\) they report severe convergence trouble and \(p_c^Q \to 1\) as \(E \to 0\). No body-centered lattice.
+Table II at E = 3.1: p_c^Q = 0.50628, interval 0.50606 to 0.50647, and ν = 1.603, interval 1.515 to 1.695, with smallest cube side 20. Averaged along the mobility edge, ν = 1.622, interval 1.587 to 1.658. At E = 0.7, p_c^Q = 0.38402, interval 0.38387 to 0.38418. At E = 0.1, p_c^Q = 0.45384, interval 0.45365 to 0.45402. Below E = 0.1 the scaling fits converge poorly, and the threshold goes to 1 as E goes to 0. The paper has no body-centered lattice.
 
-OpenAlex lists 13 citations. None of them is a BCC threshold.
+OpenAlex lists 13 citations. None of them reports a body-centered quantum percolation threshold.
 
-## Anderson benchmark
+## Anderson transition, orthogonal class
 
-K. Slevin and T. Ohtsuki, Phys. Rev. Lett. **82**, 382 (1999).
-[doi:10.1103/PhysRevLett.82.382](https://doi.org/10.1103/PhysRevLett.82.382)
+K. Slevin and T. Ohtsuki, Phys. Rev. Lett. 82, 382 (1999).
+https://doi.org/10.1103/PhysRevLett.82.382
 
-Corrections to scaling at the 3D orthogonal Anderson transition. The box-distribution critical disorder used as the gate in this repo is \(W_c = 16.54\). They fit the irrelevant exponent freely and obtain \(|y| \approx 2.8\)–\(3.9\) for \(\Lambda\). The \(y = 1.12\) fixed in `src/fss.py` is not their number. It is an effective exponent that reproduces this benchmark at \(M \le 10\).
+Corrections to scaling at the 3D orthogonal Anderson transition. The gate in this repository uses their box-distribution critical disorder, W_c = 16.54. They fit the irrelevant exponent and obtain a magnitude around 2.8 to 3.9 for the observable Λ. The value y = 1.12 fixed in src/fss.py is an effective exponent that reproduces our benchmark at M ≤ 10.
 
-K. Slevin and T. Ohtsuki, New J. Phys. **16**, 015012 (2014).
-[doi:10.1088/1367-2630/16/1/015012](https://doi.org/10.1088/1367-2630/16/1/015012)
+K. Slevin and T. Ohtsuki, New J. Phys. 16, 015012 (2014).
+https://doi.org/10.1088/1367-2630/16/1/015012
 
-Later determination of the 3D orthogonal exponent. The gate in `runs/sc_benchmark.py` (\(\nu \approx 1.571\)) is the 1999-era number, not a claim that 2014 reprinted it.
+A later determination of the same exponent. The number ν ≈ 1.571 in runs/sc_benchmark.py is the 1999 gate.
 
-A. Rodriguez, L. J. Vasquez, K. Slevin, and R. A. Römer, Phys. Rev. B **84**, 134209 (2011).
-[doi:10.1103/PhysRevB.84.134209](https://doi.org/10.1103/PhysRevB.84.134209)
+A. Rodriguez, L. J. Vasquez, K. Slevin, and R. A. Römer, Phys. Rev. B 84, 134209 (2011).
+https://doi.org/10.1103/PhysRevB.84.134209
 
-Multifractal finite-size scaling for the Anderson transition. The stability test in their appendix raises the polynomial order. It is not a scan over window width. The methods note in this repo records \(\nu = 1.590\ (1.579..1.602)\) and \(|y| \approx 1.7\) for fixed-\(\lambda\) scaling, which is a different observable from our \(\Lambda_M\).
+Multifractal finite-size scaling of the Anderson transition. The stability check in their appendix increases the order of the polynomial. It is a different test from scanning the fit window. The methods note in this repository records ν = 1.590, interval 1.579 to 1.602, and an irrelevant exponent of magnitude about 1.7. Those numbers are for their fixed-λ multifractal spectrum. Ours are for Λ_M.
 
-E. Abrahams, P. W. Anderson, D. C. Licciardello, and T. V. Ramakrishnan, Phys. Rev. Lett. **42**, 673 (1979).
-Scaling theory. No metallic phase in the orthogonal class below two dimensions. This is why a bar with \(M \lesssim \xi_{\mathrm{perc}}\) is not measuring the 3D fixed point: on those scales the cluster is fractal.
+E. Abrahams, P. W. Anderson, D. C. Licciardello, and T. V. Ramakrishnan, Phys. Rev. Lett. 42, 673 (1979).
 
-## Other lattices, older work
+Scaling theory of localization. In the orthogonal class there is no metal below two dimensions. A bar whose width is comparable to the percolation length is sitting on a fractal cluster, and it is not measuring the 3D fixed point.
 
-A. Eilmes, A. M. Fischer, and R. A. Römer, Phys. Rev. B **77**, 245117 (2008).
-[doi:10.1103/PhysRevB.77.245117](https://doi.org/10.1103/PhysRevB.77.245117)
+## Other lattices
 
-Critical disorder for the Anderson transition on FCC and BCC. Diagonal disorder, \(p = 1\). Not quantum percolation, and not \(p_q\).
+A. Eilmes, A. M. Fischer, and R. A. Römer, Phys. Rev. B 77, 245117 (2008).
+https://doi.org/10.1103/PhysRevB.77.245117
+
+Critical disorder of the Anderson transition on the face-centered and body-centered cubic lattices, with every site occupied. The control parameter is W.
 
 G. Schubert and H. Fehske, arXiv:0905.2537 (2009).
-Review of quantum percolation in disordered structures. Simple cubic mobility-edge curves that Ujfalusi and Varga compare against. Not BCC.
 
-Quantum percolation on the face-centered cubic lattice is an old transfer-matrix paper: Phys. Rev. B **44**, 9926 (1991), [doi:10.1103/PhysRevB.44.9926](https://doi.org/10.1103/PhysRevB.44.9926). FCC, not BCC.
+Review of quantum percolation. The simple-cubic mobility edges that Ujfalusi and Varga compare with are in here.
 
-## While this was parked
+Quantum percolation on the face-centered cubic lattice: Phys. Rev. B 44, 9926 (1991).
+https://doi.org/10.1103/PhysRevB.44.9926
 
-Last commit before the pause: 4 June 2026. Checked again 18 October 2026. arXiv query `BCC` and `"quantum percolation"`: no hits. OpenAlex title search `body-centered cubic anderson`: no works. The four below are the papers from that window that a search for this problem actually returns. None of them measures \(p_q\) on BCC.
+## Papers since the project was paused
+
+Last commit before the pause: 4 June 2026. Literature checked again on 18 October 2026. An arXiv search for BCC together with "quantum percolation" returned nothing. An OpenAlex title search for "body-centered cubic anderson" returned nothing. The four papers below are the neighbouring results those searches return.
 
 1. B. Bhowmik, S. Mitra, R. M. Ziff, and A. Sensharma, arXiv:2602.15163 (2026).
-   [https://arxiv.org/abs/2602.15163](https://arxiv.org/abs/2602.15163)
+   https://arxiv.org/abs/2602.15163
 
-   Classical bond percolation. Their abstract: "We investigate the effect of structural distortion on bond percolation in simple cubic and body-centered cubic lattices using extensive Monte Carlo simulations." Undistorted bond thresholds they quote for reference: \(p_b \approx 0.2488\) (SC) and \(p_b \approx 0.18025\) (BCC). No Schrödinger equation.
+   Classical bond percolation on lattices whose sites have been randomly displaced. From the abstract: "We investigate the effect of structural distortion on bond percolation in simple cubic and body-centered cubic lattices using extensive Monte Carlo simulations." For the undistorted lattices they quote bond thresholds of about 0.2488 (simple cubic) and 0.18025 (body-centered cubic).
 
 2. S. Becker and I. Oltman, arXiv:2609.38017 (2026).
-   [https://arxiv.org/abs/2609.38017](https://arxiv.org/abs/2609.38017)
+   https://arxiv.org/abs/2609.38017
 
-   "For Bernoulli bond percolation on every regular tree of degree at least three, we prove that infinite clusters appear strictly before absolutely continuous spectrum." Trees. \(p_c < p_{ac} < 1\).
+   Bond percolation on regular trees. From the abstract: "For Bernoulli bond percolation on every regular tree of degree at least three, we prove that infinite clusters appear strictly before absolutely continuous spectrum." So p_c < p_ac < 1 on those trees.
 
-3. W. S. Oliveira, J. P. de Lima, and R. R. dos Santos, Phys. Rev. E **111**, 034117 (2025).
-   [doi:10.1103/PhysRevE.111.034117](https://doi.org/10.1103/PhysRevE.111.034117), arXiv:2409.04610.
+3. W. S. Oliveira, J. P. de Lima, and R. R. dos Santos, Phys. Rev. E 111, 034117 (2025).
+   https://doi.org/10.1103/PhysRevE.111.034117
+   arXiv:2409.04610
 
-   "We theoretically investigate the quantum percolation problem on Lieb lattices in two and three dimensions." A 3D lattice that has been done. It is not BCC. This is the recent 3D quantum-percolation result, and it predates the pause.
+   Quantum percolation on Lieb lattices in two and three dimensions. This is a 3D threshold, on the Lieb lattice, and it was published before the pause.
 
 4. W. S. Oliveira, J. Faúndez, R. Arouca, and W. A. M. Morgado, arXiv:2609.04625 (2026).
-   [https://arxiv.org/abs/2609.04625](https://arxiv.org/abs/2609.04625)
+   https://arxiv.org/abs/2609.04625
 
-   "We investigate the interplay between geometric dilution and non-Hermitian disorder in the two-dimensional quantum site-percolation model." Two dimensions, complex on-site potential.
+   Two-dimensional site percolation with a random imaginary on-site potential. From the abstract: "We investigate the interplay between geometric dilution and non-Hermitian disorder in the two-dimensional quantum site-percolation model."
 
-The only paper that cites Ujfalusi and Varga 2014 with a date after 4 June 2026 is the same group's honeycomb work: W. S. Oliveira, J. Faúndez, and W. A. M. Morgado, arXiv:2604.12732, published as [doi:10.1103/yf3h-zdpr](https://doi.org/10.1103/yf3h-zdpr). "We investigate quantum percolation in a honeycomb lattice with site dilution and random spin-orbit coupling." Two-dimensional honeycomb. Not BCC.
+The one paper that cites Ujfalusi and Varga 2014 with a date after 4 June 2026 is by the same group, on the honeycomb lattice: W. S. Oliveira, J. Faúndez, and W. A. M. Morgado, arXiv:2604.12732, journal version https://doi.org/10.1103/yf3h-zdpr. From the abstract: "We investigate quantum percolation in a honeycomb lattice with site dilution and random spin-orbit coupling."

@@ -1,10 +1,9 @@
-# Runbook: SC benchmark → SC dilution → BCC dilution
+# Runbook
 
-Where the measurement stands, and the run that has to come first: `docs/next_steps.md`.
-Papers: `docs/literature.md`.
+Order of work: simple-cubic Anderson benchmark, simple-cubic dilution, body-centered dilution.
+Where the measurement stands: `docs/next_steps.md`. Papers: `docs/literature.md`.
 
-Complete sequence to reproduce the benchmark, validate, and only then run BCC.
-Each step has a clear success criterion. Do not proceed to the next step until it is met.
+Each step has a success criterion. Meet it before starting the next one.
 
 ---
 
