@@ -318,8 +318,8 @@ def _run_fss_analysis(M_flat, p_flat, lam_flat, err_flat,
 
     print("\n" + "="*55)
     print("FSS RESULT (BCC site-diluted quantum percolation)")
-    print(f"  y   = {Y_IRREL} fixed (S&O99: 1.12±0.08; 3D orthogonal class)")
-    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat)  (first measurement)")
+    print(f"  y   = {Y_IRREL} fixed (empirical; S&O99 fit y freely, |y|≈2.8–3.9)")
+    print(f"  p_q = {result.x_c:.5f} ± {result.x_c_err:.5f} (stat)")
     print(f"  ν   = {result.nu:.4f}  ± {result.nu_err:.4f} (stat)")
     print(f"  b   = {result.b:.4f}  ± {result.b_err:.4f} (stat)")
     from scipy.stats import chi2 as _chi2_dist

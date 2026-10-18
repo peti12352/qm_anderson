@@ -141,7 +141,7 @@ orthogonal). The BDI class has a different critical exponent ν_BDI ≠ 1.622 an
 different corrections-to-scaling (b → 0 at the chiral fixed point).
 
 Measured consequence: SC at E=0 gives p_q = 0.591 ± 0.001, ν ≈ 2.0, b ≈ 0,
-χ²/dof ≈ 10. Ujfalusi & Varga 2014 (PRB 90, 245136) confirm p_c^Q(E→0) → 1
+χ²/dof ≈ 10. Ujfalusi & Varga 2014 (PRB 90, 174203) confirm p_c^Q(E→0) → 1
 and report "severe convergence troubles" for MFSS at E < 0.1.
 
 ### 4.2 BDI-AI crossover and the choice E=0.7
@@ -438,8 +438,8 @@ Run before writing up:
    - MFSS method; polynomial order perturbation stability test; |y|≈1.7 for
    fixed-λ FSS. System sizes L=20–120; ν=1.590(1.579,1.602).
 
-3. Ujfalusi L and Varga I 2014 Phys. Rev. B **90** 245136
-   "Finite-size scaling and multifractality at the Anderson transition for the
-   three Wigner-Dyson symmetry classes in 3D" - quantum percolation threshold
-   p_c^Q as function of E for SC lattice; mobility edge; MFSS approach; Table I
-   gives p_c^Q(E=0.7)≈0.384; reports BDI anomaly at E=0.
+3. Ujfalusi L and Varga I 2014 Phys. Rev. B **90** 174203
+   "Quantum percolation transition in three dimensions." SC only.
+   Table II: p_c^Q(E=3.1)=0.50628 (0.50606..0.50647),
+   p_c^Q(E=0.7)=0.38402, p_c^Q(E=0.1)=0.45384.
+   Averaged ν=1.622 (1.587..1.658). MFSS. Reports convergence trouble for E<0.1.

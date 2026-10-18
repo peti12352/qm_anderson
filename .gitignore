@@ -22,3 +22,6 @@ __pycache__/
 
 docs/manuscript/presentation.nav
 docs/manuscript/presentation.snm
+
+# local extracts of papers
+docs/papers/

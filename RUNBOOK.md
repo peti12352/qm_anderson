@@ -1,6 +1,9 @@
 # Runbook: SC benchmark → SC dilution → BCC dilution
 
-Complete sequence to reproduce the benchmark, validate, and run the novel BCC measurement.
+Where the measurement stands, and the run that has to come first: `docs/next_steps.md`.
+Papers: `docs/literature.md`.
+
+Complete sequence to reproduce the benchmark, validate, and only then run BCC.
 Each step has a clear success criterion. Do not proceed to the next step until it is met.
 
 ---
@@ -20,7 +23,7 @@ where x is the control parameter (W for Anderson disorder, p for dilution).
 | Parameter | Value | Source |
 |-----------|-------|--------|
 | `poly_order` | 4 | Reduces polynomial strain vs order 3; see below |
-| `y_irrel` | 1.12 | Slevin & Ohtsuki 1999, Phys. Rev. Lett. 82, 382 |
+| `y_irrel` | 1.12 | Empirical. S&O 1999 fit y freely and get \|y\|≈2.8–3.9. See below. |
 | `fit_y_irrel` | False | See identifiability argument below |
 | `n_corrections` | 1 | See identifiability argument below |
 | `n_boot` | 500 | Sufficient for σ < 1% on bootstrap CIs |

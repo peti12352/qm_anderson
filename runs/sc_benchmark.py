@@ -1,12 +1,12 @@
 """
 Week 1 gate: reproduce the 3D SC Anderson metal-insulator transition.
 
-Expected result (from Slevin & Ohtsuki 2014, arXiv:1307.4483):
-    W_c ≈ 16.53 ± 0.05   (in units of t)
-    ν   ≈ 1.571 ± 0.007
+Gate (Slevin & Ohtsuki, PRL 82, 382, 1999, Table II: W_c = 16.54):
+    W_c within 0.30 of 16.54
+    ν   within 0.10 of 1.57
+y = 1.12 in the fit is empirical, not theirs.
 
-If your numbers disagree by more than 5%, stop and debug before continuing.
-Common failure modes:
+If the gate fails, stop. Common failure modes:
     - Wrong transfer matrix (see TRANSFER MATRIX BUG CHECKLIST in lattice.py)
     - Missing sign fix in QR (see tmm.py step function)
     - Too-short bars (increase L)
@@ -248,8 +248,7 @@ if __name__ == "__main__":
         print(f"  b   = {result.b:.4f} ± {result.b_err:.4f} (stat)")
         print(f"  χ²/dof = {result.chi2_dof:.3f}")
 
-        # Systematic error from y uncertainty (±1σ from S&O99)
-        # y is non-identifiable with M={4..10}; propagate its ±0.08 uncertainty explicitly.
+        # y is empirical and not identifiable at M={4..10}. Propagate ±0.08 as a systematic.
         y_lo, y_hi = args.y_irrel - 0.08, args.y_irrel + 0.08
         r_lo = fit_fss(M_flat, W_flat, lam_flat, err_flat,
                        x_c_guess=16.5, nu_guess=1.57, poly_order=4,

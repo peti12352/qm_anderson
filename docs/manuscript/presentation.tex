@@ -248,8 +248,7 @@
       \textbf{Critical Potential} $W_c$:
       \begin{itemize}
         \item \textbf{Obtained}: $16.6174 \pm 0.0156 \text{ (stat)} \pm 0.0148 \text{ (syst)}$
-        \item \textbf{Lit}: $16.53 \pm 0.05$
-        \item It's a good Result, sir.
+        \item \textbf{Lit}: $16.54$ (Slevin \& Ohtsuki 1999)
       \end{itemize}
       \vspace{0.3cm}
       \textbf{Goodness of Fit}:
@@ -330,14 +329,14 @@
       \vspace{0.3cm}
       \textbf{Percolation Threshold} $p_q$:
       \begin{itemize}
-        \item \textbf{Obrained}: $0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$
+        \item \textbf{Obtained}: $0.51670 \pm 0.00456 \text{ (stat)} \pm 0.00450 \text{ (syst)}$
         \item \textbf{Lit}: $0.50628$
       \end{itemize}
       \vspace{0.3cm}
       \textbf{Goodness of Fit}:
       \begin{itemize}
-        \item $\chi^2/\text{dof} = 1.068$ (should be close to 1), $Q = 0.362$ (should be $> 0.1$)
-        \item Results are good
+        \item $\chi^2/\text{dof} = 1.068$, $Q = 0.362$
+        \item Two widths. Crossings are at $0.482$ and $0.502$. This fit sits above both.
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
@@ -397,7 +396,32 @@
   \end{itemize}
 \end{frame}
 
-% Slide 16: Conclusions
+% Slide 16: Next steps: BCC and FCC
+\begin{frame}{Next steps: BCC and FCC}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Body-Centered Cubic (BCC)}
+      \begin{itemize}
+        \item \textbf{Coordination:} $Z=6 \rightarrow 8$.
+        \item \textbf{Threshold:} $p_c$ drops to $\approx 0.246$.
+        \item \textbf{Symmetry:} Bipartite. Requires evaluating at $E=3.1t$ to access Orthogonal AI class.
+        \item \textbf{Cost:} 2-atom basis ($2M^2$ vector). $\mathcal{O}(N^3)$ scaling incurs an \textbf{$8\times$ penalty}.
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \textbf{Face-Centered Cubic (FCC)}
+      \begin{itemize}
+        \item \textbf{Coordination:} Maximum $Z=12$.
+        \item \textbf{Threshold:} $p_c$ plummets to $\approx 0.199$.
+        \item \textbf{Symmetry:} Not bipartite (triangles). Natively Orthogonal AI (Altland-Zirnbauer) at exact band center ($E=0$).
+        \item \textbf{Cost:} 4-atom basis ($4M^2$ vector). $\mathcal{O}(N^3)$ scaling incurs a \textbf{$64\times$ penalty}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 17: Conclusions
 \begin{frame}{Conclusions}
   \begin{itemize}
     \item We developed a JAX-accelerated implementation of the Transfer Matrix Method.
